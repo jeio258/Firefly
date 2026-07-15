@@ -494,30 +494,24 @@ $effect(() => {
     <!-- Theme Color Section -->
     {#if showThemeColor}
     <div class="mt-2 mb-2">
-        <div class="flex flex-row gap-2 mb-2 items-center justify-between">
-            <div class="flex gap-2 font-bold text-lg text-neutral-900 dark:text-neutral-100 transition relative ml-3
-                before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
-                before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
-            >
-                {i18n(I18nKey.themeColor)}
-                <button aria-label="Reset to Default" class="btn-regular w-7 h-7 rounded-md  active:scale-90"
-                        class:opacity-0={hue === defaultHue} class:pointer-events-none={hue === defaultHue} onclick={resetHue}>
-                    <div class="text-(--btn-content)">
-                        <Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]"></Icon>
-                    </div>
-                </button>
-            </div>
-            <div class="flex gap-1">
-                <div id="hueValue" class="transition bg-(--btn-regular-bg) w-10 h-7 rounded-md flex justify-center
-                font-bold text-sm items-center text-(--btn-content)">
-                    {hue}
+        <div class="flex gap-2 font-bold text-lg text-neutral-900 dark:text-neutral-100 transition relative ml-3 mb-2
+            before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
+            before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
+        >
+            {i18n(I18nKey.themeColor)}
+            <button aria-label="Reset to Default" class="btn-regular w-7 h-7 rounded-md active:scale-90"
+                    class:opacity-0={hue === defaultHue} class:pointer-events-none={hue === defaultHue} onclick={resetHue}>
+                <div class="text-(--btn-content)">
+                    <Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.875rem]"></Icon>
                 </div>
-            </div>
+            </button>
         </div>
-        <div class="w-full h-6 px-1 bg-[oklch(0.80_0.10_0)] dark:bg-[oklch(0.70_0.10_0)] rounded-sm select-none">
+        <label class="overlay-slider-row">
+            <span class="overlay-slider-label">Hue</span>
             <input aria-label={i18n(I18nKey.themeColor)} type="range" min="0" max="360" bind:value={hue}
-                   class="slider" id="colorSlider" step="5" style="width: 100%">
-        </div>
+                   class="overlay-slider" id="colorSlider" step="5" />
+            <span class="overlay-slider-value">{hue}°</span>
+        </label>
     </div>
     {/if}
 
@@ -581,8 +575,8 @@ $effect(() => {
 
     <!-- Overlay Settings Section -->
     {#if wallpaperMode === WALLPAPER_OVERLAY && hasOverlaySettings}
-        <div class="mt-2 mb-2">
-            <div class="flex gap-2 font-bold text-lg text-neutral-900 dark:text-neutral-100 transition relative ml-3 mb-2
+        <div class="mt-3 mb-2">
+            <div class="flex gap-2 font-bold text-lg text-neutral-900 dark:text-neutral-100 transition relative ml-3 mb-3
                 before:w-1 before:h-4 before:rounded-md before:bg-(--primary)
                 before:absolute before:-left-3 before:top-1/2 before:-translate-y-1/2"
             >
@@ -594,14 +588,11 @@ $effect(() => {
                     </div>
                 </button>
             </div>
-            <div class="space-y-2">
+            <div class="overlay-slider-list">
                 {#each overlaySliderItems as item (item.key)}
                     {#if item.enabled}
-                        <div class="rounded-md bg-(--btn-regular-bg) p-2">
-                            <div class="flex items-center justify-between mb-1">
-                                <span class="text-sm font-medium text-(--btn-content) opacity-80">{item.label}</span>
-                                <span class="text-xs text-(--btn-content)">{item.displayValue}</span>
-                            </div>
+                        <label class="overlay-slider-row">
+                            <span class="overlay-slider-label">{item.label}</span>
                             <input
                                 aria-label={item.ariaLabel}
                                 type="range"
@@ -610,9 +601,10 @@ $effect(() => {
                                 step={item.step}
                                 value={item.value}
                                 oninput={(e) => item.onValueChange(Number((e.currentTarget as HTMLInputElement).value))}
-                                class="slider w-full overlay-slider"
+                                class="overlay-slider"
                             />
-                        </div>
+                            <span class="overlay-slider-value">{item.displayValue}</span>
+                        </label>
                     {/if}
                 {/each}
             </div>
@@ -811,10 +803,50 @@ $effect(() => {
             background-image unquote("linear-gradient(90deg, var(--primary) 0 var(--range-progress, 50%), hsla(var(--hue), 22%, 28%, 0.18) var(--range-progress, 50%) 100%)")
             transition background-image 0.15s ease-in-out
 
-        /* Overlay 滑块 - 更自由调节 */
+        /* Overlay 单行滑块行 */
+        .overlay-slider-list
+            display flex
+            flex-direction column
+            gap 0.5rem
+
+        .overlay-slider-row
+            display flex
+            align-items center
+            gap 0.625rem
+            padding 0.5rem 0.75rem
+            border-radius 0.625rem
+            background var(--btn-regular-bg)
+            cursor pointer
+            transition background-color 0.15s
+
+        .overlay-slider-label
+            font-size 0.8125rem
+            font-weight 600
+            color var(--btn-content)
+            white-space nowrap
+            min-width 4.5rem
+            user-select none
+
+        .overlay-slider-value
+            font-size 0.75rem
+            font-weight 700
+            color var(--primary)
+            font-family ui-monospace, monospace
+            min-width 2.75rem
+            text-align right
+            user-select none
+            font-variant-numeric tabular-nums
+
+        /* Overlay 滑块本身 */
         input[type="range"].overlay-slider
+            flex 1
+            min-width 0
             height 1.25rem
             cursor pointer
+            margin 0
+            -webkit-appearance none
+            border-radius 999px
+            background-image unquote("linear-gradient(90deg, var(--primary) 0 var(--range-progress, 50%), var(--btn-regular-bg-active) var(--range-progress, 50%) 100%)")
 
             &::-webkit-slider-thumb
                 -webkit-appearance none
@@ -822,70 +854,36 @@ $effect(() => {
                 width 1rem
                 border 2px solid var(--primary)
                 border-radius 50%
-                background white
-                box-shadow 0 1px 4px rgba(0,0,0,0.15)
+                background var(--card-bg)
+                box-shadow 0 1px 3px rgba(0,0,0,0.12)
+                cursor pointer
+                transition transform 0.1s
+                &:hover
+                    transform scale(1.2)
+                &:active
+                    transform scale(0.9)
 
             &::-moz-range-thumb
                 height 1rem
                 width 1rem
                 border 2px solid var(--primary)
                 border-radius 50%
-                background white
-                box-shadow 0 1px 4px rgba(0,0,0,0.15)
+                background var(--card-bg)
+                box-shadow 0 1px 3px rgba(0,0,0,0.12)
+                cursor pointer
 
             &::-ms-thumb
                 height 1rem
                 width 1rem
                 border 2px solid var(--primary)
                 border-radius 50%
-                background white
-                box-shadow 0 1px 4px rgba(0,0,0,0.15)
+                background var(--card-bg)
+                box-shadow 0 1px 3px rgba(0,0,0,0.12)
+                cursor pointer
 
-        #colorSlider
+        /* 颜色滑块使用彩虹渐变轨道 */
+        #colorSlider.overlay-slider
             background-image var(--color-selection-bar)
             transition background-image 0.15s ease-in-out
-
-            &::-webkit-slider-thumb
-                -webkit-appearance none
-                height 1rem
-                width 0.5rem
-                border-radius 0.125rem
-                background rgba(255, 255, 255, 0.7)
-                box-shadow none
-
-                &:hover
-                    background rgba(255, 255, 255, 0.8)
-
-                &:active
-                    background rgba(255, 255, 255, 0.6)
-
-            &::-moz-range-thumb
-                -webkit-appearance none
-                height 1rem
-                width 0.5rem
-                border-radius 0.125rem
-                border-width 0
-                background rgba(255, 255, 255, 0.7)
-                box-shadow none
-
-                &:hover
-                    background rgba(255, 255, 255, 0.8)
-
-                &:active
-                    background rgba(255, 255, 255, 0.6)
-
-            &::-ms-thumb
-                -webkit-appearance none
-                height 1rem
-                width 0.5rem
-                border-radius 0.125rem
-                background rgba(255, 255, 255, 0.7)
-                box-shadow none
-
-                &:hover
-                    background rgba(255, 255, 255, 0.8)
-
-                &:active
-                    background rgba(255, 255, 255, 0.6)
 
 </style>
