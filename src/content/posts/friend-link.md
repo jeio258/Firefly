@@ -6,7 +6,7 @@ tags:
   - 教程，部署指南
 category: 博客指南
 image: https://t.alcy.cc/ycy
-published: 2026-07-16
+pinned: true
 comment: true
 ---
 
