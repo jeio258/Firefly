@@ -361,10 +361,10 @@
             </div>
             <div style="display:flex;align-items:center;gap:0.75rem;">
                 <span id="user-info" style="font-size:0.8125rem;color:var(--text-secondary);"></span>
+                <button id="login-btn" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt"></i> 登录</button>
                 <button id="theme-toggle" title="切换亮暗模式" style="background:none;border:none;color:var(--text-secondary);font-size:1.125rem;cursor:pointer;padding:0.25rem;transition:color 0.15s;">
                     <i class="fas fa-moon"></i>
                 </button>
-                <button id="login-btn" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt"></i> 登录</button>
                 <button class="mobile-menu-btn" id="mobile-menu-btn" style="background:none;border:none;color:var(--text-primary);font-size:1.25rem;cursor:pointer;padding:0.25rem;">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -435,20 +435,33 @@
             catch { return { data: {}, body: content }; }
         }
 
-        function buildFrontmatter(content, title, draft, description, tagsStr, category, image, published, pinned, existing = {}) {
+        function buildFrontmatter(content, title, draft, description, tagsStr, category, image, published, updated, pinned, comment, slug, author, sourceLink, password, passwordHint, lang, licenseName, licenseUrl, existing = {}) {
             const fm = { ...existing };
             fm.title = title;
             fm.draft = draft;
+            if (slug) fm.slug = slug; else delete fm.slug;
+            if (author) fm.author = author; else delete fm.author;
             if (description) fm.description = description;
             if (tagsStr) fm.tags = tagsStr.split(',').map(t => t.trim()).filter(Boolean);
             else delete fm.tags;
             if (category) fm.category = category; else delete fm.category;
             if (image) fm.image = image; else delete fm.image;
+            if (sourceLink) fm.sourceLink = sourceLink; else delete fm.sourceLink;
+            if (password) fm.password = password; else delete fm.password;
+            if (passwordHint) fm.passwordHint = passwordHint; else delete fm.passwordHint;
+            if (lang) fm.lang = lang; else delete fm.lang;
+            if (licenseName) fm.licenseName = licenseName; else delete fm.licenseName;
+            if (licenseUrl) fm.licenseUrl = licenseUrl; else delete fm.licenseUrl;
             if (published) {
                 const d = new Date(published + 'T00:00:00Z');
                 fm.published = isNaN(d.getTime()) ? published : d;
             } else delete fm.published;
+            if (updated) {
+                const d = new Date(updated + 'T00:00:00Z');
+                fm.updated = isNaN(d.getTime()) ? updated : d;
+            } else delete fm.updated;
             if (pinned) fm.pinned = true; else delete fm.pinned;
+            fm.comment = comment !== false;
             const y = jsyaml.dump(fm, { lineWidth: -1, quotingType: '"', forceQuotes: false });
             const body = content.replace(/^---\n[\s\S]*?\n---\n?/, '');
             return `---\n${y}---\n${body}`;
@@ -577,49 +590,97 @@
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                                 <div>
                                     <label>标题 <span style="color:var(--danger);">*</span></label>
-                                    <input id="input-title" type="text" class="input">
+                                    <input id="input-title" type="text" class="input" autofocus>
                                 </div>
+                                <div>
+                                    <label>Slug (自定义URL)</label>
+                                    <input id="input-slug" type="text" class="input" style="font-family:monospace;" placeholder="my-article-slug">
+                                </div>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
                                 <div>
                                     <label>文件路径 <span style="color:var(--danger);">*</span></label>
                                     <input id="input-path" type="text" class="input" style="font-family:monospace;">
                                     <input id="input-sha" type="hidden">
                                 </div>
+                                <div>
+                                    <label>作者</label>
+                                    <input id="input-author" type="text" class="input">
+                                </div>
                             </div>
                             <div>
                                 <label>描述</label>
-                                <input id="input-desc" type="text" class="input">
+                                <input id="input-desc" type="text" class="input" placeholder="文章简短描述，显示在首页文章卡片上">
                             </div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
                                 <div>
                                     <label>发布日期</label>
                                     <input id="input-published" type="date" class="input">
                                 </div>
                                 <div>
+                                    <label>更新日期</label>
+                                    <input id="input-updated" type="date" class="input">
+                                </div>
+                                <div>
                                     <label>标签 (逗号分隔)</label>
-                                    <input id="input-tags" type="text" class="input">
+                                    <input id="input-tags" type="text" class="input" placeholder="前端, 开发">
                                 </div>
                             </div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;align-items:end;">
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
                                 <div>
                                     <label>分类</label>
-                                    <input id="input-category" type="text" class="input">
+                                    <input id="input-category" type="text" class="input" placeholder="前端开发">
                                 </div>
                                 <div>
                                     <label>封面图片</label>
-                                    <input id="input-image" type="text" class="input" style="font-family:monospace;">
+                                    <input id="input-image" type="text" class="input" style="font-family:monospace;" placeholder="./cover.jpg 或 /assets/xxx.webp">
                                 </div>
+                                <div>
+                                    <label>文章来源</label>
+                                    <input id="input-source" type="url" class="input" placeholder="https://">
+                                </div>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                                <div>
+                                    <label>密码保护</label>
+                                    <input id="input-password" type="text" class="input" placeholder="留空不加密">
+                                </div>
+                                <div>
+                                    <label>密码提示</label>
+                                    <input id="input-password-hint" type="text" class="input" placeholder="提示文字">
+                                </div>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;align-items:end;">
                                 <div style="display:flex;flex-direction:column;gap:0.5rem;">
                                     <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8125rem;font-weight:400;color:var(--text-primary);">
                                         <input type="checkbox" id="input-pinned" style="accent-color:var(--primary);"> 置顶文章
                                     </label>
-                                    <div style="display:flex;gap:1rem;font-size:0.8125rem;">
-                                        <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;font-weight:400;color:var(--text-primary);">
-                                            <input type="radio" name="draft" value="false" checked style="accent-color:var(--primary);"> 已发布
-                                        </label>
-                                        <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;font-weight:400;color:var(--text-primary);">
-                                            <input type="radio" name="draft" value="true" style="accent-color:var(--primary);"> 草稿
-                                        </label>
-                                    </div>
+                                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8125rem;font-weight:400;color:var(--text-primary);">
+                                        <input type="checkbox" id="input-comment" checked style="accent-color:var(--primary);"> 启用评论
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>语言</label>
+                                    <input id="input-lang" type="text" class="input" placeholder="zh-CN">
+                                </div>
+                                <div>
+                                    <label>许可证名称</label>
+                                    <input id="input-license-name" type="text" class="input">
+                                </div>
+                                <div>
+                                    <label>许可证链接</label>
+                                    <input id="input-license-url" type="url" class="input" placeholder="https://">
+                                </div>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;align-items:end;">
+                                <div style="display:flex;gap:1rem;font-size:0.8125rem;align-items:center;padding-top:1rem;">
+                                    <span style="font-size:0.75rem;font-weight:500;color:var(--text-secondary);">状态:</span>
+                                    <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;font-weight:400;color:var(--text-primary);">
+                                        <input type="radio" name="draft" value="false" checked style="accent-color:var(--primary);"> 已发布
+                                    </label>
+                                    <label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;font-weight:400;color:var(--text-primary);">
+                                        <input type="radio" name="draft" value="true" style="accent-color:var(--primary);"> 草稿
+                                    </label>
                                 </div>
                             </div>
                             <div>
@@ -676,14 +737,24 @@
 
             document.getElementById('save-btn').onclick = async () => {
                 const title = document.getElementById('input-title').value.trim();
+                const slug = document.getElementById('input-slug').value.trim();
                 const filePath = document.getElementById('input-path').value.trim();
                 const sha = document.getElementById('input-sha').value;
+                const author = document.getElementById('input-author').value.trim();
                 const desc = document.getElementById('input-desc').value.trim();
                 const tags = document.getElementById('input-tags').value.trim();
                 const category = document.getElementById('input-category').value.trim();
                 const image = document.getElementById('input-image').value.trim();
+                const sourceLink = document.getElementById('input-source').value.trim();
+                const password = document.getElementById('input-password').value.trim();
+                const passwordHint = document.getElementById('input-password-hint').value.trim();
+                const lang = document.getElementById('input-lang').value.trim();
+                const licenseName = document.getElementById('input-license-name').value.trim();
+                const licenseUrl = document.getElementById('input-license-url').value.trim();
                 const published = document.getElementById('input-published').value;
+                const updated = document.getElementById('input-updated').value;
                 const pinned = document.getElementById('input-pinned').checked;
+                const comment = document.getElementById('input-comment').checked;
                 const dr = document.querySelector('input[name="draft"]:checked');
                 const isDraft = dr ? dr.value === 'true' : false;
                 const content = simplemde.value();
@@ -693,7 +764,7 @@
                 let existingFM = {};
                 const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
                 if (fmMatch) { try { existingFM = jsyaml.load(fmMatch[1]); } catch {} }
-                const final = buildFrontmatter(content, title, isDraft, desc, tags, category, image, published, pinned, existingFM);
+                const final = buildFrontmatter(content, title, isDraft, desc, tags, category, image, published, updated, pinned, comment, slug, author, sourceLink, password, passwordHint, lang, licenseName, licenseUrl, existingFM);
                 const res = await savePost(GITHUB_OWNER, GITHUB_REPO, GITHUB_BRANCH, filePath, b64(final), sha, accessToken);
                 if (res.ok) { alert('保存成功'); window.location.hash = '#/posts'; }
                 else { const e = await res.json().catch(()=>({})); alert('保存失败: ' + e.message); }
