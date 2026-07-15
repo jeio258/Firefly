@@ -435,32 +435,26 @@
             catch { return { data: {}, body: content }; }
         }
 
-        function buildFrontmatter(content, title, draft, description, tagsStr, category, image, published, updated, pinned, comment, slug, author, sourceLink, password, passwordHint, lang, licenseName, licenseUrl, existing = {}) {
-            const fm = { ...existing };
+        function buildFrontmatter(content, title, draft, description, tagsStr, category, image, published, updated, pinned, comment, author, sourceLink, password) {
+            const fm = {};
             fm.title = title;
             fm.draft = draft;
-            if (slug) fm.slug = slug; else delete fm.slug;
-            if (author) fm.author = author; else delete fm.author;
+            if (author) fm.author = author;
             if (description) fm.description = description;
             if (tagsStr) fm.tags = tagsStr.split(',').map(t => t.trim()).filter(Boolean);
-            else delete fm.tags;
-            if (category) fm.category = category; else delete fm.category;
-            if (image) fm.image = image; else delete fm.image;
-            if (sourceLink) fm.sourceLink = sourceLink; else delete fm.sourceLink;
-            if (password) fm.password = password; else delete fm.password;
-            if (passwordHint) fm.passwordHint = passwordHint; else delete fm.passwordHint;
-            if (lang) fm.lang = lang; else delete fm.lang;
-            if (licenseName) fm.licenseName = licenseName; else delete fm.licenseName;
-            if (licenseUrl) fm.licenseUrl = licenseUrl; else delete fm.licenseUrl;
+            if (category) fm.category = category;
+            if (image) fm.image = image;
+            if (sourceLink) fm.sourceLink = sourceLink;
+            if (password) fm.password = password;
             if (published) {
                 const d = new Date(published + 'T00:00:00Z');
                 fm.published = isNaN(d.getTime()) ? published : d;
-            } else delete fm.published;
+            }
             if (updated) {
                 const d = new Date(updated + 'T00:00:00Z');
                 fm.updated = isNaN(d.getTime()) ? updated : d;
-            } else delete fm.updated;
-            if (pinned) fm.pinned = true; else delete fm.pinned;
+            }
+            if (pinned) fm.pinned = true;
             fm.comment = comment !== false;
             const y = jsyaml.dump(fm, { lineWidth: -1, quotingType: '"', forceQuotes: false });
             const body = content.replace(/^---\n[\s\S]*?\n---\n?/, '');
@@ -593,8 +587,8 @@
                                     <input id="input-title" type="text" class="input" autofocus>
                                 </div>
                                 <div>
-                                    <label>Slug (自定义URL)</label>
-                                    <input id="input-slug" type="text" class="input" style="font-family:monospace;" placeholder="my-article-slug">
+                                    <label>作者</label>
+                                    <input id="input-author" type="text" class="input">
                                 </div>
                             </div>
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
@@ -645,31 +639,19 @@
                                     <label>密码保护</label>
                                     <input id="input-password" type="text" class="input" placeholder="留空不加密">
                                 </div>
-                                <div>
-                                    <label>密码提示</label>
-                                    <input id="input-password-hint" type="text" class="input" placeholder="提示文字">
-                                </div>
                             </div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1rem;align-items:end;">
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:end;">
                                 <div style="display:flex;flex-direction:column;gap:0.5rem;">
-                                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8125rem;font-weight:400;color:var(--text-primary);">
+                                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8125rem;">
                                         <input type="checkbox" id="input-pinned" style="accent-color:var(--primary);"> 置顶文章
                                     </label>
-                                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8125rem;font-weight:400;color:var(--text-primary);">
+                                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8125rem;">
                                         <input type="checkbox" id="input-comment" checked style="accent-color:var(--primary);"> 启用评论
                                     </label>
                                 </div>
                                 <div>
-                                    <label>语言</label>
-                                    <input id="input-lang" type="text" class="input" placeholder="zh-CN">
-                                </div>
-                                <div>
-                                    <label>许可证名称</label>
-                                    <input id="input-license-name" type="text" class="input">
-                                </div>
-                                <div>
-                                    <label>许可证链接</label>
-                                    <input id="input-license-url" type="url" class="input" placeholder="https://">
+                                    <label>文章来源</label>
+                                    <input id="input-source" type="url" class="input" placeholder="https://">
                                 </div>
                             </div>
                             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;align-items:end;">
@@ -730,14 +712,13 @@
             } else {
                 const today = new Date().toISOString().slice(0, 10);
                 document.getElementById('input-path').value = `${POSTS_BASE_PATH}/${today}-new-post.md`;
-                document.getElementById('input-title').value = '新文章';
+                document.getElementById('input-title').value = '';
                 document.getElementById('input-published').value = today;
-                simplemde.value(`---\ntitle: 新文章\npublished: ${today}\ndraft: false\n---\n\n开始写作...`);
+                simplemde.value('');
             }
 
             document.getElementById('save-btn').onclick = async () => {
                 const title = document.getElementById('input-title').value.trim();
-                const slug = document.getElementById('input-slug').value.trim();
                 const filePath = document.getElementById('input-path').value.trim();
                 const sha = document.getElementById('input-sha').value;
                 const author = document.getElementById('input-author').value.trim();
@@ -747,10 +728,6 @@
                 const image = document.getElementById('input-image').value.trim();
                 const sourceLink = document.getElementById('input-source').value.trim();
                 const password = document.getElementById('input-password').value.trim();
-                const passwordHint = document.getElementById('input-password-hint').value.trim();
-                const lang = document.getElementById('input-lang').value.trim();
-                const licenseName = document.getElementById('input-license-name').value.trim();
-                const licenseUrl = document.getElementById('input-license-url').value.trim();
                 const published = document.getElementById('input-published').value;
                 const updated = document.getElementById('input-updated').value;
                 const pinned = document.getElementById('input-pinned').checked;
@@ -761,10 +738,7 @@
                 if (!filePath) { alert('请填写文件路径'); return; }
                 if (!filePath.startsWith(POSTS_BASE_PATH)) { alert(`路径必须在 ${POSTS_BASE_PATH} 下`); return; }
                 if (!/\.(md|mdx)$/i.test(filePath)) { alert('扩展名必须是 .md 或 .mdx'); return; }
-                let existingFM = {};
-                const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
-                if (fmMatch) { try { existingFM = jsyaml.load(fmMatch[1]); } catch {} }
-                const final = buildFrontmatter(content, title, isDraft, desc, tags, category, image, published, updated, pinned, comment, slug, author, sourceLink, password, passwordHint, lang, licenseName, licenseUrl, existingFM);
+                const final = buildFrontmatter(content, title, isDraft, desc, tags, category, image, published, updated, pinned, comment, author, sourceLink, password);
                 const res = await savePost(GITHUB_OWNER, GITHUB_REPO, GITHUB_BRANCH, filePath, b64(final), sha, accessToken);
                 if (res.ok) { alert('保存成功'); window.location.hash = '#/posts'; }
                 else { const e = await res.json().catch(()=>({})); alert('保存失败: ' + e.message); }
