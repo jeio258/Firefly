@@ -7,7 +7,8 @@ tags:
 category: 博客指南
 image: https://t.alcy.cc/ycy
 ---
-<img src="./docs/images/1131.png" width = "350" height = "500" alt="Firefly" align=right />
+
+
 ## 🚀 本地开发部署（从零开始）
 
 ### 环境要求
