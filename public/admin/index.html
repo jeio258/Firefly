@@ -449,13 +449,14 @@
             if (image) fm.image = image;
             if (sourceLink) fm.sourceLink = sourceLink;
             if (password) fm.password = password;
-            if (published) fm.published = formatDate(published);
-            if (updated) fm.updated = formatDate(updated);
+            if (published) fm.published = published;
+            if (updated) fm.updated = updated;
             if (pinned) fm.pinned = true;
             fm.comment = comment !== false;
             var y = jsyaml.dump(fm, { lineWidth: -1, quotingType: "'", forceQuotes: false });
             // 修复日期格式: 将 "2025-01-15" 去掉引号变成纯日期
             y = y.replace(/'(\d{4}-\d{2}-\d{2})'/g, '$1');
+            y = y.replace(/(\d{4}-\d{2}-\d{2})T00:00:00\.000Z/g, '$1');
             var body = content.replace(/^---\n[\s\S]*?\n---\n?/, '');
             return '---\n' + y + '---\n' + body;
         }
@@ -667,12 +668,8 @@
                 document.getElementById('input-tags').value = Array.isArray(post.tags) ? post.tags.join(', ') : (post.tags || '');
                 document.getElementById('input-category').value = post.category || '';
                 document.getElementById('input-image').value = post.image || '';
-                if (post.published) {
-                    const d = new Date(post.published);
-                    if (!isNaN(d)) {
-                        document.getElementById('input-published').value = d.toISOString().slice(0, 10);
-                    }
-                }
+                document.getElementById('input-published').value = post.published ? new Date(post.published).toISOString().slice(0, 10) : '';
+                document.getElementById('input-updated').value = post.updated ? new Date(post.updated).toISOString().slice(0, 10) : '';
                 document.getElementById('input-pinned').checked = !!post.pinned;
                 const dr = document.querySelector(`input[name="draft"][value="${post.draft}"]`);
                 if (dr) dr.checked = true;
@@ -682,6 +679,7 @@
                 document.getElementById('input-path').value = `${POSTS_BASE_PATH}/${today}-new-post.md`;
                 document.getElementById('input-title').value = '';
                 document.getElementById('input-published').value = today;
+                document.getElementById('input-updated').value = today;
                 simplemde.value('');
             }
 
