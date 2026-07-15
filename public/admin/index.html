@@ -446,19 +446,20 @@
             if (image) fm.image = image;
             if (sourceLink) fm.sourceLink = sourceLink;
             if (password) fm.password = password;
-            if (published) {
-                const d = new Date(published + 'T00:00:00Z');
-                fm.published = isNaN(d.getTime()) ? published : d;
-            }
-            if (updated) {
-                const d = new Date(updated + 'T00:00:00Z');
-                fm.updated = isNaN(d.getTime()) ? updated : d;
-            }
+            if (published) fm.published = formatDate(published);
+            if (updated) fm.updated = formatDate(updated);
             if (pinned) fm.pinned = true;
             fm.comment = comment !== false;
-            const y = jsyaml.dump(fm, { lineWidth: -1, quotingType: '"', forceQuotes: false });
-            const body = content.replace(/^---\n[\s\S]*?\n---\n?/, '');
-            return `---\n${y}---\n${body}`;
+            var y = jsyaml.dump(fm, { lineWidth: -1, quotingType: "'", forceQuotes: false });
+            // 修复日期格式: 将 "2025-01-15" 去掉引号变成纯日期
+            y = y.replace(/'(\d{4}-\d{2}-\d{2})'/g, '$1');
+            var body = content.replace(/^---\n[\s\S]*?\n---\n?/, '');
+            return '---\n' + y + '---\n' + body;
+        }
+        function formatDate(str) {
+            if (!str) return '';
+            // 保留 YYYY-MM-DD 格式，让 YAML 解析为日期
+            return str;
         }
 
         // ===== 导航 =====
