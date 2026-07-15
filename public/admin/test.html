@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理 · 本地测试</title>
+
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+
+    <script>
+        // 暗色模式初始化（在页面渲染前执行，防止闪烁）
+        (function() {
+            try {
+                var theme = localStorage.getItem('theme');
+                if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                } else if (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch(e) {}
+        })();
+    </script>
+    <style>
+        /* ========== Firefly 设计系统 CSS 变量 ========== */
+        :root {
+            --hue: 250;
+            --primary: oklch(0.55 0.15 var(--hue));
+            --primary-soft: oklch(0.55 0.15 var(--hue) / 10%);
+            --primary-hover: oklch(0.50 0.16 var(--hue));
+            --card-bg: #fff;
+            --card-bg-transparent: oklch(1 0 0 / 0.72);
+            --bg-secondary: oklch(0.96 0.01 var(--hue));
+            --text-primary: #1a1a2e;
+            --text-secondary: oklch(0.45 0.02 var(--hue));
+            --text-tertiary: oklch(0.70 0.02 var(--hue));
+            --line-divider: oklch(0.88 0.01 var(--hue));
+            --line-color: oklch(0.85 0.02 var(--hue));
+            --btn-content: oklch(0.35 0.02 var(--hue));
+            --btn-plain-bg-hover: oklch(0.90 0.03 var(--hue));
+            --btn-plain-bg-active: oklch(0.85 0.04 var(--hue));
+            --btn-regular-bg: oklch(0.94 0.02 var(--hue));
+            --btn-regular-bg-hover: oklch(0.90 0.03 var(--hue));
+            --btn-regular-bg-active: oklch(0.85 0.04 var(--hue));
+            --radius-large: 1rem;
+            --selection-bg: oklch(0.55 0.15 var(--hue) / 30%);
+            --danger: #ef4444;
+            --success: #22c55e;
+        }
+
+        .dark {
+            --primary: oklch(0.65 0.14 var(--hue));
+            --primary-soft: oklch(0.65 0.14 var(--hue) / 12%);
+            --primary-hover: oklch(0.70 0.13 var(--hue));
+            --card-bg: oklch(0.22 0.01 var(--hue));
+            --card-bg-transparent: oklch(0.22 0.01 var(--hue) / 0.85);
+            --bg-secondary: oklch(0.18 0.01 var(--hue));
+            --text-primary: oklch(0.92 0.01 var(--hue));
+            --text-secondary: oklch(0.65 0.02 var(--hue));
+            --text-tertiary: oklch(0.45 0.02 var(--hue));
+            --line-divider: oklch(0.28 0.01 var(--hue));
+            --line-color: oklch(0.30 0.02 var(--hue));
+            --btn-content: oklch(0.75 0.02 var(--hue));
+            --btn-plain-bg-hover: oklch(0.28 0.02 var(--hue));
+            --btn-plain-bg-active: oklch(0.32 0.03 var(--hue));
+            --btn-regular-bg: oklch(0.26 0.02 var(--hue));
+            --btn-regular-bg-hover: oklch(0.30 0.02 var(--hue));
+            --btn-regular-bg-active: oklch(0.34 0.03 var(--hue));
+            --danger: #f87171;
+            --success: #4ade80;
+        }
+
+        /* ========== 全局样式 ========== */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: background 0.15s, color 0.15s;
+            position: relative;
+        }
+        /* 背景图 + 遮罩 */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url('https://t.alcy.cc/ycy');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: -2;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: var(--bg-secondary);
+            opacity: 0.78;
+            z-index: -1;
+            transition: background 0.15s;
+        }
+        .dark body::after {
+            opacity: 0.88;
+        }
+        ::selection { background: var(--selection-bg); }
+
+        /* ========== 导航栏 ========== */
+        .admin-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--line-divider);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .admin-nav .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .admin-nav .brand i { color: var(--primary); }
+        .admin-nav .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .admin-nav .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.15s;
+            padding: 0.25rem 0;
+        }
+        .admin-nav .nav-links a:hover,
+        .admin-nav .nav-links a.active { color: var(--primary); }
+
+        /* ========== 卡片 ========== */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius-large);
+            overflow: hidden;
+            transition: background 0.15s;
+        }
+        .card-border {
+            border: 1px solid var(--line-divider);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--line-divider);
+        }
+        .card-body { padding: 1.5rem; }
+
+        /* ========== 按钮 ========== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
+            line-height: 1.4;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-regular {
+            background: var(--btn-regular-bg);
+            color: var(--btn-content);
+        }
+        .btn-regular:hover { background: var(--btn-regular-bg-hover); }
+        .btn-regular:active { background: var(--btn-regular-bg-active); }
+        .btn-danger {
+            background: oklch(0.90 0.05 30);
+            color: var(--danger);
+        }
+        .btn-danger:hover { background: oklch(0.85 0.08 30); }
+        .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ========== 输入框 ========== */
+        .input {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--line-divider);
+            border-radius: 0.625rem;
+            padding: 0.625rem 0.875rem;
+            font-size: 0.8125rem;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.15s, background 0.15s, color 0.15s;
+        }
+        .input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+        .input::placeholder { color: var(--text-tertiary); }
+        label { font-size: 0.75rem; font-weight: 500; color: var(--text-secondary); display: block; margin-bottom: 0.25rem; }
+
+        /* ========== 文章列表 ========== */
+        .post-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+        .post-item:hover {
+            background: var(--btn-plain-bg-hover);
+            border-color: color-mix(in oklch, var(--primary) 25%, transparent);
+        }
+        .badge-draft {
+            font-size: 0.6875rem;
+            background: oklch(0.90 0.02 var(--hue));
+            color: var(--text-secondary);
+            padding: 0.125rem 0.5rem;
+            border-radius: 999px;
+        }
+        .badge-published {
+            font-size: 0.6875rem;
+            background: oklch(0.90 0.08 150);
+            color: #16a34a;
+            padding: 0.125rem 0.5rem;
+            border-radius: 999px;
+        }
+
+        /* ========== 加载动画 ========== */
+        .spinner {
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid var(--line-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ========== 页面头部 ========== */
+        .page-heading {
+            padding: 5rem 1.5rem 2rem;
+            text-align: center;
+        }
+        .page-heading h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-primary);
+        }
+        .page-heading p {
+            margin: 0.25rem 0 0;
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        /* ========== 移动端菜单 ========== */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 3.75rem;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--line-divider);
+            padding: 0.75rem 1.5rem;
+            z-index: 49;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+        .mobile-menu a:hover { color: var(--primary); background: var(--btn-plain-bg-hover); }
+
+        /* ========== 响应式 ========== */
+        @media (max-width: 768px) {
+            .admin-nav .nav-links { display: none; }
+            .page-heading h1 { font-size: 1.5rem; }
+            .card-body { padding: 1rem; }
+        }
+        @media (min-width: 769px) {
+            .mobile-menu-btn { display: none; }
+        }
+
+        /* ========== SimpleMDE 主题覆盖 ========== */
+        .editor-toolbar {
+            border-color: var(--line-divider) !important;
+            background: var(--card-bg) !important;
+            border-radius: 0.625rem 0.625rem 0 0 !important;
+        }
+        .editor-toolbar a {
+            color: var(--text-secondary) !important;
+        }
+        .editor-toolbar a:hover {
+            background: var(--btn-plain-bg-hover) !important;
+            color: var(--primary) !important;
+        }
+        .CodeMirror {
+            background: var(--bg-secondary) !important;
+            color: var(--text-primary) !important;
+            border-color: var(--line-divider) !important;
+            border-radius: 0 0 0.625rem 0.625rem !important;
+        }
+        .CodeMirror-cursor { border-color: var(--primary) !important; }
+        .CodeMirror-selected { background: var(--primary-soft) !important; }
+        .editor-preview {
+            background: var(--card-bg) !important;
+        }
+        .editor-preview-side {
+            background: var(--card-bg) !important;
+            border-color: var(--line-divider) !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- 导航栏 -->
+        <nav class="admin-nav" id="admin-nav">
+            <a href="#/" class="brand">
+                <i class="fas fa-leaf"></i>
+                <span>临渊羡鱼</span>
+            </a>
+            <div class="nav-links" id="nav-links-desktop">
+                <a href="#/" class="tab-link" data-tab="posts"><i class="fas fa-file-lines"></i> 文章管理</a>
+                <a href="#/friends" class="tab-link" data-tab="friends"><i class="fas fa-link"></i> 友链审核</a>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span id="user-info" style="font-size:0.8125rem;color:var(--text-secondary);"></span>
+                <button id="theme-toggle" title="切换亮暗模式" style="background:none;border:none;color:var(--text-secondary);font-size:1.125rem;cursor:pointer;padding:0.25rem;transition:color 0.15s;">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="login-btn" class="btn btn-primary btn-sm"><i class="fas fa-sign-in-alt"></i> 登录</button>
+                <button class="mobile-menu-btn" id="mobile-menu-btn" style="background:none;border:none;color:var(--text-primary);font-size:1.25rem;cursor:pointer;padding:0.25rem;">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- 移动端菜单 -->
+        <div class="mobile-menu" id="mobile-menu">
+            <a href="#/" class="tab-link"><i class="fas fa-file-lines"></i> 文章管理</a>
+            <a href="#/friends" class="tab-link"><i class="fas fa-link"></i> 友链审核</a>
+        </div>
+
+        <!-- 主内容 -->
+        <div id="main-view"></div>
+    </div>
+
+    <script>
+        // 移动端菜单
+        (function() {
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            if (btn && menu) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    menu.classList.toggle('open');
+                });
+                menu.querySelectorAll('a').forEach(a => {
+                    a.addEventListener('click', () => menu.classList.remove('open'));
+                });
+                document.addEventListener('click', function(e) {
+                    if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                        menu.classList.remove('open');
+                    }
+                });
+            }
+        })();
+    </script>
+
+    <script type="module">
+        // ===== 测试模式：纯本地 Mock =====
+        const MOCK_POSTS = [
+            { path: 'src/content/posts/hello-world.md', name: 'hello-world.md' },
+            { path: 'src/content/posts/用Firefly搭建个人博客.md', name: '用Firefly搭建个人博客.md' },
+            { path: 'src/content/posts/测试文章-草稿.md', name: '测试文章-草稿.md' },
+        ];
+
+        // 模拟文章数据（直接用对象，不解析 Frontmatter）
+        const MOCK_DATA = {
+            'src/content/posts/用Firefly搭建个人博客.md': {
+                title: '用Firefly搭建个人博客',
+                published: new Date('2025-01-15'),
+                updated: new Date('2025-06-01'),
+                description: '使用Firefly主题快速搭建个人博客',
+                tags: ['Firefly', 'Astro', '博客'],
+                category: '前端开发',
+                image: 'https://picsum.photos/800/400',
+                author: '示例作者',
+                comment: true,
+                pinned: false,
+                draft: false,
+                sourceLink: 'https://github.com/CuteLeaf/Firefly',
+                password: '',
+                content: '## Hello Firefly\n\n这是一篇 **示例文章**。\n\n### 特性\n\n- 暗色模式 / 亮色模式\n- 响应式设计\n- Markdown 支持\n',
+            },
+            'src/content/posts/测试文章-草稿.md': {
+                title: '测试文章（草稿）',
+                published: new Date('2025-06-15'),
+                description: '这是一篇草稿文章',
+                tags: ['测试'],
+                category: '杂项',
+                draft: true,
+                comment: true,
+                pinned: false,
+                content: '这是一篇草稿，不会对读者可见。\n',
+            },
+        };
+        function mockGetPost(path) {
+            var data = MOCK_DATA[path] || {
+                title: path.split('/').pop().replace(/\.(md|mdx)$/i, ''),
+                draft: false,
+                comment: true,
+                content: '文章内容...',
+            };
+            return Object.assign({}, data, {
+                path: path,
+                sha: 'mock-' + Math.random().toString(36).slice(2,8),
+                body: data.content || '',
+            });
+        }
+
+        let accessToken = 'mock';
+        let GITHUB_OWNER = 'test', GITHUB_REPO = 'test', GITHUB_BRANCH = 'master', POSTS_BASE_PATH = 'src/content/posts';
+        const mainView = document.getElementById('main-view');
+
+        function b64(s) { return btoa(unescape(encodeURIComponent(s))); }
+        function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
+        function buildFM(content, title, draft, desc, tagsStr, cat, img, pub, upd, pinned, comment, author, src, pw) {
+            var fm = {};
+            fm.title = title; fm.draft = draft;
+            if (desc) fm.description = desc;
+            if (tagsStr) fm.tags = tagsStr.split(',').map(function(t){return t.trim();}).filter(Boolean);
+            if (cat) fm.category = cat;
+            if (img) fm.image = img;
+            if (src) fm.sourceLink = src;
+            if (pw) fm.password = pw;
+            if (pub) { var d = new Date(pub + 'T00:00:00Z'); fm.published = isNaN(d.getTime()) ? pub : d; }
+            if (upd) { var d2 = new Date(upd + 'T00:00:00Z'); fm.updated = isNaN(d2.getTime()) ? upd : d2; }
+            if (pinned) fm.pinned = true;
+            fm.comment = comment !== false;
+            var y = jsyaml.dump(fm, { lineWidth: -1 });
+            var body = content.replace(/^---[\s\S]*?---\n?/, '');
+            return '---\n' + y + '---\n' + body;
+        }
+
+        function updateNav() {
+            var btn = document.getElementById('login-btn');
+            if (btn) btn.style.display = 'none';
+            var info = document.getElementById('user-info');
+            if (info) info.innerHTML = '<span style="font-size:0.75rem;color:var(--text-tertiary);">🧪 测试模式</span>';
+        }
+        function setTab(tab) {
+            document.querySelectorAll('.tab-link').forEach(function(el){el.classList.remove('active');});
+            document.querySelectorAll('.tab-link[data-tab="'+tab+'"]').forEach(function(el){el.classList.add('active');});
+        }
+
+        // 文章列表
+        async function renderPostList() {
+            mainView.innerHTML =
+                '<div class="page-heading"><h1>📝 文章管理</h1></div>' +
+                '<div style="max-width:72rem;margin:-1rem auto 2rem;padding:0 1rem;">' +
+                '<div class="card card-border"><div class="card-header">' +
+                '<span id="post-count" style="font-size:0.8125rem;font-weight:500;color:var(--text-secondary);">全部 ('+MOCK_POSTS.length+')</span>' +
+                '<div style="display:flex;gap:0.5rem;">' +
+                '<button id="new-post-btn" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> 新建</button>' +
+                '<button id="refresh-btn" class="btn btn-regular btn-sm"><i class="fas fa-sync-alt"></i> 刷新</button></div></div>' +
+                '<div class="card-body" id="post-list"></div></div></div>';
+            document.getElementById('new-post-btn').onclick = function(){window.location.hash='#/new';};
+            document.getElementById('refresh-btn').onclick = renderPostList;
+            var listEl = document.getElementById('post-list');
+            var html = '';
+            MOCK_POSTS.forEach(function(f, i) {
+                var p = mockGetPost(f.path);
+                var badge = p.draft ? '<span class="badge-draft">草稿</span>' : '<span class="badge-published">已发布</span>';
+                html += '<div class="post-item" data-path="'+esc(f.path)+'">' +
+                    '<span style="font-size:0.75rem;color:var(--text-tertiary);font-family:monospace;">#'+(i+1)+'</span>'+badge+
+                    '<span style="font-weight:600;flex:1;font-size:0.875rem;">'+esc(p.title)+'</span></div>';
+            });
+            listEl.innerHTML = html;
+            listEl.querySelectorAll('.post-item').forEach(function(el){
+                el.onclick = function(){window.location.hash='#/edit/'+encodeURIComponent(el.dataset.path);};
+            });
+        }
+
+        // 编辑器
+        async function renderEditor(path) {
+            var isNew = !path;
+            mainView.innerHTML =
+                '<div class="page-heading"><h1>'+(isNew?'新建文章':'编辑文章')+'</h1></div>'+
+                '<div style="max-width:72rem;margin:-1rem auto 2rem;padding:0 1rem;">'+
+                '<div class="card card-border"><div class="card-header">'+
+                '<button id="back-btn" class="btn btn-regular btn-sm"><i class="fas fa-arrow-left"></i> 返回</button>'+
+                '<span style="font-weight:600;font-size:0.875rem;"><i class="fas fa-pen-fancy" style="color:var(--primary);"></i> '+(isNew?'新建':'编辑')+'</span><div></div></div>'+
+                '<div class="card-body"><form id="editor-form" style="display:flex;flex-direction:column;gap:1rem;">'+
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">'+
+                '<div><label>标题 *</label><input id="input-title" type="text" class="input" autofocus></div>'+
+                '<div><label>作者</label><input id="input-author" type="text" class="input"></div></div>'+
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">'+
+                '<div><label>文件路径 *</label><input id="input-path" type="text" class="input" style="font-family:monospace;"><input id="input-sha" type="hidden"></div>'+
+                '<div><label>状态</label><div style="display:flex;gap:1rem;padding-top:0.375rem;">'+
+                '<label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;font-size:0.8125rem;"><input type="radio" name="draft" value="false" checked style="accent-color:var(--primary);"> 已发布</label>'+
+                '<label style="display:flex;align-items:center;gap:0.25rem;cursor:pointer;font-size:0.8125rem;"><input type="radio" name="draft" value="true" style="accent-color:var(--primary);"> 草稿</label></div></div></div>'+
+                '<div><label>描述</label><input id="input-desc" type="text" class="input"></div>'+
+                '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">'+
+                '<div><label>发布日期</label><input id="input-published" type="date" class="input"></div>'+
+                '<div><label>更新日期</label><input id="input-updated" type="date" class="input"></div>'+
+                '<div><label>标签</label><input id="input-tags" type="text" class="input" placeholder="前端, 开发"></div></div>'+
+                '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">'+
+                '<div><label>分类</label><input id="input-category" type="text" class="input"></div>'+
+                '<div><label>封面图片</label><input id="input-image" type="text" class="input" style="font-family:monospace;" placeholder="https:// 或 /path/to/img"></div>'+
+                '<div><label>文章来源</label><input id="input-source" type="url" class="input" placeholder="https://"></div></div>'+
+                '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">'+
+                '<div><label>密码保护</label><input id="input-password" type="text" class="input" placeholder="留空不加密"></div>'+
+                '<div style="display:flex;align-items:flex-end;gap:1rem;padding-bottom:0.25rem;">'+
+                '<label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8125rem;"><input type="checkbox" id="input-pinned" style="accent-color:var(--primary);"> 置顶</label>'+
+                '<label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;font-size:0.8125rem;"><input type="checkbox" id="input-comment" checked style="accent-color:var(--primary);"> 评论</label></div></div>'+
+                '<div><label>正文</label><textarea id="input-content" rows="15" style="display:none;"></textarea></div>'+
+                '<div style="display:flex;gap:0.75rem;padding-top:0.5rem;">'+
+                '<button type="button" id="save-btn" class="btn btn-primary" style="flex:1;"><i class="fas fa-save"></i> 保存</button>'+
+                '<button type="button" id="delete-btn" class="btn" style="flex:1;background:oklch(0.90 0.05 30);color:var(--danger);'+(isNew?'opacity:0.5;':'')+'" '+(isNew?'disabled':'')+'><i class="fas fa-trash-alt"></i> 删除</button></div>'+
+                '</form></div></div></div>';
+
+            var ta = document.getElementById('input-content');
+            var sm = new SimpleMDE({
+                element: ta, spellChecker: false,
+                status: ['lines', 'words'],
+                toolbar: ['bold','italic','heading','|','quote','unordered-list','ordered-list','|','link','image','code','table','|','preview','side-by-side','fullscreen','|','guide'],
+            });
+            function $(id) { return document.getElementById(id); }
+
+            document.getElementById('back-btn').onclick = function(){window.location.hash='#/posts';};
+
+            if (!isNew) {
+                var post = mockGetPost(decodeURIComponent(path));
+                $('input-title').value = post.title || '';
+                $('input-author').value = post.author || '';
+                $('input-path').value = post.path;
+                $('input-sha').value = post.sha || '';
+                $('input-desc').value = post.description || '';
+                $('input-tags').value = Array.isArray(post.tags) ? post.tags.join(', ') : (post.tags || '');
+                $('input-category').value = post.category || '';
+                $('input-image').value = post.image || '';
+                $('input-source').value = post.sourceLink || '';
+                $('input-password').value = post.password || '';
+                if (post.published) { var d = new Date(post.published); if (!isNaN(d)) $('input-published').value = d.toISOString().slice(0,10); }
+                if (post.updated) { var d2 = new Date(post.updated); if (!isNaN(d2)) $('input-updated').value = d2.toISOString().slice(0,10); }
+                $('input-pinned').checked = !!post.pinned;
+                $('input-comment').checked = post.comment !== false;
+                var dr = document.querySelector('input[name="draft"][value="'+post.draft+'"]');
+                if (dr) dr.checked = true;
+                sm.value(post.content || post.body || '');
+            } else {
+                var today = new Date().toISOString().slice(0,10);
+                $('input-path').value = 'src/content/posts/'+today+'-new-post.md';
+                $('input-title').value = '';
+                $('input-published').value = today;
+                $('input-updated').value = today;
+                $('input-comment').checked = true;
+                sm.value('');
+            }
+
+            $('save-btn').onclick = function() {
+                var title = $('input-title').value.trim();
+                if (!title) { alert('请输入标题'); return; }
+                var dr = document.querySelector('input[name="draft"]:checked');
+                var isDraft = dr ? dr.value === 'true' : false;
+                var data = buildFM(sm.value(), title, isDraft,
+                    $('input-desc').value.trim(), $('input-tags').value.trim(),
+                    $('input-category').value.trim(), $('input-image').value.trim(),
+                    $('input-published').value, $('input-updated').value,
+                    $('input-pinned').checked, $('input-comment').checked,
+                    $('input-author').value.trim(), $('input-source').value.trim(),
+                    $('input-password').value.trim()
+                );
+                alert('✅ 保存成功（测试模式）');
+                console.log(data);
+            };
+            $('delete-btn').onclick = function() {
+                if (confirm('确定删除？（测试模式）')) { alert('✅ 已删除'); window.location.hash = '#/posts'; }
+            };
+        }
+
+        // 友链
+        function renderFriendsView() {
+            var friends = [
+                {name:'示例博客A', desc:'前端开发'},
+                {name:'示例博客B', desc:'摄影日记'},
+                {name:'示例博客C', desc:'技术随笔'},
+            ];
+            mainView.innerHTML =
+                '<div class="page-heading"><h1>🔗 友链审核</h1><p>测试模式</p></div>'+
+                '<div style="max-width:72rem;margin:-1rem auto 2rem;padding:0 1rem;">'+
+                '<div class="card card-border"><div class="card-body">'+
+                '<section><h2 style="font-size:1rem;font-weight:600;margin:0 0 1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--line-divider);">待审核申请</h2>'+
+                '<div style="padding:2rem 0;text-align:center;color:var(--text-tertiary);">暂无待审核申请</div></section>'+
+                '<section style="margin-top:2rem;"><h2 style="font-size:1rem;font-weight:600;margin:0 0 1rem;padding-bottom:0.5rem;border-bottom:1px solid var(--line-divider);">已通过友链</h2>'+
+                '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;">'+
+                friends.map(function(f){
+                    return '<div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;border-radius:0.75rem;border:1px solid var(--line-divider);">'+
+                        '<div style="width:2.5rem;height:2.5rem;border-radius:50%;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--primary);flex-shrink:0;">'+f.name[0]+'</div>'+
+                        '<div style="flex:1;"><div style="font-weight:500;font-size:0.8125rem;">'+f.name+'</div>'+
+                        '<div style="font-size:0.6875rem;color:var(--text-tertiary);">'+f.desc+'</div></div></div>';
+                }).join('')+
+                '</div></section></div></div></div>';
+        }
+
+        function route() {
+            updateNav();
+            var hash = window.location.hash.slice(1) || '/';
+            if (hash === '/friends') { setTab('friends'); renderFriendsView(); }
+            else if (hash.startsWith('/edit/')) { setTab('posts'); renderEditor(hash.replace('/edit/','')); }
+            else if (hash === '/new') { setTab('posts'); renderEditor(); }
+            else { setTab('posts'); renderPostList(); }
+        }
+
+        function updateTI() {
+            var b = document.getElementById('theme-toggle');
+            if (b) b.innerHTML = document.documentElement.classList.contains('dark') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        }
+        document.getElementById('theme-toggle').onclick = function() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            updateTI();
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            window.addEventListener('hashchange', route);
+            window.addEventListener('theme-change', function() {
+                var t = localStorage.getItem('theme');
+                if (t === 'dark') document.documentElement.classList.add('dark');
+                else if (t === 'light') document.documentElement.classList.remove('dark');
+                updateTI();
+            });
+            updateTI();
+            route();
+        });
+    </script>
+</body>
+</html>
