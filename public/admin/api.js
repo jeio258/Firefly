@@ -92,7 +92,9 @@ export async function getFileContent(owner, repo, branch, filePath, token) {
         } catch (_) {}
     }
     if (!title) title = filePath.split('/').pop().replace(/\.(md|mdx)$/i, '');
-    return { path: filePath, sha: data.sha, content: raw, title, draft, description, tags, category, image, published, updated, pinned, comment, author, sourceLink, password };
+    // 去掉 frontmatter，正文不显示元数据
+    var body = match ? raw.slice(match[0].length).trimStart() : raw;
+    return { path: filePath, sha: data.sha, content: body, title, draft, description, tags, category, image, published, updated, pinned, comment, author, sourceLink, password };
 }
 
 export async function savePost(owner, repo, branch, filePath, base64Content, sha, token) {
