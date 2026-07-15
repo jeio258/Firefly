@@ -170,7 +170,7 @@ let overlaySliderItems = $derived<OverlaySliderItem[]>([
 		label: i18n(I18nKey.overlayOpacity),
 		displayValue: `${Math.round(overlayOpacity * 100)}%`,
 		ariaLabel: i18n(I18nKey.overlayOpacity),
-		min: 20,
+		min: 0,
 		max: 100,
 		step: 1,
 		value: Math.round(overlayOpacity * 100),
@@ -198,7 +198,7 @@ let overlaySliderItems = $derived<OverlaySliderItem[]>([
 		label: i18n(I18nKey.overlayCardOpacity),
 		displayValue: `${Math.round(overlayCardOpacity * 100)}%`,
 		ariaLabel: i18n(I18nKey.overlayCardOpacity),
-		min: 20,
+		min: 0,
 		max: 100,
 		step: 1,
 		value: Math.round(overlayCardOpacity * 100),
@@ -490,7 +490,7 @@ $effect(() => {
 </script>
 
 {#if hasAnyContent}
-<div id="display-setting" class="float-panel float-panel-closed absolute transition-all w-80 right-4 px-4 py-2">
+<div id="display-setting" class="float-panel float-panel-closed absolute transition-all w-96 right-4 px-5 py-3">
     <!-- Theme Color Section -->
     {#if showThemeColor}
     <div class="mt-2 mb-2">
@@ -798,6 +798,11 @@ $effect(() => {
 
 
 <style lang="stylus">
+    @media (max-width: 480px)
+        #display-setting
+            width calc(100vw - 2rem) !important
+            right 1rem !important
+
     #display-setting
         input[type="range"]
             -webkit-appearance none
@@ -806,35 +811,35 @@ $effect(() => {
             background-image unquote("linear-gradient(90deg, var(--primary) 0 var(--range-progress, 50%), hsla(var(--hue), 22%, 28%, 0.18) var(--range-progress, 50%) 100%)")
             transition background-image 0.15s ease-in-out
 
+        /* Overlay 滑块 - 更自由调节 */
         input[type="range"].overlay-slider
-            height 0.85rem
+            height 1.25rem
+            cursor pointer
 
-            /* Input Thumb */
             &::-webkit-slider-thumb
                 -webkit-appearance none
-                height 0
-                width 0
-                border 0
-                border-radius 0
-                background transparent
-                box-shadow none
+                height 1rem
+                width 1rem
+                border 2px solid var(--primary)
+                border-radius 50%
+                background white
+                box-shadow 0 1px 4px rgba(0,0,0,0.15)
 
             &::-moz-range-thumb
-                height 0
-                width 0
-                border 0
-                border-radius 0
-                background transparent
-                box-shadow none
+                height 1rem
+                width 1rem
+                border 2px solid var(--primary)
+                border-radius 50%
+                background white
+                box-shadow 0 1px 4px rgba(0,0,0,0.15)
 
             &::-ms-thumb
-                -webkit-appearance none
-                height 0
-                width 0
-                border 0
-                border-radius 0
-                background transparent
-                box-shadow none
+                height 1rem
+                width 1rem
+                border 2px solid var(--primary)
+                border-radius 50%
+                background white
+                box-shadow 0 1px 4px rgba(0,0,0,0.15)
 
         #colorSlider
             background-image var(--color-selection-bar)
