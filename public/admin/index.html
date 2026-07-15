@@ -668,9 +668,13 @@
                 document.getElementById('input-tags').value = Array.isArray(post.tags) ? post.tags.join(', ') : (post.tags || '');
                 document.getElementById('input-category').value = post.category || '';
                 document.getElementById('input-image').value = post.image || '';
+                document.getElementById('input-source').value = post.sourceLink || '';
+                document.getElementById('input-password').value = post.password || '';
+                document.getElementById('input-author').value = post.author || '';
                 document.getElementById('input-published').value = post.published ? new Date(post.published).toISOString().slice(0, 10) : '';
                 document.getElementById('input-updated').value = post.updated ? new Date(post.updated).toISOString().slice(0, 10) : '';
                 document.getElementById('input-pinned').checked = !!post.pinned;
+                document.getElementById('input-comment').checked = post.comment !== false;
                 const dr = document.querySelector(`input[name="draft"][value="${post.draft}"]`);
                 if (dr) dr.checked = true;
                 simplemde.value(post.content);

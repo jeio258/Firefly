@@ -72,6 +72,7 @@ export async function getFileContent(owner, repo, branch, filePath, token) {
     // 简单解析 frontmatter 获取基础元数据
     const match = raw.match(/^---\n([\s\S]*?)\n---/);
     let title = '', draft = false, description = '', tags = '', category = '', image = '';
+    let published = '', updated = '', pinned = false, comment = true, author = '', sourceLink = '', password = '';
     if (match) {
         try {
             const fm = jsyaml.load(match[1]);
@@ -81,10 +82,17 @@ export async function getFileContent(owner, repo, branch, filePath, token) {
             tags = Array.isArray(fm.tags) ? fm.tags.join(', ') : (fm.tags || '');
             category = fm.category || '';
             image = fm.image || '';
+            published = fm.published || '';
+            updated = fm.updated || '';
+            pinned = fm.pinned === true || fm.pinned === 'true';
+            comment = fm.comment !== false;
+            author = fm.author || '';
+            sourceLink = fm.sourceLink || '';
+            password = fm.password || '';
         } catch (_) {}
     }
     if (!title) title = filePath.split('/').pop().replace(/\.(md|mdx)$/i, '');
-    return { path: filePath, sha: data.sha, content: raw, title, draft, description, tags, category, image };
+    return { path: filePath, sha: data.sha, content: raw, title, draft, description, tags, category, image, published, updated, pinned, comment, author, sourceLink, password };
 }
 
 export async function savePost(owner, repo, branch, filePath, base64Content, sha, token) {
