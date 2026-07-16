@@ -506,12 +506,12 @@ $effect(() => {
                 </div>
             </button>
         </div>
-        <label class="overlay-slider-row">
+        <div class="overlay-slider-row">
             <span class="overlay-slider-label">Hue</span>
             <input aria-label={i18n(I18nKey.themeColor)} type="range" min="0" max="360" bind:value={hue}
                    class="overlay-slider" id="colorSlider" step="5" />
             <span class="overlay-slider-value">{hue}°</span>
-        </label>
+        </div>
     </div>
     {/if}
 
@@ -591,7 +591,7 @@ $effect(() => {
             <div class="overlay-slider-list">
                 {#each overlaySliderItems as item (item.key)}
                     {#if item.enabled}
-                        <label class="overlay-slider-row">
+                        <div class="overlay-slider-row">
                             <span class="overlay-slider-label">{item.label}</span>
                             <input
                                 aria-label={item.ariaLabel}
@@ -604,7 +604,7 @@ $effect(() => {
                                 class="overlay-slider"
                             />
                             <span class="overlay-slider-value">{item.displayValue}</span>
-                        </label>
+                        </div>
                     {/if}
                 {/each}
             </div>
@@ -816,7 +816,6 @@ $effect(() => {
             padding 0.5rem 0.75rem
             border-radius 0.625rem
             background var(--btn-regular-bg)
-            cursor pointer
             transition background-color 0.15s
 
         .overlay-slider-label
@@ -826,6 +825,7 @@ $effect(() => {
             white-space nowrap
             min-width 4.5rem
             user-select none
+            pointer-events none
 
         .overlay-slider-value
             font-size 0.75rem
@@ -846,12 +846,13 @@ $effect(() => {
             margin 0
             -webkit-appearance none
             border-radius 999px
+            touch-action manipulation
             background-image unquote("linear-gradient(90deg, var(--primary) 0 var(--range-progress, 50%), var(--btn-regular-bg-active) var(--range-progress, 50%) 100%)")
 
             &::-webkit-slider-thumb
                 -webkit-appearance none
-                height 1rem
-                width 1rem
+                height 1.25rem
+                width 1.25rem
                 border 2px solid var(--primary)
                 border-radius 50%
                 background var(--card-bg)
@@ -864,8 +865,8 @@ $effect(() => {
                     transform scale(0.9)
 
             &::-moz-range-thumb
-                height 1rem
-                width 1rem
+                height 1.25rem
+                width 1.25rem
                 border 2px solid var(--primary)
                 border-radius 50%
                 background var(--card-bg)
@@ -873,8 +874,8 @@ $effect(() => {
                 cursor pointer
 
             &::-ms-thumb
-                height 1rem
-                width 1rem
+                height 1.25rem
+                width 1.25rem
                 border 2px solid var(--primary)
                 border-radius 50%
                 background var(--card-bg)
