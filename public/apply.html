@@ -211,7 +211,7 @@
             <span style="color:var(--primary);font-size:1.25rem;">✦</span>
             <span>临渊羡鱼</span>
         </a>
-        <button id="theme-btn" onclick="toggleTheme()" title="切换亮暗模式" style="background:var(--btn-regular-bg);border:1px solid var(--line-divider);color:var(--text-secondary);border-radius:0.625rem;width:2.25rem;height:2.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all 0.15s;">
+        <button id="theme-btn" title="切换亮暗模式" style="background:var(--btn-regular-bg);border:1px solid var(--line-divider);color:var(--text-secondary);border-radius:0.625rem;width:2.25rem;height:2.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all 0.15s;">
             <i class="fas fa-moon"></i>
         </button>
     </nav>
@@ -254,35 +254,29 @@
     </div>
 
     <script>
-        function toggleTheme() {
-            var isDark = document.documentElement.classList.contains('dark');
-            var next = isDark ? 'light' : 'dark';
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', next);
-            updateThemeBtn();
-        }
         function updateThemeBtn() {
             var btn = document.getElementById('theme-btn');
             if (btn) btn.innerHTML = document.documentElement.classList.contains('dark')
                 ? '<i class="fas fa-sun"></i>'
                 : '<i class="fas fa-moon"></i>';
         }
-        window.addEventListener('theme-change', function() {
+        function applyTheme() {
             var t = localStorage.getItem('theme') || 'system';
             var isDark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
             if (isDark) document.documentElement.classList.add('dark');
             else document.documentElement.classList.remove('dark');
             updateThemeBtn();
-        });
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
-            if ((localStorage.getItem('theme') || 'system') === 'system') {
-                window.dispatchEvent(new Event('theme-change'));
-            }
-        });
-        updateThemeBtn();
-    <\/script>
-    <script type="module">
-        document.getElementById('apply-form').addEventListener('submit', async (e) => {
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            var btn = document.getElementById('theme-btn');
+            if (btn) btn.addEventListener('click', function() {
+                var isDark = document.documentElement.classList.contains('dark');
+                localStorage.setItem('theme', isDark ? 'light' : 'dark');
+                applyTheme();
+            });
+            updateThemeBtn();
+            var form = document.getElementById('apply-form');
+            if (form) form.addEventListener('submit', async function(e) {
             e.preventDefault();
             const msg = document.getElementById('apply-msg');
             const title = document.getElementById('apply-title').value.trim();
@@ -318,6 +312,11 @@
             } catch (err) {
                 msg.innerHTML = '<span style="color:var(--danger);">❌ 提交失败，请稍后重试</span>';
             }
+            });
+        });
+        window.addEventListener('theme-change', applyTheme);
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+            if ((localStorage.getItem('theme') || 'system') === 'system') applyTheme();
         });
     </script>
 </body>
