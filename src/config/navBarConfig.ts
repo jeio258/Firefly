@@ -33,8 +33,11 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		],
 	});
 
-	// 动态
-	links.push(LinkPresets.Dynamic);
+	// 友链
+	links.push(LinkPresets.Friends);
+
+	// 动态（已关闭）
+	// links.push(LinkPresets.Dynamic);
 
 	// 留言板（已关闭）
 	// links.push(LinkPresets.Guestbook);

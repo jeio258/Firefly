@@ -42,10 +42,10 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 	src: {
 		// 桌面背景图片（支持单张或多张随机）
 		// desktop: "assets/images/DesktopWallpaper/d1.avif",
-        desktop: "https://t.alcy.cc/pc",
+		desktop: "https://t.alcy.cc/pc",
 		// 移动背景图片（支持单张或多张随机）
 		// mobile: "assets/images/MobileWallpaper/m1.avif",
-		mobile: "https://t.alcy.cc/mp", 
+		mobile: "https://t.alcy.cc/mp",
 		// 背景视频播放地址
 		// 支持单个视频路径（字符串）或多个视频循环（数组）
 		// 支持远程视频URL，本地视频请放在 public/assets/videos/ 目录下
@@ -64,6 +64,8 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 		homeText: {
 			// 是否启用主页横幅文字
 			enable: true,
+			// 是否允许用户通过控制面板切换横幅标题显示
+			switchable: true,
 			// 主页横幅主标题
 			title: "临渊羡鱼 博客",
 			// 主页横幅主标题字体大小
@@ -109,6 +111,8 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 				// 移动端是否启用水波纹动画效果
 				mobile: true,
 			},
+			// 是否允许用户通过控制面板切换水波纹动画
+			switchable: true,
 		},
 		// 渐变过渡效果配置，当水波纹关闭时自动启用，提供壁纸底部到背景色的平滑过渡
 		gradient: {
@@ -120,6 +124,8 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 			},
 			// 渐变高度
 			height: "10%",
+			// 是否允许用户通过控制面板切换渐变过渡
+			switchable: true,
 		},
 		// 壁纸轮播配置，横幅壁纸和全屏壁纸共享，仅在配置多张图片时生效
 		carousel: {
@@ -129,6 +135,8 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 			interval: 5000,
 			// 过渡效果: 'fade' 渐变 | 'zoom' 缩放 | 'slide' 滑动 | 'kenburns' 旋转木马
 			transitionEffect: "zoom",
+			// 是否允许用户通过控制面板切换壁纸轮播
+			switchable: true,
 		},
 	},
 	// Banner模式特有配置
@@ -140,6 +148,12 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 	},
 	// 全屏透明覆盖模式特有配置
 	overlay: {
+		// 是否允许用户通过控制面板调整全屏透明模式参数
+		switchable: {
+			opacity: true,
+			blur: true,
+			cardOpacity: true,
+		},
 		// 层级，确保壁纸在背景层
 		zIndex: -1,
 		// 壁纸透明度

@@ -1,5 +1,6 @@
 export type BackgroundWallpaperConfig = {
 	mode: "banner" | "fullscreen" | "overlay" | "none"; // 壁纸模式：banner横幅模式、fullscreen全屏壁纸、overlay全屏透明覆盖模式或none纯色背景
+	switchable?: boolean; // 是否允许用户通过导航栏切换壁纸模式
 	playerEnable?: boolean; // 是否启用背景视频播放，默认false
 	src:
 		| string
@@ -15,6 +16,7 @@ export type BackgroundWallpaperConfig = {
 		playerMode?: "order" | "random"; // 多视频播放模式："order" 顺序循环（默认），"random" 随机切换
 		homeText?: {
 			enable: boolean; // 是否在首页显示自定义文字（全局开关）
+			switchable?: boolean; // 是否允许用户切换标题显示
 			title?: string; // 主标题
 			subtitle?: string | string[]; // 副标题，支持单个字符串或字符串数组
 			titleSize?: string; // 主标题字体大小，如 "3.5rem"
@@ -32,6 +34,7 @@ export type BackgroundWallpaperConfig = {
 			blur?: number; // 毛玻璃模糊度
 		};
 		waves?: {
+			switchable?: boolean; // 是否允许用户切换水波纹
 			enable:
 				| boolean
 				| {
@@ -41,6 +44,7 @@ export type BackgroundWallpaperConfig = {
 		};
 		// 渐变过渡效果配置，当水波纹关闭时自动启用，提供壁纸底部到背景色的平滑过渡
 		gradient?: {
+			switchable?: boolean; // 是否允许用户切换渐变
 			enable:
 				| boolean
 				| {
@@ -51,6 +55,7 @@ export type BackgroundWallpaperConfig = {
 		};
 		// 壁纸轮播配置，横幅壁纸和全屏壁纸共享
 		carousel?: {
+			switchable?: boolean; // 是否允许用户切换轮播
 			enable: boolean; // 是否启用壁纸轮播
 			interval?: number; // 轮播间隔时间，单位毫秒
 			transitionEffect?: "fade" | "zoom" | "slide" | "kenburns"; // 过渡效果: 'fade' 渐变 | 'zoom' 缩放 | 'slide' 滑动 | 'kenburns' 旋转木马
@@ -82,6 +87,11 @@ export type BackgroundWallpaperConfig = {
 	};
 	// 全屏透明覆盖模式特有配置
 	overlay?: {
+		switchable?: {
+			opacity?: boolean;
+			blur?: boolean;
+			cardOpacity?: boolean;
+		}; // 是否允许用户通过控制面板调整全屏透明模式参数
 		zIndex?: number; // 层级，确保壁纸在合适的层级显示
 		opacity?: number; // 壁纸透明度，0-1之间
 		blur?: number; // 背景模糊程度，单位px

@@ -16,15 +16,12 @@
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 
     <script>
-        // 暗色模式初始化（在页面渲染前执行，防止闪烁）
+        // 暗色模式初始化（与主站同步：light / dark / system）
         (function() {
             try {
-                var theme = localStorage.getItem('theme');
-                if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                } else if (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    document.documentElement.classList.add('dark');
-                }
+                var t = localStorage.getItem('theme') || 'system';
+                var isDark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                if (isDark) document.documentElement.classList.add('dark');
             } catch(e) {}
         })();
     </script>
@@ -36,14 +33,14 @@
             --primary-soft: oklch(0.55 0.15 var(--hue) / 10%);
             --primary-hover: oklch(0.50 0.16 var(--hue));
             --card-bg: #fff;
-            --card-bg-transparent: oklch(1 0 0 / 0.72);
+            --card-bg-transparent: rgb(255 255 255 / 0.65);
             --bg-secondary: oklch(0.96 0.01 var(--hue));
-            --text-primary: #1a1a2e;
-            --text-secondary: oklch(0.45 0.02 var(--hue));
-            --text-tertiary: oklch(0.70 0.02 var(--hue));
+            --text-primary: #171717;
+            --text-secondary: #737373;
+            --text-tertiary: #a3a3a3;
             --line-divider: oklch(0.88 0.01 var(--hue));
             --line-color: oklch(0.85 0.02 var(--hue));
-            --btn-content: oklch(0.35 0.02 var(--hue));
+            --btn-content: #404040;
             --btn-plain-bg-hover: oklch(0.90 0.03 var(--hue));
             --btn-plain-bg-active: oklch(0.85 0.04 var(--hue));
             --btn-regular-bg: oklch(0.94 0.02 var(--hue));
@@ -59,15 +56,15 @@
             --primary: oklch(0.65 0.14 var(--hue));
             --primary-soft: oklch(0.65 0.14 var(--hue) / 12%);
             --primary-hover: oklch(0.70 0.13 var(--hue));
-            --card-bg: oklch(0.22 0.01 var(--hue));
-            --card-bg-transparent: oklch(0.22 0.01 var(--hue) / 0.85);
+            --card-bg: oklch(0.23 0.015 var(--hue));
+            --card-bg-transparent: rgb(23 23 23 / 0.65);
             --bg-secondary: oklch(0.18 0.01 var(--hue));
-            --text-primary: oklch(0.92 0.01 var(--hue));
-            --text-secondary: oklch(0.65 0.02 var(--hue));
-            --text-tertiary: oklch(0.45 0.02 var(--hue));
+            --text-primary: #f5f5f5;
+            --text-secondary: #a3a3a3;
+            --text-tertiary: #737373;
             --line-divider: oklch(0.28 0.01 var(--hue));
             --line-color: oklch(0.30 0.02 var(--hue));
-            --btn-content: oklch(0.75 0.02 var(--hue));
+            --btn-content: #d4d4d4;
             --btn-plain-bg-hover: oklch(0.28 0.02 var(--hue));
             --btn-plain-bg-active: oklch(0.32 0.03 var(--hue));
             --btn-regular-bg: oklch(0.26 0.02 var(--hue));
@@ -103,12 +100,14 @@
             position: fixed;
             inset: 0;
             background: var(--bg-secondary);
-            opacity: 0.78;
+            opacity: 0.08;
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
             z-index: -1;
-            transition: background 0.15s;
+            transition: background 0.15s, opacity 0.15s;
         }
         .dark body::after {
-            opacity: 0.88;
+            opacity: 0.08;
         }
         ::selection { background: var(--selection-bg); }
 
@@ -119,11 +118,12 @@
             left: 0;
             right: 0;
             z-index: 50;
-            background: var(--card-bg);
-            
-            -webkit-
-            border-bottom: 1px solid var(--line-divider);
-            padding: 0.75rem 1.5rem;
+            background: var(--card-bg-transparent);
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
+            border-bottom: 1px solid oklch(0 0 0 / 0.06);
+            padding: 0 1.5rem;
+            height: 3.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -135,11 +135,11 @@
             align-items: center;
             gap: 0.5rem;
             font-weight: 700;
-            font-size: 1.125rem;
+            font-size: 1rem;
             color: var(--text-primary);
             text-decoration: none;
         }
-        .admin-nav .brand i { color: var(--primary); }
+        .admin-nav .brand i { color: var(--primary); font-size: 1.25rem; }
         .admin-nav .nav-links {
             display: flex;
             gap: 1.5rem;
@@ -157,14 +157,21 @@
 
         /* ========== 卡片 ========== */
         .card {
-            background: var(--card-bg);
+            background: var(--card-bg-transparent);
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
             border-radius: var(--radius-large);
             overflow: hidden;
             transition: background 0.15s;
         }
         .card-border {
-            border: 1px solid var(--line-divider);
+            border: 1px solid oklch(0 0 0 / 0.06);
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .dark .card-border,
+        .dark .admin-nav,
+        .dark .mobile-menu {
+            border-color: oklch(1 0 0 / 0.08);
         }
         .card-header {
             display: flex;
@@ -192,8 +199,10 @@
         .btn-primary {
             background: var(--primary);
             color: #fff;
+            box-shadow: 0 2px 8px oklch(0.55 0.15 var(--hue) / 25%);
         }
-        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 14px oklch(0.55 0.15 var(--hue) / 35%); }
+        .btn:active { transform: translateY(0); }
         .btn-regular {
             background: var(--btn-regular-bg);
             color: var(--btn-content);
@@ -269,7 +278,7 @@
 
         /* ========== 页面头部 ========== */
         .page-heading {
-            padding: 5rem 1.5rem 2rem;
+            padding: 5.5rem 1.5rem 2rem;
             text-align: center;
         }
         .page-heading h1 {
@@ -288,11 +297,13 @@
         .mobile-menu {
             display: none;
             position: fixed;
-            top: 3.75rem;
+            top: 3.5rem;
             left: 0;
             right: 0;
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--line-divider);
+            background: var(--card-bg-transparent);
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
+            border-bottom: 1px solid oklch(0 0 0 / 0.06);
             padding: 0.75rem 1.5rem;
             z-index: 49;
             flex-direction: column;
@@ -354,7 +365,7 @@
     <div id="app">
         <!-- 导航栏 -->
         <nav class="admin-nav" id="admin-nav">
-            <a href="#/" class="brand">
+            <a href="/" class="brand" title="返回博客">
                 <i class="fas fa-leaf"></i>
                 <span>临渊羡鱼</span>
             </a>
@@ -823,8 +834,9 @@
         }
         function toggleTheme() {
             var isDark = document.documentElement.classList.contains('dark');
+            var next = isDark ? 'light' : 'dark';
             document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', next);
             updateThemeIcon();
         }
         document.addEventListener('DOMContentLoaded', () => {
@@ -832,10 +844,16 @@
             var themeBtn = document.getElementById('theme-toggle');
             if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
             window.addEventListener('theme-change', function() {
-                var t = localStorage.getItem('theme');
-                if (t === 'dark') document.documentElement.classList.add('dark');
-                else if (t === 'light') document.documentElement.classList.remove('dark');
+                var t = localStorage.getItem('theme') || 'system';
+                var isDark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                if (isDark) document.documentElement.classList.add('dark');
+                else document.documentElement.classList.remove('dark');
                 updateThemeIcon();
+            });
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+                if ((localStorage.getItem('theme') || 'system') === 'system') {
+                    window.dispatchEvent(new Event('theme-change'));
+                }
             });
             updateThemeIcon();
             window.addEventListener('hashchange', handleRoute);

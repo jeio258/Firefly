@@ -9,10 +9,9 @@
     <script>
         (function() {
             try {
-                var t = localStorage.getItem("theme");
-                if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
-                    document.documentElement.classList.add("dark");
-                }
+                var t = localStorage.getItem("theme") || "system";
+                var isDark = t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+                if (isDark) document.documentElement.classList.add("dark");
             } catch(e) {}
         })();
     </script>
@@ -24,10 +23,16 @@
             --primary-soft: oklch(0.55 0.15 var(--hue) / 10%);
             --primary-hover: oklch(0.50 0.16 var(--hue));
             --card-bg: #fff;
+            --card-bg-transparent: rgb(255 255 255 / 0.65);
             --bg-secondary: oklch(0.96 0.01 var(--hue));
-            --text-primary: #1a1a2e;
-            --text-secondary: oklch(0.45 0.02 var(--hue));
-            --text-tertiary: oklch(0.70 0.02 var(--hue));
+            --text-primary: #171717;
+            --text-secondary: #737373;
+            --text-tertiary: #a3a3a3;
+            --btn-content: #404040;
+            --btn-regular-bg: oklch(0.94 0.02 var(--hue));
+            --btn-regular-bg-hover: oklch(0.90 0.03 var(--hue));
+            --btn-regular-bg-active: oklch(0.85 0.04 var(--hue));
+            --btn-plain-bg-hover: oklch(0.90 0.03 var(--hue));
             --line-divider: oklch(0.88 0.01 var(--hue));
             --radius-large: 1rem;
             --selection-bg: oklch(0.55 0.15 var(--hue) / 30%);
@@ -39,11 +44,17 @@
             --primary: oklch(0.65 0.14 var(--hue));
             --primary-soft: oklch(0.65 0.14 var(--hue) / 12%);
             --primary-hover: oklch(0.70 0.13 var(--hue));
-            --card-bg: oklch(0.22 0.01 var(--hue));
+            --card-bg: oklch(0.23 0.015 var(--hue));
+            --card-bg-transparent: rgb(23 23 23 / 0.65);
             --bg-secondary: oklch(0.18 0.01 var(--hue));
-            --text-primary: oklch(0.92 0.01 var(--hue));
-            --text-secondary: oklch(0.65 0.02 var(--hue));
-            --text-tertiary: oklch(0.45 0.02 var(--hue));
+            --text-primary: #f5f5f5;
+            --text-secondary: #a3a3a3;
+            --text-tertiary: #737373;
+            --btn-content: #d4d4d4;
+            --btn-regular-bg: oklch(0.26 0.02 var(--hue));
+            --btn-regular-bg-hover: oklch(0.30 0.02 var(--hue));
+            --btn-regular-bg-active: oklch(0.34 0.03 var(--hue));
+            --btn-plain-bg-hover: oklch(0.28 0.02 var(--hue));
             --line-divider: oklch(0.28 0.01 var(--hue));
             --success: #4ade80;
             --danger: #f87171;
@@ -76,12 +87,14 @@
             position: fixed;
             inset: 0;
             background: var(--bg-secondary);
-            opacity: 0.78;
+            opacity: 0.08;
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
             z-index: -1;
-            transition: background 0.15s;
+            transition: background 0.15s, opacity 0.15s;
         }
         .dark body::after {
-            opacity: 0.92;
+            opacity: 0.08;
         }
         ::selection { background: var(--selection-bg); }
 
@@ -104,12 +117,18 @@
 
         /* ===== 卡片 ===== */
         .card {
-            background: var(--card-bg);
+            background: var(--card-bg-transparent);
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
             border-radius: var(--radius-large);
             overflow: hidden;
-            transition: background 0.15s;
-            border: 1px solid var(--line-divider);
+            transition: background 0.15s, border-color 0.15s;
+            border: 1px solid oklch(0 0 0 / 0.06);
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .dark .card,
+        .dark nav {
+            border-color: oklch(1 0 0 / 0.08);
         }
         .card-body { padding: 2rem; }
 
@@ -149,12 +168,14 @@
             font-weight: 500;
             border: none;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: all 0.2s ease;
             line-height: 1.4;
             background: var(--primary);
             color: #fff;
+            box-shadow: 0 2px 8px oklch(0.55 0.15 var(--hue) / 25%);
         }
-        .btn:hover { background: var(--primary-hover); }
+        .btn:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 14px oklch(0.55 0.15 var(--hue) / 35%); }
+        .btn:active { transform: translateY(0); }
 
         /* ===== 加载动画 ===== */
         .spinner {
@@ -177,17 +198,23 @@
         /* ===== 响应式 ===== */
         @media (max-width: 768px) {
             .page-heading h1 { font-size: 1.5rem; }
-            .page-heading { padding: 4rem 1rem 1.5rem; }
+            .page-heading { padding: 5rem 1rem 1.5rem; }
             .card-body { padding: 1.25rem; }
+            nav { padding: 0 1rem !important; }
         }
     </style>
 </head>
 <body>
-    <div style="position:fixed;top:1rem;right:1rem;z-index:100;">
-        <button id="theme-btn" onclick="toggleTheme()" title="切换亮暗模式" style="background:var(--card-bg);border:1px solid var(--line-divider);color:var(--text-secondary);border-radius:0.625rem;width:2.25rem;height:2.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all 0.15s;">
+    <!-- 导航栏 -->
+    <nav style="position:fixed;top:0;left:0;right:0;z-index:50;background:var(--card-bg-transparent);backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);border-bottom:1px solid oklch(0 0 0 / 0.06);padding:0 1.5rem;height:3.5rem;display:flex;align-items:center;justify-content:space-between;transition:background 0.15s,border-color 0.15s;">
+        <a href="/" style="display:flex;align-items:center;gap:0.5rem;font-weight:700;font-size:1rem;color:var(--text-primary);text-decoration:none;">
+            <span style="color:var(--primary);font-size:1.25rem;">✦</span>
+            <span>临渊羡鱼</span>
+        </a>
+        <button id="theme-btn" onclick="toggleTheme()" title="切换亮暗模式" style="background:var(--btn-regular-bg);border:1px solid var(--line-divider);color:var(--text-secondary);border-radius:0.625rem;width:2.25rem;height:2.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all 0.15s;">
             <i class="fas fa-moon"></i>
         </button>
-    </div>
+    </nav>
     <div class="page-heading">
         <h1>🔗 申请友链</h1>
         <p>提交后等待管理员审核</p>
@@ -229,8 +256,9 @@
     <script>
         function toggleTheme() {
             var isDark = document.documentElement.classList.contains('dark');
+            var next = isDark ? 'light' : 'dark';
             document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', next);
             updateThemeBtn();
         }
         function updateThemeBtn() {
@@ -240,11 +268,18 @@
                 : '<i class="fas fa-moon"></i>';
         }
         window.addEventListener('theme-change', function() {
-            var t = localStorage.getItem('theme');
-            if (t === 'dark') document.documentElement.classList.add('dark');
-            else if (t === 'light') document.documentElement.classList.remove('dark');
+            var t = localStorage.getItem('theme') || 'system';
+            var isDark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            if (isDark) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
             updateThemeBtn();
         });
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
+            if ((localStorage.getItem('theme') || 'system') === 'system') {
+                window.dispatchEvent(new Event('theme-change'));
+            }
+        });
+        updateThemeBtn();
     <\/script>
     <script type="module">
         document.getElementById('apply-form').addEventListener('submit', async (e) => {

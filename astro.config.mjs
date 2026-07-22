@@ -65,6 +65,10 @@ const adapter = process.env.CF_WORKERS
 export default defineConfig({
 	site: siteConfig.site_url,
 
+	server: {
+		host: true,
+	},
+
 	base: "/",
 	trailingSlash: "always",
 
@@ -325,6 +329,7 @@ export default defineConfig({
 	vite: {
 		plugins: [tailwindcss()],
 		server: {
+			host: true,
 			watch: {
 				ignored: ["**/package/**", "**/Firefly-docs/**"],
 			},
