@@ -13,6 +13,7 @@ image: ./images/firefly2.avif
 published: 2026-07-16
 updated: 2026-07-16
 comment: true
+slug: firefly
 ---
 
 ## 🌟 项目概述
