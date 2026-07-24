@@ -15,6 +15,15 @@ export const galleryConfig: GalleryConfig = {
 		// password: 访问密码，设置后需要输入密码才能查看相册内容（可选）
 		// passwordHint: 密码提示，设置后在输入密码错误时显示（可选，需配合password使用）
 		// 每添加一个数组项就相当于添加了一个相册，记得在 public/gallery/ 目录下创建对应的子目录并放入图片
+		// ImgBed 相册：从 CloudFlare-ImgBed API 自动拉取图片，无需本地目录
+		{
+			id: "imgbed",
+			name: "图床相册",
+			description: "来自 CloudFlare-ImgBed 的图片（构建时自动同步）",
+			location: "CloudFlare-ImgBed",
+			date: "2026-01-01",
+			tags: ["图床", "自动同步"],
+		},
 		{
 			id: "firefly-2026",
 			name: "可爱流萤",

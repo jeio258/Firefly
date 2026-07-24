@@ -16,11 +16,11 @@ const title = i18n(I18nKey.gallery);
 const description = i18n(I18nKey.galleryDescription);
 
 // 构建相册数据（扫描照片、获取封面）
-const albums = galleryConfig.albums.map((album) => {
-	const photos = scanAlbumPhotos(album.id);
+const albums = await Promise.all(galleryConfig.albums.map(async (album) => {
+	const photos = await scanAlbumPhotos(album.id);
 	const cover = getAlbumCover(album, photos);
 	return { ...album, cover, photoCount: photos.length };
-});
+}));
 
 // 收集所有标签用于筛选
 const allTags = [...new Set(albums.flatMap((a) => a.tags || []))].sort();
