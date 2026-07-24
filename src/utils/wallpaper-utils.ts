@@ -9,6 +9,7 @@ import {
 import type { WALLPAPER_MODE } from "@/types/config";
 import {
 	backgroundWallpaper,
+	displaySettingsConfig,
 	expressiveCodeConfig,
 	siteConfig,
 } from "../config";

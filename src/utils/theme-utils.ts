@@ -6,7 +6,7 @@ import {
 	SYSTEM_MODE,
 } from "@constants/constants";
 import type { LIGHT_DARK_MODE } from "@/types/config";
-import { siteConfig } from "../config";
+import { expressiveCodeConfig, siteConfig } from "../config";
 
 
 export function getDefaultHue(): number {

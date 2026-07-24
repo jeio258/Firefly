@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { displaySettingsConfig, sakuraConfig, siteConfig } from "../config";
+import { backgroundWallpaper, displaySettingsConfig, sakuraConfig, siteConfig } from "../config";
 
 function clampNumber(value: number, min: number, max: number): number {
 	return Math.min(max, Math.max(min, value));
