@@ -40,7 +40,7 @@ export async function fetchImgBedImages(): Promise<string[]> {
 			if (!data.files || data.files.length === 0) break;
 
 			for (const f of data.files) {
-				allFiles.push(`${baseUrl}/${f.name}`);
+				allFiles.push(`${baseUrl}/file/${f.name}`);
 			}
 
 			if (data.files.length < pageSize) break;
