@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { readFile } from "node:fs/promises";
 import { assertSafeSvgForDom, initMerman, renderSvg } from "@mermanjs/web";
 import { h } from "hastscript";
@@ -11,8 +12,8 @@ import {
 	MERMAID_SVG_DARK,
 	MERMAID_SVG_LIGHT,
 	MERMAID_WRAPPER,
-} from "./utils/diagramConstants.js";
-import { extractText } from "./utils/extractText.js";
+} from "./utils/diagramConstants.ts";
+import { extractText } from "./utils/extractText.ts";
 
 const mermanWasmUrl = import.meta.resolve(
 	"@mermanjs/web/pkg/merman_wasm_bg.wasm",

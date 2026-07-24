@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { h } from "hastscript";
 import { visit } from "unist-util-visit";
 import plantumlThemeScript from "./plantuml-theme-switch.js?raw";
@@ -7,8 +8,8 @@ import {
 	PLANTUML_CONTAINER,
 	PLANTUML_IMAGE,
 	PLANTUML_WRAPPER,
-} from "./utils/diagramConstants.js";
-import { extractText } from "./utils/extractText.js";
+} from "./utils/diagramConstants.ts";
+import { extractText } from "./utils/extractText.ts";
 
 /**
  * 生成当前 HAST 节点的随机 id，避免同一页多个图表冲突。

@@ -122,10 +122,12 @@ const jsonLd = {
 		url: Astro.site,
 	},
 	datePublished: formatDateToYYYYMMDD(entry.data.published),
+	image: entry.data.image
+		? new URL(entry.data.image, Astro.site).toString()
+		: `${Astro.site}og/${String(entry.id)}.png`,
 	inLanguage: entry.data.lang
 		? entry.data.lang.replace("_", "-")
 		: siteConfig.lang.replace("_", "-"),
-	// TODO include cover image here
 };
 
 const relatedPosts = await getRelatedPosts(entry, 5);

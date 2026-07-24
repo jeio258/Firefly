@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { h } from "hastscript";
 import clientScript from "./diagram-panzoom-script.js?raw";
 

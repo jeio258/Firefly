@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { h } from "hastscript";
 import { visit } from "unist-util-visit";
 

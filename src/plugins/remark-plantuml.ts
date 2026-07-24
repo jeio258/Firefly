@@ -1,5 +1,6 @@
+// @ts-nocheck
 import { visit } from "unist-util-visit";
-import { buildUrl, encodePlantUML, injectTheme } from "./plantuml-encoder.js";
+import { buildUrl, encodePlantUML, injectTheme } from "./plantuml-encoder.ts";
 
 /**
  * @typedef {Object} RemarkPlantumlOptions

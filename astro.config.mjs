@@ -35,20 +35,20 @@ import {
 } from "./src/config";
 import I18nKey from "./src/i18n/i18nKey";
 import { i18n } from "./src/i18n/translation";
-import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.mjs";
-import { rehypeDiagramPanZoom } from "./src/plugins/rehype-diagram-panzoom.mjs";
-import rehypeEmailProtection from "./src/plugins/rehype-email-protection.mjs";
-import rehypeExternalLinks from "./src/plugins/rehype-external-links.mjs";
-import rehypeFigure from "./src/plugins/rehype-figure.mjs";
-import rehypeImageReferrerPolicy from "./src/plugins/rehype-image-referrerpolicy.mjs";
-import { rehypeMermaid } from "./src/plugins/rehype-mermaid.mjs";
-import { rehypePlantuml } from "./src/plugins/rehype-plantuml.mjs";
-import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.js";
-import { remarkExcerpt } from "./src/plugins/remark-excerpt.js";
-import { remarkImageGrid } from "./src/plugins/remark-image-grid.js";
-import { remarkMermaid } from "./src/plugins/remark-mermaid.js";
-import { remarkPlantuml } from "./src/plugins/remark-plantuml.js";
-import { remarkReadingTime } from "./src/plugins/remark-reading-time.mjs";
+import { GithubCardComponent } from "./src/plugins/rehype-component-github-card.ts";
+import { rehypeDiagramPanZoom } from "./src/plugins/rehype-diagram-panzoom.ts";
+import rehypeEmailProtection from "./src/plugins/rehype-email-protection.ts";
+import rehypeExternalLinks from "./src/plugins/rehype-external-links.ts";
+import rehypeFigure from "./src/plugins/rehype-figure.ts";
+import rehypeImageReferrerPolicy from "./src/plugins/rehype-image-referrerpolicy.ts";
+import { rehypeMermaid } from "./src/plugins/rehype-mermaid.ts";
+import { rehypePlantuml } from "./src/plugins/rehype-plantuml.ts";
+import { parseDirectiveNode } from "./src/plugins/remark-directive-rehype.ts";
+import { remarkExcerpt } from "./src/plugins/remark-excerpt.ts";
+import { remarkImageGrid } from "./src/plugins/remark-image-grid.ts";
+import { remarkMermaid } from "./src/plugins/remark-mermaid.ts";
+import { remarkPlantuml } from "./src/plugins/remark-plantuml.ts";
+import { remarkReadingTime } from "./src/plugins/remark-reading-time.ts";
 import { collectUsedFontCssVars } from "./src/utils/fontHelper";
 
 if (process.env.NODE_ENV === "development") {
