@@ -14,6 +14,7 @@ import {
 	siteConfig,
 } from "../config";
 import { isHomePage as checkIsHomePage } from "./layout-utils";
+import { applyStoredOverlaySettingsToDocument } from "./effects-utils";
 
 export function applyWallpaperModeToDocument(
 	mode: WALLPAPER_MODE,
