@@ -21,8 +21,7 @@ comment: true
 
 你可以直接克隆主仓库，但更推荐先 Fork 到自己名下再克隆：
 
-```
-bash
+```bash
 git clone https://github.com/jeio258/Firefly.git
 cd Firefly
 ```
@@ -91,4 +90,3 @@ pnpm dev
 
 
 现在，你可以轻松打造属于自己的个性博客了。如果在使用中遇到任何问题，欢迎到 [GitHub Issues](https://github.com/CuteLeaf/Firefly/issues) 反馈，或加入 QQ 交流群：**1087127207** 一起讨论。
-```

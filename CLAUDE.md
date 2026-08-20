@@ -39,6 +39,8 @@ All features are toggled/configured via TypeScript files in `src/config/`, expor
 - `sidebarConfig.ts` — sidebar layout (left/right/both, widget ordering)
 - `commentConfig.ts`, `analyticsConfig.ts`, `fontConfig.ts`, etc.
 
+**图床 (ImgBed) token:** `src/config/imgBedConfig.ts` reads the API token from the environment variable `IMG_BED_TOKEN` (or `SECRET_IMG_BED_TOKEN`) at build time — never commit a hardcoded token. Set it in the deployment platform's build environment (or a non-committed `.env`) and rotate it if ever leaked. When unset, the `imgbed` gallery album gracefully degrades to an empty list.
+
 ### Layout System
 
 - `Layout.astro` — base HTML shell (head, body, theme init, analytics, Swup hooks)

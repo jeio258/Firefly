@@ -22,6 +22,16 @@ interface ImgBedListResponse {
  */
 export async function fetchImgBedImages(): Promise<string[]> {
 	const { baseUrl, apiToken, pageSize } = imgBedConfig;
+
+	// 未配置 baseUrl 或 API Token（环境变量 IMG_BED_TOKEN 未设置）时优雅降级：
+	// 跳过远程拉取，返回空列表，避免发送畸形的 Bearer 请求
+	if (!baseUrl || !apiToken) {
+		console.warn(
+			"[ImgBed] 未配置 baseUrl 或 API Token（环境变量 IMG_BED_TOKEN），跳过远程相册拉取",
+		);
+		return [];
+	}
+
 	const allFiles: string[] = [];
 	let start = 0;
 

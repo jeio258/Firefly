@@ -23,7 +23,7 @@ npm install
 
 复制 `.env.example` 为 `.env`，填写必要配置：
 
-```env
+```txt
 # 必填：Telegram Bot Token（用于存储文件到 Telegram）
 TG_BOT_TOKEN=你的Telegram Bot Token
 
