@@ -192,7 +192,6 @@ src/
 │   ├── licenseConfig.ts          # 许可证配置
 │   ├── musicConfig.ts            # 音乐播放器配置
 │   ├── navBarConfig.ts           # 导航栏配置
-│   ├── pioConfig.ts              # 看板娘配置
 │   ├── mermaidConfig.ts          # Mermaid 图表配置
 │   ├── plantumlConfig.ts         # PlantUML 图表配置
 │   ├── profileConfig.ts          # 用户资料配置
@@ -286,7 +285,6 @@ location: China # 位置
 
 ### 其他参考
 - 博主`霞葉`的 [Bangumi 收藏](https://kasuha.com/posts/fuwari-enhance-ep2/) 页面组件
-- 哔哩哔哩up主 `公公的日常` 的Q版 [流萤看板娘 Spine 切片数据](https://www.bilibili.com/video/BV1fuVzzdE5y) 
 
 ## 📝 许可协议
 
