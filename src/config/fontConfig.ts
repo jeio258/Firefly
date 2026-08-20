@@ -31,16 +31,16 @@ export const fontsList: FontDefinition[] = [
 		name: "Zen Maru Gothic",
 		cssVariable: "--font-zen-maru-gothic",
 		provider: "fontsource",
-		weights: ["300", "400", "500", "600", "700"],
+		weights: ["400", "700"],
 		styles: ["normal"],
-		subsets: ["latin", "cyrillic"],
+		subsets: ["latin", "cyrillic", "japanese"],
 		fallbacks: ["sans-serif"],
 	},
 	{
 		name: "Inter",
 		cssVariable: "--font-inter",
 		provider: "fontsource",
-		weights: ["300", "400", "500", "600", "700"],
+		weights: ["400", "500", "700"],
 		styles: ["normal"],
 		subsets: ["latin", "cyrillic"],
 		fallbacks: ["sans-serif"],
@@ -88,14 +88,13 @@ export const fontConfig: FontSelectionConfig = {
 	// 是否启用自定义字体功能
 	enable: true,
 	// 当前选择的字体 CSS 变量名（对应上方 fonts 中的 cssVariable）
-	// 使用 "system" 表示系统字体（不加载任何自定义字体）
-	selected: ["system"],
+	// Inter 作为正文字体，Zen Maru Gothic 作为 banner 标题字体
+	selected: ["--font-inter"],
 
 	// 各区域独立字体设置（填写上方 fonts 中的 cssVariable，留空则使用全局 selected 字体）
-	// 例如：bannerTitleFont: "--font-inter", 表示主页横幅主标题使用 Inter 字体
-	// 主页横幅主标题字体
+	// 主页横幅主标题字体 — 圆体日文/中文 display face
 	bannerTitleFont: "--font-zen-maru-gothic",
-	// 主页横幅副标题字体
+	// 主页横幅副标题字体 — Inter 保持与正文一致
 	bannerSubtitleFont: "--font-inter",
 	// 导航栏标题字体
 	navbarTitleFont: "",

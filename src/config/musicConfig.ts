@@ -3,7 +3,7 @@ import type { MusicPlayerConfig } from "../types/musicConfig";
 // 音乐播放器配置
 export const musicPlayerConfig: MusicPlayerConfig = {
 	// 是否在导航栏显示音乐播放器入口
-	showInNavbar: true,
+	showInNavbar: false,
 
 	// 是否在侧边栏显示音乐播放器组件
 	showInSidebar: true,
@@ -30,12 +30,12 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 		// 类型：song=单曲, playlist=歌单, album=专辑, search=搜索, artist=艺术家
 		type: "playlist",
 		// 歌单/专辑/单曲 ID 或搜索关键词
-		id: "10046455237",
+		id: "17754061918",
 		// 认证 token（可选）
 		auth: "",
 		// 备用 API 配置（当主 API 失败时使用）
 		fallbackApis: [
-			"https://api.injahow.cn/meting/?server=:server&type=:type&id=:id",
+			"https://api.i-meto.com/meting/api?server=:server&type=:type&id=:id&r=:r",
 			"https://api.moeyao.cn/meting/?server=:server&type=:type&id=:id",
 		],
 	},

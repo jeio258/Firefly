@@ -7,8 +7,8 @@
 :root
   --primary: oklch(0.70 0.14 var(--hue))
   --page-bg: oklch(0.95 0.01 var(--hue))
-  --card-bg: white
-  --card-bg-transparent: unquote("rgb(255 255 255 / var(--card-transparent-opacity, 0.6))")
+  --card-bg: oklch(0.995 0.004 var(--hue))
+  --card-bg-transparent: unquote("oklch(0.995 0.004 var(--hue) / var(--card-transparent-opacity, 0.6))")
   
   --btn-content: oklch(0.55 0.12 var(--hue))
   --btn-regular-bg: oklch(0.95 0.025 var(--hue))
@@ -46,7 +46,7 @@
   --link-hover: oklch(0.95 0.025 var(--hue))
   --link-active: oklch(0.90 0.05 var(--hue))
   
-  --float-panel-bg: white
+  --float-panel-bg: oklch(0.995 0.004 var(--hue))
   
   --scrollbar-bg-light: rgba(0, 0, 0, 0.4)
   --scrollbar-bg-hover-light: rgba(0, 0, 0, 0.5)
@@ -85,7 +85,7 @@
 
 /* 卡片风格跟随主题色相 */
 :root:not(.dark) body.card-follow-theme-hue
-  --card-bg: oklch(1 0.01 var(--hue))
+  --card-bg: oklch(0.995 0.008 var(--hue))
 
 /* 暗色主题变量 */
 :root.dark

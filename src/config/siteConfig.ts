@@ -2,55 +2,39 @@ import type { SiteConfig } from "@/types/siteConfig";
 import { resolvePageToggles } from "../utils/page-toggle-utils";
 import { resolveSiteLang } from "../utils/site-config-utils";
 
-// 定义站点语言
-// 语言代码，例如：'zh_CN', 'zh_TW', 'en', 'ja', 'ru', 'ko'。
+// 定义站点语言（支持 PUBLIC_LANG 环境变量覆盖）
 const SITE_LANG = resolveSiteLang("zh_CN");
 
-// 页面开关配置 - 控制特定页面的访问权限，设为false会返回404并自动隐藏对应的导航栏菜单项
+// 页面开关配置 - 控制特定页面的访问权限，设为 false 会返回 404 并自动隐藏对应的导航栏菜单项
+// 支持环境变量覆盖：PUBLIC_PAGES_<KEY>=true/false（见 page-toggle-utils.ts）
 const pages = resolvePageToggles({
-	// ── 社交 (Social) ──────────────────────────────────
-
 	// 友链页面开关
 	friends: true,
-	// 留言板页面开关，需要配置评论系统
-	guestbook: true,
-
-	// ── 我的 (My) ──────────────────────────────────
-
-	// 动态页面开关
-	dynamic: true,
-	// 相册页面开关
-	gallery: true,
-	// 书签导航页面开关
-	booknav: true,
-	// 哔哩哔哩追番页面开关
-	bilibili: false,
-	// 番组计划页面开关
-	bangumi: false,
-	// VNDB页面开关
-	vndb: false,
-	// MyAnimeList页面开关
-	mal: false,
-
-	// ── 关于 (About) ──────────────────────────────────
-
 	// 打赏页面开关
 	sponsor: true,
+	// 留言板页面开关，需要配置评论系统
+	guestbook: true,
+	// 相册页面开关
+	gallery: true,
+	// 动态页面开关
+	dynamic: false,
+	// 书签导航页面开关
+	booknav: true,
 });
 
 export const siteConfig: SiteConfig = {
 	// 站点标题
-	title: "Firefly",
+	title: "临渊羡鱼博客",
 
 	// 站点副标题
-	subtitle: "Demo site",
+	subtitle: "博客",
 
 	// 站点 URL
-	site_url: "https://firefly.cuteleaf.cn",
+	site_url: "https://blog.994613.xyz",
 
 	// 站点描述
 	description:
-		"Firefly 是一款基于 Astro 框架和 Fuwari 模板开发的清新美观且现代化个人博客主题模板，专为技术爱好者和内容创作者设计。该主题融合了现代 Web 技术栈，提供了丰富的功能模块和高度可定制的界面，让您能够轻松打造出专业且美观的个人博客网站。",
+		"记录时间的形状。这里是我对抗信息碎片化的方式，写给自己，也写给偶然闯入的你。愿文字如光，照亮那些幽微的心事，也温暖每一个孤独的瞬息",
 
 	// 站点关键词
 	keywords: [
@@ -67,6 +51,8 @@ export const siteConfig: SiteConfig = {
 	themeColor: {
 		// 主题色的默认色相，范围从 0 到 360。例如：红色：0，青色：200，蓝绿色：250，粉色：345
 		hue: 165,
+		// 是否对访问者隐藏主题色选择器
+		fixed: false,
 		// 默认模式："light" 亮色，"dark" 暗色，"system" 跟随系统
 		defaultMode: "system",
 	},
@@ -115,7 +101,7 @@ export const siteConfig: SiteConfig = {
 			alt: "🍀",
 		},
 		// 导航栏标题
-		title: "Firefly",
+		title: "临渊羡鱼",
 		// 全宽导航栏，导航栏是否占满屏幕宽度
 		widthFull: false,
 		// 导航菜单对齐方式，left：左对齐，center：居中
@@ -127,13 +113,14 @@ export const siteConfig: SiteConfig = {
 	},
 
 	// 站点开始日期，用于统计运行天数
-	siteStartDate: "2025-01-01",
+	siteStartDate: "2025-12-01",
 
 	// 站点时区（IANA 时区字符串），用于格式化bangumi、rss里的构建日期时间等等..
 	// 示例："Asia/Shanghai", "UTC", 如果为空，则按照构建服务器的时区进行时区转换
 	timezone: "Asia/Shanghai",
 
-	// 页面开关配置 - 控制特定页面的访问权限，设为false会返回404并自动隐藏对应的导航栏菜单项
+	// 页面开关配置（定义见文件顶部 const pages）
+	pages,
 
 	// 分类导航栏开关，在首页和归档页顶部显示分类快捷导航
 	categoryBar: true,
@@ -144,30 +131,29 @@ export const siteConfig: SiteConfig = {
 	categoryStyle: "rectangle",
 
 	// 标签样式，作用于文章列表底部标签、标签页和侧边栏标签
-	// "pill"：胶囊，主题色底圆角
-	// "pill-gray"：胶囊，中性灰底圆角
+	// "pill"：胶囊，中性灰底圆角
 	// "rectangle"：矩形，主题色底小圆角
 	tagStyle: "pill",
 
 	// 归档页是否折叠非最新年份文章，禁用后默认展开全部年份
 	foldArticle: true,
 
-	// ── 文章列表布局配置 ──────────────────────────────────
+	// 文章列表布局配置
 	postListLayout: {
 		// 默认布局模式："list" 列表模式（单列布局），"grid" 网格模式（多列布局）
 		defaultMode: "list",
 		// 移动端默认布局模式，不设置则跟随 defaultMode
-		mobileDefaultMode: "grid",
+		mobileDefaultMode: "list",
 		// 列表模式下封面图显示在哪一侧："right" 右侧，"left" 左侧
 		// 网格模式的封面固定在卡片顶部，不受此项影响
 		coverPosition: "right",
 		// 文章简介显示行数，设为 0 则不截断
 		descriptionLines: 2,
+		// 是否允许用户切换布局
+		allowSwitch: true,
 		// 文章卡片底部统计和发布日期是否显示图标
 		showStatsIcons: true,
 		// 标签显示位置
-		// 设置为"meta"：显示在文章标题下的元数据
-		// 设置为"bottom"：顶替stats在底部显示
 		tagsPosition: "bottom",
 		// 底部标签样式，仅在 tagsPosition 为 "bottom" 时生效
 		// "chip"：按钮样式，形状跟随上方的 tagStyle 配置
@@ -189,7 +175,6 @@ export const siteConfig: SiteConfig = {
 			showReadingTime: false,
 		},
 		// 底部 PostStats 统计信息显示控制
-		// 如果tagsPosition设置为"bottom"，则stats将不显示
 		stats: {
 			// 是否显示发布日期
 			showPublished: true,
@@ -211,13 +196,7 @@ export const siteConfig: SiteConfig = {
 		},
 	},
 
-	// 分页配置
-	pagination: {
-		// 每页显示的文章数量
-		postsPerPage: 10,
-	},
-
-	// ── 文章内容页配置 ──────────────────────────────────
+	// 文章内容页配置
 	post: {
 		// 提醒框（Admonitions）配置，修改后需要重启开发服务器才能生效
 		// 主题：'github' | 'obsidian' | 'vitepress' | 'docusaurus'，每个主题风格和语法不同，可根据喜好选择
@@ -237,69 +216,15 @@ export const siteConfig: SiteConfig = {
 		generateOgImages: false,
 	},
 
-	// ── Bilibili配置 ──────────────────────────────────
-	bilibili: {
-		// 你的 Bilibili 用户 UID
-		uid: "38932988",
+	// bangumi 和追番功能已移除
+
+	// 分页配置
+	pagination: {
+		// 每页显示的文章数量
+		postsPerPage: 10,
 	},
 
-	// ── 番组计划bangumi配置 ──────────────────────────────────
-	bangumi: {
-		// Bangumi用户ID
-		userId: "1143164",
-		// 数据模式：static=构建时获取，dynamic=客户端实时获取
-		// static 模式在构建时获取数据并静态渲染，部署后数据不更新
-		// dynamic 模式在浏览器中实时请求 API，始终显示最新数据
-		mode: "dynamic",
-		// Bangumi API 地址
-		apiUrl: "https://bgmapi.anibt.net",
-		// 详情页地址
-		subjectBaseUrl: "https://bgmmi.anibt.net/subject/",
-		// 条目类型排序，数组中的类型将按顺序优先展示
-		// 可选值: "anime" | "book" | "music" | "game" | "real" (暂不支持"real"类型)
-		// 未列出的类型将按默认顺序排在后面
-		categoryOrder: ["anime", "book", "music", "game"],
-		// 控制各分类的启用状态（true/false），未指定的分类默认启用
-		// categories: {
-		// 	game: false, // 禁用游戏分类显示
-		// },
-	},
-
-	// ── VNDB配置 ──────────────────────────────────
-	vndb: {
-		// VNDB 用户 ID
-		userId: "u358128",
-		// 数据模式：static=构建时获取，dynamic=客户端实时获取
-		// static 模式在构建时获取数据并静态渲染，部署后数据不更新
-		// dynamic 模式在浏览器中实时请求 API，始终显示最新数据
-		mode: "static",
-		// 构建时下载并压缩封面到 public/vndb-covers，图片由本站服务器提供
-		downloadCovers: false,
-		// VNDB API 地址
-		apiUrl: "https://api.vndb.org/kana",
-		// 条目详情页地址，末尾需要带 /
-		vnBaseUrl: "https://vndb.org/",
-		// 私密列表访问令牌，仅 static 模式下使用；不要把真实令牌提交到公开仓库！
-		apiToken: "",
-		// 对Nsfw的游戏封面模糊化
-		blurNsfw: true,
-	},
-
-	// ── MyAnimeList配置 ──────────────────────────────────
-	mal: {
-		// MyAnimeList 用户名（列表需为公开状态，私密列表无法读取）
-		username: "cuteleaf",
-		// MyAnimeList Client ID，在 https://myanimelist.net/apiconfig 注册免费应用后获取
-		clientId: "	0ef34371450f9c6c809deaadec6aa8f3",
-		// MAL API 地址
-		apiUrl: "https://api.myanimelist.net/v2",
-		// 动画条目详情页地址，末尾需要带 /
-		animeBaseUrl: "https://myanimelist.net/anime/",
-		// 漫画条目详情页地址，末尾需要带 /
-		mangaBaseUrl: "https://myanimelist.net/manga/",
-	},
-
-	// ── 图像优化配置 ──────────────────────────────────
+	// 图像优化及响应式配置
 	// 图像优化压缩只保留avif或webp
 	// 响应式图像是为在不同设备上提高性能而调整的图像。这些图像可以调整大小以适应其容器，并且可以根据访问者的屏幕尺寸和分辨率以不同的大小提供。
 	// Astro 仅能对 src 目录下的图像进行优化，src 目录下的图像越多，构建时间会越长
@@ -315,17 +240,9 @@ export const siteConfig: SiteConfig = {
 		// 为特定域名的图片添加 referrerpolicy="no-referrer" 属性
 		// 支持通配符 *，例如：["i0.hdslb.com", "*.bilibili.com"]
 		// 可解决指定域名图片加载时的 403 问题（如防盗链图片）
-		noReferrerDomains: [
-			"*.hdslb.com",
-			"*.bilibili.com",
-			"*.myanimelist.net",
-			"*.vndb.org",
-		],
+		noReferrerDomains: ["*.hdslb.com", "*.bilibili.com"],
 	},
 
 	// 站点语言，在本配置文件顶部SITE_LANG定义
 	lang: SITE_LANG,
-
-	// 页面开关配置，在本配置文件顶部pages定义
-	pages,
 };

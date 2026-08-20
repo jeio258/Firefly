@@ -36,6 +36,7 @@ export type SiteConfig = {
 
 	themeColor: {
 		hue: number;
+		fixed?: boolean; // 是否对访问者隐藏主题色选择器
 		defaultMode?: LIGHT_DARK_MODE; // 默认模式：浅色、深色或跟随系统
 	};
 
@@ -83,11 +84,7 @@ export type SiteConfig = {
 		friends: boolean; // 友链页面开关
 		sponsor: boolean; // 打赏页面开关
 		guestbook: boolean; // 留言板页面开关
-		bangumi: boolean;
-		vndb: boolean;
-		mal: boolean; // MyAnimeList 页面开关
 		gallery: boolean; // 相册页面开关
-		bilibili: boolean; // 哔哩哔哩追番页面开关
 		dynamic: boolean; // 动态页面开关
 	};
 
@@ -97,8 +94,8 @@ export type SiteConfig = {
 	// 分类导航栏按钮样式："pill"=胶囊，"rectangle"=矩形（配色同胶囊）
 	categoryStyle?: "pill" | "rectangle";
 
-	// 标签样式："pill"=主题色胶囊，"pill-gray"=中性灰胶囊，"rectangle"=主题色矩形
-	tagStyle?: "pill" | "pill-gray" | "rectangle";
+	// 标签样式："pill"=胶囊，"rectangle"=主题色矩形
+	tagStyle?: "pill" | "rectangle";
 
 	// 归档页是否折叠非最新年份文章
 	foldArticle?: boolean;
@@ -109,6 +106,7 @@ export type SiteConfig = {
 		mobileDefaultMode?: "list" | "grid"; // 移动端默认布局模式（视口宽度<780px时使用），不设置则跟随 defaultMode
 		// 列表模式下封面图的位置："right"=右侧（默认），"left"=左侧。网格模式封面固定在顶部，不受此项影响
 		coverPosition?: "left" | "right";
+		allowSwitch?: boolean; // 是否允许用户切换布局
 		descriptionLines?: number; // 文章简介显示行数，设为 0 则不截断，默认 2
 		showStatsIcons?: boolean; // 文章卡片底部统计是否显示图标
 		// 标签显示位置："meta"=跟随元数据行（默认），"bottom"=卡片底部独立一行（将替换stats显示，二者只能选其一）
@@ -158,47 +156,7 @@ export type SiteConfig = {
 		generateOgImages: boolean;
 	};
 
-	// bangumi配置
-	bangumi?: {
-		userId?: string; // Bangumi用户ID
-		mode?: "static" | "dynamic"; // 数据模式：static=构建时获取，dynamic=客户端实时获取
-		apiUrl?: string; // Bangumi API 地址
-		subjectBaseUrl?: string; // 条目详情页地址
-		categoryOrder?: ("anime" | "game" | "book" | "music" | "real")[]; // 条目类型排序顺序
-		// 各分类的显示启用状态，未设置时默认启用
-		categories?: {
-			book?: boolean;
-			anime?: boolean;
-			music?: boolean;
-			game?: boolean;
-			real?: boolean;
-		};
-	};
-
-	// VNDB 配置
-	vndb?: {
-		userId?: string; // VNDB 用户 ID，例如 "u2"
-		mode?: "static" | "dynamic"; // 数据模式：static=构建时获取，dynamic=客户端实时获取
-		downloadCovers?: boolean; // 构建时下载并压缩 VNDB 封面到本地
-		apiUrl?: string; // VNDB API 地址
-		vnBaseUrl?: string; // VNDB 条目详情页地址，末尾需要带 /
-		apiToken?: string; // 私密列表访问令牌，仅 static 模式下使用
-		blurNsfw?: boolean; // 对Nsfw的游戏封面模糊化，默认为true
-	};
-
-	// MyAnimeList 配置
-	mal?: {
-		username?: string; // MyAnimeList 用户名，列表需为公开状态
-		clientId?: string; // MyAnimeList Client ID，从 https://myanimelist.net/apiconfig 注册免费应用后获取
-		apiUrl?: string; // MAL API 地址
-		animeBaseUrl?: string; // 动画条目详情页地址，末尾需要带 /
-		mangaBaseUrl?: string; // 漫画条目详情页地址，末尾需要带 /
-	};
-
-	// Bilibili 配置
-	bilibili?: {
-		uid?: string; // Bilibili 用户 UID
-	};
+	// bangumi 和追番功能已移除
 
 	// 分页配置
 	pagination: {
