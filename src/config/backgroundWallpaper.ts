@@ -180,12 +180,12 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 	overlay: {
 		// 层级，确保壁纸在背景层
 		zIndex: -1,
-		// 壁纸透明度
-		opacity: 0.8,
-		// 背景模糊度
-		blur: 10,
-		// 卡片透明度，0-1之间，值越小越透明
-		cardOpacity: 0.6,
+		// 壁纸透明度（100% 不透明）
+		opacity: 1,
+		// 背景模糊度（0 关闭模糊）
+		blur: 0,
+		// 卡片透明度（65% 半透明）
+		cardOpacity: 0.65,
 	},
 	// 全屏壁纸模式特有配置
 	// 全屏模式下壁纸固定全屏显示，首屏居中标题，内容区在首屏之下、下滑时覆盖壁纸
