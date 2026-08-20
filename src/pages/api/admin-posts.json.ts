@@ -8,7 +8,7 @@ import { getSortedPosts } from "@/utils/content-utils";
  * - password 仅返回布尔值：明文密码只应通过 GitHub API（带 OAuth token）获取
  * - 如需编辑文章正文/密码，请由管理后台直接调用 GitHub Contents API
  */
-export async function GET() {
+export async function GET(): Promise<Response> {
 	const posts = await getSortedPosts();
 	const data = posts.map((post) => ({
 		path: `src/content/posts/${post.id}.md`,
