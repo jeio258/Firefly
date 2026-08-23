@@ -8,18 +8,29 @@ const SITE_LANG = resolveSiteLang("zh_CN");
 // 页面开关配置 - 控制特定页面的访问权限，设为 false 会返回 404 并自动隐藏对应的导航栏菜单项
 // 支持环境变量覆盖：PUBLIC_PAGES_<KEY>=true/false（见 page-toggle-utils.ts）
 const pages = resolvePageToggles({
+	// ── 社交 (Social) ──────────────────────────────────
 	// 友链页面开关
 	friends: true,
-	// 打赏页面开关
-	sponsor: true,
 	// 留言板页面开关，需要配置评论系统
 	guestbook: true,
-	// 相册页面开关
-	gallery: true,
+	// ── 我的 (My) ──────────────────────────────────
 	// 动态页面开关
 	dynamic: false,
+	// 相册页面开关
+	gallery: true,
 	// 书签导航页面开关
 	booknav: true,
+	// 哔哩哔哩追番页面开关（已禁用）
+	bilibili: false,
+	// 番组计划页面开关（已禁用）
+	bangumi: false,
+	// VNDB页面开关（已禁用）
+	vndb: false,
+	// MyAnimeList页面开关（已禁用）
+	mal: false,
+	// ── 关于 (About) ──────────────────────────────────
+	// 打赏页面开关
+	sponsor: true,
 });
 
 export const siteConfig: SiteConfig = {
