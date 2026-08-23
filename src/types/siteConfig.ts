@@ -86,6 +86,10 @@ export type SiteConfig = {
 		guestbook: boolean; // 留言板页面开关
 		gallery: boolean; // 相册页面开关
 		dynamic: boolean; // 动态页面开关
+		bangumi: boolean; // 番组计划页面开关
+		vndb: boolean; // VNDB页面开关
+		mal: boolean; // MyAnimeList页面开关
+		bilibili: boolean; // 哔哩哔哩追番页面开关
 	};
 
 	// 分类导航栏开关
@@ -156,7 +160,36 @@ export type SiteConfig = {
 		generateOgImages: boolean;
 	};
 
-	// bangumi 和追番功能已移除
+	// bangumi、VNDB、MAL、Bilibili 追番配置（可选，默认关闭）
+	// 页面开关通过 pages.bangumi / pages.vndb / pages.mal / pages.bilibili 控制
+	bangumi?: {
+		userId?: string;
+		mode?: "static" | "dynamic";
+		apiUrl?: string;
+		subjectBaseUrl?: string;
+		categoryOrder?: ("anime" | "game" | "book" | "music" | "real")[];
+		nsfw?: import("./nsfw").NsfwMode;
+	};
+	vndb?: {
+		userId?: string;
+		mode?: "static" | "dynamic";
+		downloadCovers?: boolean;
+		apiUrl?: string;
+		vnBaseUrl?: string;
+		apiToken?: string;
+		nsfw?: import("./nsfw").NsfwMode;
+	};
+	mal?: {
+		username?: string;
+		clientId?: string;
+		apiUrl?: string;
+		animeBaseUrl?: string;
+		mangaBaseUrl?: string;
+		nsfw?: import("./nsfw").NsfwMode;
+	};
+	bilibili?: {
+		uid?: string;
+	};
 
 	// 分页配置
 	pagination: {
