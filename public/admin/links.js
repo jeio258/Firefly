@@ -1,4 +1,3 @@
-// links.js：友链 YAML 数据层（纯数据，UI 在 views/friends.js）
 import { stringToBase64, base64ToString } from './utils.js';
 import { store } from './store.js';
 
@@ -9,7 +8,6 @@ function apiUrl(path) {
     return `https://api.github.com/repos/${store.owner}/${store.repo}/contents/${path}?ref=${store.branch}`;
 }
 
-// ---------- 数据获取 ----------
 export async function getFriendRequests() {
     try {
         const res = await fetch(apiUrl(REQUESTS_PATH), { headers: { Authorization: `token ${store.token}` } });
@@ -34,7 +32,6 @@ export async function getFriends() {
     }
 }
 
-// ---------- 文件更新 ----------
 async function updateFile(path, content, sha, message) {
     const res = await fetch(apiUrl(path), {
         method: 'PUT',
@@ -47,7 +44,7 @@ async function updateFile(path, content, sha, message) {
     return res;
 }
 
-// 自动重试一次，解决 409 冲突
+// 409 冲突时拉取最新 sha 重试一次
 async function updateFileWithRetry(path, newContent, initialSha, message) {
     let sha = initialSha;
     for (let attempt = 0; attempt < 2; attempt++) {
@@ -67,13 +64,6 @@ async function updateFileWithRetry(path, newContent, initialSha, message) {
     return false;
 }
 
-function triggerHook() {
-    if (window.NETLIFY_HOOK) {
-        fetch(window.NETLIFY_HOOK, { method: 'POST' }).catch(() => {});
-    }
-}
-
-// ---------- 审核批准 ----------
 export async function approveRequest(index) {
     const reqRes = await getFriendRequests();
     const friendRes = await getFriends();
@@ -86,7 +76,6 @@ export async function approveRequest(index) {
             updateFileWithRetry(REQUESTS_PATH, newRequests, reqRes.sha, `审核通过: ${request.title}`),
             updateFileWithRetry(FRIENDS_PATH, newFriends, friendRes.sha, `新增友链: ${request.title}`)
         ]);
-        triggerHook();
         return true;
     } catch (e) {
         console.error('批准失败:', e);
@@ -94,7 +83,6 @@ export async function approveRequest(index) {
     }
 }
 
-// ---------- 审核拒绝 ----------
 export async function rejectRequest(index) {
     const { sha, data } = await getFriendRequests();
     const newData = data.filter((_, i) => i !== index);
@@ -107,7 +95,6 @@ export async function rejectRequest(index) {
     }
 }
 
-// ---------- 已通过友链修改/删除 ----------
 export async function updateFriend(index, updatedData) {
     const { sha, data } = await getFriends();
     if (index < 0 || index >= data.length) return false;
@@ -115,7 +102,6 @@ export async function updateFriend(index, updatedData) {
     newData[index] = { ...newData[index], ...updatedData };
     try {
         await updateFileWithRetry(FRIENDS_PATH, newData, sha, `更新友链: ${updatedData.title}`);
-        triggerHook();
         return true;
     } catch (e) {
         console.error('更新失败:', e);
@@ -129,7 +115,6 @@ export async function deleteFriend(index) {
     const newData = data.filter((_, i) => i !== index);
     try {
         await updateFileWithRetry(FRIENDS_PATH, newData, sha, '删除友链');
-        triggerHook();
         return true;
     } catch (e) {
         console.error('删除失败:', e);

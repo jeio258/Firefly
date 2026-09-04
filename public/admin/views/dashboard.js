@@ -1,4 +1,3 @@
-// views/dashboard.js：统计卡（文章/待审/已通过）
 import { store } from '../store.js';
 import { getAllPostFiles } from '../api.js';
 import { getFriendRequests, getFriends } from '../links.js';
@@ -9,10 +8,9 @@ export async function renderDashboard(container) {
     try {
         const [posts, reqs, friends] = await Promise.all([
             getAllPostFiles(store.owner, store.repo, store.branch, store.folder, store.token).catch(() => []),
-            getFriendRequests(store.owner, store.repo, store.branch, store.token),
-            getFriends(store.owner, store.repo, store.branch, store.token)
+            getFriendRequests(),
+            getFriends()
         ]);
-        const draftCount = 0; // 草稿需逐篇读正文，列表页统计
         container.innerHTML = `
         <div class="space-y-5">
             <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">

@@ -1,4 +1,3 @@
-// views/editor.js：新建/编辑文章（SimpleMDE + frontmatter 字段）
 import { store } from '../store.js';
 import { getFileContent, savePost, deletePost } from '../api.js';
 import { buildFrontmatter, stringToBase64 } from '../utils.js';

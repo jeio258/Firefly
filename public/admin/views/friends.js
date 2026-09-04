@@ -1,5 +1,5 @@
-// views/friends.js：友链审核（待审批准/拒绝 + 已通过编辑/删除）
 import { getFriendRequests, getFriends, approveRequest, rejectRequest, updateFriend, deleteFriend } from '../links.js';
+import { escapeHtml, escapeAttr } from '../utils.js';
 import { badge, confirmDlg, emptyState, openModal, closeModal, toast } from '../ui.js';
 
 export async function renderFriends(container) {
@@ -39,9 +39,9 @@ export async function renderFriends(container) {
         <div class="flex items-start gap-4 rounded-lg border border-slate-200 p-4">
             <img src="${escapeAttr(req.imgurl || '')}" onerror="this.style.visibility='hidden'" class="h-10 w-10 shrink-0 rounded-full object-cover" alt="" />
             <div class="min-w-0 flex-1">
-                <p class="text-sm font-medium text-slate-800">${escapeText(req.title)}</p>
-                <a href="${escapeAttr(req.siteurl || '#')}" target="_blank" rel="noopener" class="block truncate text-xs text-brand-600">${escapeText(req.siteurl || '')}</a>
-                <p class="mt-1 text-xs text-slate-500">${escapeText(req.desc || '')}</p>
+                <p class="text-sm font-medium text-slate-800">${escapeHtml(req.title)}</p>
+                <a href="${escapeAttr(req.siteurl || '#')}" target="_blank" rel="noopener" class="block truncate text-xs text-brand-600">${escapeHtml(req.siteurl || '')}</a>
+                <p class="mt-1 text-xs text-slate-500">${escapeHtml(req.desc || '')}</p>
                 <div class="mt-1 flex flex-wrap gap-1">${(req.tags || []).map((t) => badge('emerald', t)).join('')}</div>
             </div>
             <div class="flex shrink-0 gap-2">
@@ -94,8 +94,8 @@ export async function renderFriends(container) {
         <div class="flex items-center gap-4 rounded-lg border border-slate-200 p-4">
             <img src="${escapeAttr(f.imgurl || '')}" onerror="this.style.visibility='hidden'" class="h-10 w-10 shrink-0 rounded-full object-cover" alt="" />
             <div class="min-w-0 flex-1">
-                <p class="text-sm font-medium text-slate-800">${escapeText(f.title)}</p>
-                <p class="truncate text-xs text-slate-400">${escapeText(f.siteurl || '')}</p>
+                <p class="text-sm font-medium text-slate-800">${escapeHtml(f.title)}</p>
+                <p class="truncate text-xs text-slate-400">${escapeHtml(f.siteurl || '')}</p>
             </div>
             <div class="flex shrink-0 gap-1.5">
                 <button class="btn-secondary btn-sm" data-edit="${i}">编辑</button>
@@ -133,7 +133,7 @@ function openEditModal(friends, index, onSuccess) {
                 <div><label class="label">标题</label><input id="ef-title" class="field" value="${escapeAttr(f.title || '')}" /></div>
                 <div><label class="label">网址</label><input id="ef-url" class="field" value="${escapeAttr(f.siteurl || '')}" /></div>
                 <div><label class="label">头像</label><input id="ef-img" class="field" value="${escapeAttr(f.imgurl || '')}" /></div>
-                <div><label class="label">描述</label><textarea id="ef-desc" class="field" rows="2">${escapeText(f.desc || '')}</textarea></div>
+                <div><label class="label">描述</label><textarea id="ef-desc" class="field" rows="2">${escapeHtml(f.desc || '')}</textarea></div>
                 <div><label class="label">标签（逗号分隔）</label><input id="ef-tags" class="field" value="${escapeAttr((f.tags || []).join(', '))}" /></div>
                 <div><label class="label">权重</label><input id="ef-weight" type="number" class="field" value="${f.weight ?? 0}" /></div>
             </div>`,
@@ -164,13 +164,4 @@ function openEditModal(friends, index, onSuccess) {
             toast('更新失败', 'error');
         }
     };
-}
-
-function escapeText(s) {
-    const d = document.createElement('div');
-    d.textContent = s == null ? '' : String(s);
-    return d.innerHTML;
-}
-function escapeAttr(s) {
-    return escapeText(s).replace(/"/g, '&quot;');
 }

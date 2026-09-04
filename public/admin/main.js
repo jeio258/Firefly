@@ -1,5 +1,5 @@
-// main.js：后台应用入口（布局壳 / 路由 / OAuth）
 import { store, loadToken, setToken, clearToken, loadConfig } from './store.js';
+import { escapeHtml } from './utils.js';
 import { toast } from './ui.js';
 import { renderLoginView } from './views/login.js';
 import { renderDashboard } from './views/dashboard.js';
@@ -7,10 +7,9 @@ import { renderPosts } from './views/posts.js';
 import { renderEditor } from './views/editor.js';
 import { renderFriends } from './views/friends.js';
 
-let shell = null;      // 登录后一次性渲染的应用壳
-let drawerOpen = false;
+let shell = null;
 
-// ---------- OAuth（协议与旧后台一致，勿改） ----------
+// OAuth 弹窗 postMessage 协议须与旧后台一致
 function loginWithGithub(onDone) {
     const popup = window.open('/auth', '_blank', 'width=800,height=600');
     if (!popup || popup.closed) {
@@ -61,7 +60,6 @@ function logout() {
     show();
 }
 
-// ---------- 布局壳（对齐 cms-admin：左 240 侧栏 + sticky 顶栏） ----------
 const NAV = [
     { group: '内容管理', items: [
         { path: '/dashboard', label: '仪表盘', icon: 'fa-chart-pie' },
@@ -99,7 +97,7 @@ function renderShell() {
             <div class="border-t border-slate-200 p-3">
                 <div class="rounded-lg bg-slate-50 p-3">
                     <p class="text-xs font-medium text-slate-700">写回仓库</p>
-                    <p class="mt-1 text-[11px] leading-relaxed text-slate-500">${escapeText(store.owner ? `${store.owner}/${store.repo} · ${store.branch}` : '登录后自动读取')}</p>
+                    <p class="mt-1 text-[11px] leading-relaxed text-slate-500">${escapeHtml(store.owner ? `${store.owner}/${store.repo} · ${store.branch}` : '登录后自动读取')}</p>
                 </div>
             </div>
         </aside>
@@ -160,13 +158,6 @@ function renderShell() {
     };
 }
 
-function escapeText(s) {
-    const d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
-}
-
-// ---------- 路由 ----------
 function parseRoute() {
     const raw = (window.location.hash || '#/dashboard').slice(1);
     const [pathPart, queryPart] = raw.split('?');

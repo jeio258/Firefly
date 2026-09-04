@@ -26,7 +26,6 @@ async function gitRequest(owner, repo, branch, method, path, body, token) {
 }
 
 export async function getAllPostFiles(owner, repo, branch, basePath, token) {
-    // 优先使用 Git Trees API
     const treeSha = `${branch}:${basePath}`;
     const treeUrl = `${API_BASE}/repos/${owner}/${repo}/git/trees/${encodeURIComponent(treeSha)}?recursive=1`;
     const headers = { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' };
@@ -44,7 +43,6 @@ export async function getAllPostFiles(owner, repo, branch, basePath, token) {
     } catch (e) {
         console.warn('Trees API 失败，回退递归', e);
     }
-    // 递归获取
     const recursiveGet = async (dirPath) => {
         const res = await gitRequest(owner, repo, branch, 'GET', dirPath, null, token);
         if (!res.ok) return [];
@@ -69,7 +67,6 @@ export async function getFileContent(owner, repo, branch, filePath, token) {
     const data = await res.json();
     if (!data.content) return null;
     const raw = base64ToString(data.content);
-    // 简单解析 frontmatter 获取基础元数据
     const match = raw.match(/^---\n([\s\S]*?)\n---/);
     let title = '', draft = false, description = '', tags = '', category = '', image = '';
     let published = '', updated = '', pinned = false, comment = true, author = '', sourceLink = '', password = '';
@@ -92,7 +89,6 @@ export async function getFileContent(owner, repo, branch, filePath, token) {
         } catch (_) {}
     }
     if (!title) title = filePath.split('/').pop().replace(/\.(md|mdx)$/i, '');
-    // 去掉 frontmatter，正文不显示元数据
     var body = match ? raw.slice(match[0].length).trimStart() : raw;
     return { path: filePath, sha: data.sha, content: body, title, draft, description, tags, category, image, published, updated, pinned, comment, author, sourceLink, password };
 }

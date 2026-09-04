@@ -1,5 +1,5 @@
-// views/login.js：GitHub OAuth 登录页（协议复用 master functions/auth）
 import { store } from '../store.js';
+import { escapeHtml } from '../utils.js';
 
 export function renderLoginView() {
     const app = document.getElementById('app');
@@ -29,7 +29,7 @@ export function renderLoginView() {
                 <div class="mt-7">
                     <button id="login-btn" class="btn-primary w-full justify-center py-2.5"><i class="fab fa-github"></i> 使用 GitHub 登录</button>
                 </div>
-                <p class="mt-6 text-center text-xs leading-relaxed text-slate-400">登录后改动将直接提交到 ${escapeText(store.owner ? `${store.owner}/${store.repo}@${store.branch}` : '配置中的仓库')}</p>
+                <p class="mt-6 text-center text-xs leading-relaxed text-slate-400">登录后改动将直接提交到 ${escapeHtml(store.owner ? `${store.owner}/${store.repo}@${store.branch}` : '配置中的仓库')}</p>
             </div>
         </div>
     </div>`;
@@ -37,10 +37,4 @@ export function renderLoginView() {
         const { handleLoginButton } = await import('../main.js');
         handleLoginButton();
     };
-}
-
-function escapeText(s) {
-    const d = document.createElement('div');
-    d.textContent = s;
-    return d.innerHTML;
 }

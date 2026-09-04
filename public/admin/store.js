@@ -1,4 +1,3 @@
-// store.js：仓库与登录态共享单例
 export const store = {
     token: '',
     owner: '',
@@ -23,7 +22,6 @@ export function clearToken() {
     localStorage.removeItem(TOKEN_KEY);
 }
 
-// 读取 /admin/config.yml（CF Functions 动态生成），解析 owner/repo/branch/folder
 export async function loadConfig() {
     try {
         const res = await fetch('/admin/config.yml');

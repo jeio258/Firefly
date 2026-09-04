@@ -1,6 +1,6 @@
-// views/posts.js：文章列表（搜索/状态/分页/删除）
 import { store } from '../store.js';
 import { getAllPostFiles, getFileContent, deletePost } from '../api.js';
+import { escapeHtml, escapeAttr } from '../utils.js';
 import { badge, emptyState, iconBtnHtml, confirmDlg, toast } from '../ui.js';
 
 export async function renderPosts(container) {
@@ -57,8 +57,8 @@ export async function renderPosts(container) {
                 <tbody>${list.map((p) => `
                     <tr class="border-b border-slate-50 last:border-0 hover:bg-slate-50/60">
                         <td class="px-4 py-2.5">
-                            <button class="block max-w-[24rem] truncate text-left font-medium text-slate-800 hover:text-brand-600" data-open="${escapeAttr(p.path)}">${escapeText(p.title)}</button>
-                            <span class="block max-w-[24rem] truncate font-mono text-[11px] text-slate-400">${escapeText(p.path.replace(store.folder + '/', ''))}</span>
+                            <button class="block max-w-[24rem] truncate text-left font-medium text-slate-800 hover:text-brand-600" data-open="${escapeAttr(p.path)}">${escapeHtml(p.title)}</button>
+                            <span class="block max-w-[24rem] truncate font-mono text-[11px] text-slate-400">${escapeHtml(p.path.replace(store.folder + '/', ''))}</span>
                         </td>
                         <td class="px-2 py-2.5">
                             ${p.category ? badge('blue', p.category) : ''}
@@ -102,13 +102,4 @@ export async function renderPosts(container) {
     document.getElementById('post-refresh').onclick = () => load();
     search.addEventListener('input', render);
     await load();
-}
-
-function escapeText(s) {
-    const d = document.createElement('div');
-    d.textContent = s == null ? '' : String(s);
-    return d.innerHTML;
-}
-function escapeAttr(s) {
-    return escapeText(s).replace(/"/g, '&quot;');
 }
