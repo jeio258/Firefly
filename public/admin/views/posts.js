@@ -46,7 +46,7 @@ export async function renderPosts(container) {
             return;
         }
         box.innerHTML = `
-        <div class="overflow-x-auto">
+        <div class="hidden overflow-x-auto sm:block">
             <table class="w-full text-left text-sm">
                 <thead><tr class="border-b border-slate-100 text-xs text-slate-400">
                     <th class="px-4 py-2.5 font-medium">标题</th>
@@ -70,32 +70,50 @@ export async function renderPosts(container) {
                         </div></td>
                     </tr>`).join('')}</tbody>
             </table>
+        </div>
+        <div id="post-cards" class="divide-y divide-slate-100 sm:hidden">
+            ${list.map((p) => `
+                <div class="px-4 py-3">
+                    <div class="flex items-start justify-between gap-2">
+                        <button class="min-w-0 flex-1 truncate text-left text-sm font-medium text-slate-800 hover:text-brand-600" data-open="${escapeAttr(p.path)}">${escapeHtml(p.title)}</button>
+                        ${p.draft ? badge('amber', '草稿') : badge('emerald', '已发布')}
+                    </div>
+                    <p class="mt-1 truncate font-mono text-[11px] text-slate-400">${escapeHtml(p.path.replace(store.folder + '/', ''))}</p>
+                    <div class="mt-2 flex items-center justify-between gap-2">
+                        <div class="flex min-w-0 flex-wrap gap-1">
+                            ${p.category ? badge('blue', p.category) : ''}
+                            ${(Array.isArray(p.tags) ? p.tags.slice(0, 2) : []).map((t) => badge('emerald', t)).join('')}
+                        </div>
+                        <div class="flex shrink-0 gap-1">${iconBtnHtml('fa-pen', '编辑')}${iconBtnHtml('fa-trash-can', '删除', 'danger')}</div>
+                    </div>
+                </div>`).join('')}
         </div>`;
 
         box.querySelectorAll('[data-open]').forEach((b) => {
             b.onclick = () => (window.location.hash = `#/edit?path=${encodeURIComponent(b.dataset.open)}`);
         });
-        box.querySelectorAll('button[aria-label="编辑"]').forEach((b, i) => {
-            b.onclick = () => (window.location.hash = `#/edit?path=${encodeURIComponent(list[i].path)}`);
-        });
-        box.querySelectorAll('button[aria-label="删除"]').forEach(async (b, i) => {
-            const item = list[i];
-            b.onclick = async () => {
+        const bindRow = (btn, item, isDel) => {
+            btn.onclick = async () => {
+                if (!isDel) { window.location.hash = `#/edit?path=${encodeURIComponent(item.path)}`; return; }
                 const ok = await confirmDlg({ title: '删除文章', message: `确认删除「${item.title}」（${item.path}）？删除将直接提交仓库。`, confirmText: '确认删除' });
                 if (!ok) return;
-                if (!item.sha) {
-                    toast('该文件尚未读取到 sha，请刷新后重试', 'error');
-                    return;
-                }
+                if (!item.sha) { toast('该文件尚未读取到 sha，请刷新后重试', 'error'); return; }
                 const res = await deletePost(store.owner, store.repo, store.branch, item.path, item.sha, store.token);
-                if (res.ok) {
-                    toast('文章已删除');
-                    await load();
-                } else {
-                    const err = await res.json().catch(() => ({}));
-                    toast(`删除失败: ${err.message || res.status}`, 'error');
-                }
+                if (res.ok) { toast('文章已删除'); await load(); }
+                else { const err = await res.json().catch(() => ({})); toast(`删除失败: ${err.message || res.status}`, 'error'); }
             };
+        };
+        let ti = 0;
+        box.querySelectorAll('tbody tr').forEach((tr) => {
+            const item = list[ti++];
+            bindRow(tr.querySelector('button[aria-label="编辑"]'), item, false);
+            bindRow(tr.querySelector('button[aria-label="删除"]'), item, true);
+        });
+        let ci = 0;
+        box.querySelectorAll('#post-cards > div').forEach((el) => {
+            const item = list[ci++];
+            bindRow(el.querySelector('button[aria-label="编辑"]'), item, false);
+            bindRow(el.querySelector('button[aria-label="删除"]'), item, true);
         });
     }
 
