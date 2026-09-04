@@ -6,10 +6,7 @@
     <title>申请友链 · 临渊羡鱼</title>
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon/firefly-32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/firefly-180.png" />
-    <link rel="preconnect" href="https://cdn.tailwindcss.com" />
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script>
         (function() {
             try {
@@ -22,7 +19,7 @@
     <style>
         /* ========== Firefly 设计系统 CSS 变量 ========== */
         :root {
-            --hue: 250;
+            --hue: 165;
             --primary: oklch(0.55 0.15 var(--hue));
             --primary-soft: oklch(0.55 0.15 var(--hue) / 10%);
             --primary-hover: oklch(0.50 0.16 var(--hue));
@@ -215,9 +212,7 @@
             <span style="color:var(--primary);font-size:1.25rem;">✦</span>
             <span>临渊羡鱼</span>
         </a>
-        <button id="theme-btn" title="切换亮暗模式" style="background:var(--btn-regular-bg);border:1px solid var(--line-divider);color:var(--text-secondary);border-radius:0.625rem;width:2.25rem;height:2.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all 0.15s;">
-            <i class="fas fa-moon"></i>
-        </button>
+        <button id="theme-btn" title="切换亮暗模式" style="background:var(--btn-regular-bg);border:1px solid var(--line-divider);color:var(--text-secondary);border-radius:0.625rem;width:2.25rem;height:2.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all 0.15s;" aria-label="切换亮暗模式"></button>
     </nav>
     <div class="page-heading">
         <h1>🔗 申请友链</h1>
@@ -248,9 +243,7 @@
                         <label>标签 <span style="color:var(--text-tertiary);font-weight:400;">(逗号分隔)</span></label>
                         <input id="apply-tags" type="text" class="input" placeholder="技术, 博客, 前端">
                     </div>
-                    <button type="submit" class="btn">
-                        <i class="fas fa-paper-plane"></i> 提交申请
-                    </button>
+                    <button type="submit" class="btn">提交申请</button>
                     <p id="apply-msg"></p>
                 </form>
             </div>
@@ -260,9 +253,7 @@
     <script>
         function updateThemeBtn() {
             var btn = document.getElementById('theme-btn');
-            if (btn) btn.innerHTML = document.documentElement.classList.contains('dark')
-                ? '<i class="fas fa-sun"></i>'
-                : '<i class="fas fa-moon"></i>';
+            if (btn) btn.textContent = document.documentElement.classList.contains('dark') ? '☀' : '☾';
         }
         function applyTheme() {
             var t = localStorage.getItem('theme') || 'system';
