@@ -66,6 +66,7 @@ Firefly 项目中所有可复用组件的集中管理。组件按照功能和职
 - `CoverImage.astro` - 封面图组件（支持本地图片和随机图API）
 - `ImageWrapper.astro` - 图片包装器（支持本地和远程图片）
 - `Markdown.astro` - Markdown 内容样式包装器
+- `PioMessageBox.astro` - 消息框组件（Live2D/Spine 消息显示）
 - `Timeline.astro` / `TimelineItem.astro` - MDX 时间线组件（左侧竖线节点，条目支持日期/标题/正文 Markdown、节点换色和内置图标）
 - `Steps.astro` / `StepItem.astro` / `Badge.astro`  - MDX 内容组件（编号步骤条、内联徽章）
 
@@ -74,8 +75,8 @@ Firefly 项目中所有可复用组件的集中管理。组件按照功能和职
 - `Pagination.astro` - 静态路由分页（Astro 原生）
 
 **列表与筛选组件**
-- `FilterControls.svelte` - 筛选控制组件（胶囊筛选按钮）
-- `TabNav.svelte` - 标签导航组件（支持 URL hash 深链）
+- `FilterControls.svelte` - 筛选控制组件（胶囊筛选按钮，bangumi/vndb/mal 共用）
+- `TabNav.svelte` - 标签导航组件（支持 URL hash 深链，bangumi/vndb/mal/bilibili 共用）
 - `GridSkeleton.svelte` - 媒体网格加载骨架
 
 ### 🧩 widget/ - 小部件
@@ -91,6 +92,7 @@ Firefly 项目中所有可复用组件的集中管理。组件按照功能和职
 - `SidebarTOC.astro` - 侧边栏目录组件
 - `SiteInfo.astro` - 站点信息组件
 - `SiteStats.astro` - 站点统计组件
+- `SpineModel.astro` - Spine 看板娘组件
 - `Tags.astro` - 标签组件
 
 ### ✨ features/ - 全局功能特效组件
@@ -106,8 +108,10 @@ Firefly 项目中所有可复用组件的集中管理。组件按照功能和职
 **功能组件**
 - `EncryptedContent.astro` - 加密内容组件
 - `EncryptedPost.astro` - 加密文章组件
+- `Live2DWidget.astro` - Live2D 看板娘组件
 - `MusicPlayer.astro` - 音乐播放器 UI 视图控制器（纯 UI，委托 MusicManager 进行播放控制）
 - `SakuraEffect.astro` - 樱花飘落特效
+- `SpineModel.astro` - Spine 看板娘组件
 - `TypewriterText.astro` - 打字机动画效果
 
 ### 📃 pages/ - 页面特定组件
@@ -115,6 +119,11 @@ Firefly 项目中所有可复用组件的集中管理。组件按照功能和职
 特定页面使用的组件，不用于其他页面。
 
 - `AdvancedSearch.svelte` - 高级搜索组件
+
+**pages/bangumi/** - 番组计划页面组件
+- `BangumiGrid.svelte` - 番组网格布局组件
+- `BangumiSection.svelte` - 番组分类展示组件
+- `Card.svelte` - 番组卡片组件
 
 **pages/gallery/** - 相册页面组件
 - `AlbumCard.astro` - 相册卡片组件

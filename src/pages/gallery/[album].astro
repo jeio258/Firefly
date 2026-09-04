@@ -28,7 +28,7 @@ if (!albumMeta) {
 	return Astro.redirect("/404/");
 }
 
-const photos = await scanAlbumPhotos(albumMeta.id);
+const photos = scanAlbumPhotos(albumMeta.id);
 const cover = getAlbumCover(albumMeta, photos);
 const columnWidth = galleryConfig.columnWidth || 240;
 
@@ -39,7 +39,6 @@ const coverLqipProps = cover
 ---
 
 <MainGridLayout title={albumMeta.name} description={albumMeta.description || ""}>
-  <link slot="head" rel="preconnect" href="https://s41.ax1x.com" />
   <!-- 相册封面横幅 -->
   <div class="w-full rounded-(--radius-large) overflow-hidden relative">
     {cover ? (

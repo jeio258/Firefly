@@ -21,7 +21,7 @@ export const displaySettingsConfig: DisplaySettingsConfig =
 		// 无需改动本文件：PUBLIC_DISPLAY_SETTINGS=true
 		// 环境变量优先级更高，未设置或取值无法识别时使用这里的值
 		// 生产环境建议默认关闭，只在开发调试环境开启用来预览效果
-		enable: true,
+		enable: false,
 
 		// ── 外观 (Appearance) ──────────────────────────────────
 
@@ -42,6 +42,9 @@ export const displaySettingsConfig: DisplaySettingsConfig =
 		// 壁纸模式切换开关
 		wallpaperModeSwitchable: true,
 
+		// 全屏壁纸布局切换开关（classic / hero）
+		fullscreenLayoutSwitchable: true,
+
 		// 水波纹动画开关
 		wavesSwitchable: true,
 
@@ -54,7 +57,7 @@ export const displaySettingsConfig: DisplaySettingsConfig =
 		// 壁纸轮播开关
 		bannerCarouselSwitchable: true,
 
-		// 全屏透明模式参数调节开关
+		// 全屏壁纸/透明覆盖模式参数调节开关
 		// 设为 false 关闭所有滑块，或用对象形式单独控制每个滑块
 		overlaySwitchable: {
 			opacity: true,
