@@ -41,16 +41,13 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		name: "我的",
 		url: "#",
 		icon: "material-symbols:person",
-		children: [
-			// 动态
-			LinkPresets.Dynamic,
+	children: [
+		// 相册
+		LinkPresets.Gallery,
 
-			// 相册
-			LinkPresets.Gallery,
-
-			// 书签导航
-			LinkPresets.Booknav,
-		],
+		// 书签导航
+		LinkPresets.Booknav,
+	],
 	});
 
 	// 关于及其子菜单
