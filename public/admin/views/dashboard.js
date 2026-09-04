@@ -19,13 +19,13 @@ export async function renderDashboard(container) {
                 ${statCard('已通过友链', (friends.data || []).length, 'fa-link', 'text-emerald-600')}
                 ${statCard('目标仓库', '', 'fa-git-alt', 'text-slate-500')}
             </div>
-            <div class="card flex items-center justify-between p-4 text-sm">
-                <div class="flex items-center gap-2 text-slate-600">
+            <div class="card flex flex-col gap-3 p-4 text-sm sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex flex-wrap items-center gap-2 text-slate-600">
                     <i class="fas fa-cloud-arrow-up text-brand-500"></i>
                     <span>写回目标</span>
                     ${badge('slate', `${store.owner}/${store.repo}@${store.branch}`)}
                 </div>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                     <a href="#/posts" class="btn-secondary btn-sm">文章管理</a>
                     <a href="#/friends" class="btn-secondary btn-sm">友链审核</a>
                 </div>

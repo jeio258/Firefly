@@ -1,6 +1,6 @@
 import { store, loadToken, setToken, clearToken, loadConfig } from './store.js';
 import { escapeHtml } from './utils.js';
-import { toast } from './ui.js';
+import { toast, openModal, closeModal } from './ui.js';
 import { renderLoginView } from './views/login.js';
 import { renderDashboard } from './views/dashboard.js';
 import { renderPosts } from './views/posts.js';
@@ -60,6 +60,36 @@ function logout() {
     show();
 }
 
+// ---------- 主题深浅（跟随前台，支持手动切换） ----------
+function applyDark(dark) {
+    document.documentElement.classList.toggle('dark', dark);
+    const b = document.getElementById('theme-toggle');
+    if (b) b.innerHTML = dark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+}
+
+function resolvedDark() {
+    const mode = localStorage.getItem('theme');
+    return mode === 'dark' || (!mode && window.matchMedia('(prefers-color-scheme: dark)').matches);
+}
+
+let themeWired = false;
+function wireThemeEvents() {
+    if (themeWired) return;
+    themeWired = true;
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'theme' || e.key === 'hue') syncTheme();
+    });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (!localStorage.getItem('theme')) syncTheme();
+    });
+}
+
+function syncTheme() {
+    applyDark(resolvedDark());
+    const hue = parseInt(localStorage.getItem('hue'), 10);
+    if (hue >= 0 && hue <= 360) document.documentElement.style.setProperty('--hue', String(hue));
+}
+
 const NAV = [
     { group: '内容管理', items: [
         { path: '/dashboard', label: '仪表盘', icon: 'fa-chart-pie' },
@@ -85,7 +115,7 @@ function renderShell() {
         </div>`).join('');
     app.innerHTML = `
     <div class="flex min-h-screen bg-slate-50">
-        <aside class="fixed inset-y-0 left-0 z-30 hidden w-60 border-r border-slate-200 bg-white lg:block">
+        <aside class="fixed inset-y-0 left-0 z-30 hidden w-60 border-r border-slate-200 bg-(--card-bg) lg:block">
             <div class="flex h-16 items-center gap-2.5 px-5">
                 <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">F</span>
                 <div class="leading-tight">
@@ -103,9 +133,11 @@ function renderShell() {
         </aside>
 
         <div class="flex min-w-0 flex-1 flex-col lg:pl-60">
-            <header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-slate-200 bg-white/90 px-4 backdrop-blur sm:px-6">
+            <header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-slate-200 bg-(--card-bg) px-4 backdrop-blur sm:px-6">
                 <button id="hamburger" class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 lg:hidden" aria-label="打开菜单"><i class="fas fa-bars"></i></button>
                 <h1 id="page-title" class="min-w-0 flex-1 truncate text-base font-semibold text-slate-900 sm:text-lg"></h1>
+                <button id="theme-toggle" class="hidden h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-brand-600 sm:inline-flex" aria-label="切换深浅模式"></button>
+                <button id="preview-btn" class="hidden h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-brand-600 sm:inline-flex" aria-label="预览前台" title="预览前台"><i class="fas fa-eye"></i></button>
                 <div class="relative">
                     <button id="user-menu-btn" class="flex items-center gap-2 rounded-lg py-1 pl-1 pr-2 transition-colors hover:bg-slate-100">
                         <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700">GH</span>
@@ -115,7 +147,7 @@ function renderShell() {
                         </span>
                         <i class="fas fa-chevron-down text-slate-400"></i>
                     </button>
-                    <div id="user-menu" class="absolute right-0 top-full z-40 mt-2 hidden w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
+                    <div id="user-menu" class="absolute right-0 top-full z-40 mt-2 hidden w-44 overflow-hidden rounded-xl border border-slate-200 bg-(--card-bg) py-1 shadow-lg">
                         <button id="logout-btn" class="flex w-full items-center gap-2 px-3 py-2 text-sm text-rose-600 transition-colors hover:bg-rose-50"><i class="fas fa-right-from-bracket"></i>退出登录</button>
                     </div>
                 </div>
@@ -156,6 +188,39 @@ function renderShell() {
         userMenu.classList.add('hidden');
         logout();
     };
+    applyDark(resolvedDark());
+    app.querySelector('#theme-toggle').onclick = () => {
+        localStorage.setItem('theme', resolvedDark() ? 'light' : 'dark');
+        syncTheme();
+    };
+    app.querySelector('#preview-btn').onclick = openPreviewModal;
+    wireThemeEvents();
+}
+
+// ---------- 前台主题预览 ----------
+function openPreviewModal() {
+    const wrap = openModal({
+        title: '前台主题预览',
+        body: '<iframe id="preview-iframe" src="/" class="h-[60vh] w-full rounded border-(--line-divider) bg-(--card-bg)"></iframe>',
+        footer: '<button class="btn-secondary btn-sm" data-pf-close>关闭</button>'
+    });
+    const iframe = wrap.querySelector('#preview-iframe');
+    const apply = () => {
+        try {
+            const root = iframe.contentDocument.documentElement;
+            const h = document.documentElement.style.getPropertyValue('--hue')
+                || getComputedStyle(document.documentElement).getPropertyValue('--hue');
+            if (h) root.style.setProperty('--hue', h);
+            root.classList.toggle('dark', document.documentElement.classList.contains('dark'));
+        } catch {}
+    };
+    iframe.addEventListener('load', apply);
+    const obs = new MutationObserver(apply);
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class', 'style'] });
+    wrap.querySelector('[data-pf-close]').onclick = () => {
+        obs.disconnect();
+        closeModal();
+    };
 }
 
 function parseRoute() {
@@ -175,7 +240,7 @@ function showError(err) {
         <div class="card max-w-2xl p-6">
             <p class="mb-2 text-sm font-semibold text-rose-600"><i class="fas fa-triangle-exclamation"></i> 后台初始化失败</p>
             <p class="mb-3 text-xs text-slate-500">请把下面信息反馈给维护者（或检查 /auth、/admin/config.yml 是否可访问）：</p>
-            <pre class="max-h-80 overflow-auto rounded-lg bg-slate-900 p-4 text-xs leading-relaxed text-slate-100"></pre>
+            <pre class="max-h-80 overflow-auto rounded-lg bg-(--codeblock-bg) p-4 text-xs leading-relaxed text-(--codeblock-text)"></pre>
         </div>
     </div>`;
     app.querySelector('pre').textContent = msg;

@@ -200,3 +200,77 @@
   height: 420px !important;
 }
 body { background: var(--page-bg); }
+
+/* 代码/错误块专用背景（亮暗一致） */
+:root {
+  --codeblock-bg: oklch(0.17 0.015 var(--hue));
+  --codeblock-text: oklch(0.92 0.02 var(--hue));
+  --overlay: rgba(0, 0, 0, 0.5);
+}
+
+/* ===== 暗色模式：镜像 variables.styl dark 块 ===== */
+:root.dark {
+  --primary: oklch(0.75 0.14 var(--hue));
+  --primary-hover: oklch(0.80 0.12 var(--hue));
+  --page-bg: oklch(0.16 0.014 var(--hue));
+  --card-bg: oklch(0.23 0.015 var(--hue));
+  --btn-content: oklch(0.78 0.10 var(--hue));
+  --btn-regular-bg: oklch(0.33 0.035 var(--hue));
+  --btn-regular-bg-hover: oklch(0.38 0.04 var(--hue));
+  --btn-regular-bg-active: oklch(0.43 0.045 var(--hue));
+  --deep-text: oklch(0.93 0.02 var(--hue));
+  --line-divider: rgba(255, 255, 255, 0.08);
+  --line-color: rgba(255, 255, 255, 0.10);
+  --danger: oklch(0.65 0.20 25);
+  --danger-hover: oklch(0.72 0.19 25);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* 暗色下色族反转：中性灰与状态色变深底亮字 */
+.dark {
+  --color-brand-50: oklch(0.22 0.04 var(--hue));
+  --color-brand-100: oklch(0.30 0.05 var(--hue));
+  --color-brand-200: oklch(0.40 0.06 var(--hue));
+
+  --color-slate-50: oklch(0.22 0.015 var(--hue));
+  --color-slate-100: oklch(0.27 0.018 var(--hue));
+  --color-slate-200: oklch(0.33 0.020 var(--hue));
+  --color-slate-300: oklch(0.50 0.020 var(--hue));
+  --color-slate-400: oklch(0.68 0.020 var(--hue));
+  --color-slate-500: oklch(0.76 0.020 var(--hue));
+  --color-slate-600: oklch(0.83 0.020 var(--hue));
+  --color-slate-700: oklch(0.89 0.020 var(--hue));
+  --color-slate-800: oklch(0.93 0.020 var(--hue));
+  --color-slate-900: oklch(0.97 0.018 var(--hue));
+  --color-slate-950: oklch(1.00 0.010 var(--hue));
+
+  --color-emerald-50: oklch(0.24 0.05 180); --color-emerald-100: oklch(0.31 0.06 180);
+  --color-emerald-200: oklch(0.40 0.07 180); --color-emerald-600: oklch(0.70 0.11 180);
+  --color-emerald-700: oklch(0.77 0.11 180); --color-emerald-800: oklch(0.84 0.10 180);
+  --color-cyan-50: oklch(0.24 0.05 195); --color-cyan-600: oklch(0.70 0.11 195);
+  --color-cyan-700: oklch(0.77 0.11 195);
+  --color-amber-50: oklch(0.26 0.07 60); --color-amber-100: oklch(0.33 0.08 60);
+  --color-amber-200: oklch(0.42 0.09 60); --color-amber-600: oklch(0.72 0.14 60);
+  --color-amber-700: oklch(0.79 0.14 60);
+  --color-rose-50: oklch(0.26 0.07 25); --color-rose-100: oklch(0.33 0.09 25);
+  --color-rose-200: oklch(0.42 0.10 25); --color-rose-600: oklch(0.72 0.17 25);
+  --color-rose-700: oklch(0.79 0.16 25); --color-rose-800: oklch(0.86 0.14 25);
+  --color-blue-50: oklch(0.24 0.05 250); --color-blue-100: oklch(0.31 0.06 250);
+  --color-blue-200: oklch(0.40 0.07 250); --color-blue-600: oklch(0.70 0.14 250);
+  --color-blue-700: oklch(0.77 0.14 250);
+  --color-violet-50: oklch(0.26 0.06 310); --color-violet-600: oklch(0.72 0.15 310);
+  --color-violet-700: oklch(0.79 0.14 310);
+}
+
+/* 暗色下品牌文字单独调亮（背景色保持饱和表面） */
+.dark .text-brand-600 { color: oklch(0.76 0.13 var(--hue)); }
+.dark .text-brand-700 { color: oklch(0.82 0.11 var(--hue)); }
+
+/* SimpleMDE 暗色适配 */
+.dark .editor-toolbar,
+.dark .CodeMirror { border-color: var(--line-divider) !important; background: var(--card-bg) !important; color: var(--deep-text) !important; }
+.dark .CodeMirror-cursor { border-left-color: var(--deep-text) !important; }
+.dark .CodeMirror-selected { background: oklch(0.42 0.07 var(--hue)) !important; }
+.dark .editor-toolbar a { color: var(--deep-text) !important; }
+.dark .editor-toolbar a.active { background: var(--btn-regular-bg-hover) !important; }
+

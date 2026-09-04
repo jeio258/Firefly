@@ -19,7 +19,7 @@ export function toast(message, type = 'success') {
         ? 'border-emerald-200 bg-emerald-50 text-emerald-800'
         : type === 'error'
             ? 'border-rose-200 bg-rose-50 text-rose-800'
-            : 'border-slate-200 bg-white text-slate-700';
+            : 'border-slate-200 bg-(--card-bg) text-slate-700';
     const icon = type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-xmark' : 'fa-circle-info';
     const root = document.getElementById('toast-root');
     const el = document.createElement('div');
@@ -35,8 +35,8 @@ export function openModal({ title, body, footer, onClose }) {
     const root = document.getElementById('modal-root');
     root.innerHTML = `
         <div class="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4">
-            <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]" data-close></div>
-            <div class="relative z-10 w-full max-w-lg rounded-t-2xl bg-white shadow-xl sm:rounded-xl">
+            <div class="absolute inset-0 bg-(--overlay) backdrop-blur-[2px]" data-close></div>
+            <div class="relative z-10 w-full max-w-lg rounded-t-2xl bg-(--card-bg) shadow-xl sm:rounded-xl">
                 <div class="flex items-center justify-between border-b border-slate-200 px-5 py-3.5">
                     <h3 class="text-base font-semibold text-slate-900">${escapeHtml(title)}</h3>
                     <button data-close class="rounded-md p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"><i class="fas fa-xmark"></i></button>
@@ -107,9 +107,9 @@ export function emptyState(title, description = '', icon = 'fa-inbox') {
 
 export function iconBtnHtml(icon, title, variant = 'card') {
     const cls = {
-        card: 'border bg-white text-slate-500 shadow-sm border-slate-200 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-600',
+        card: 'border bg-(--card-bg) text-slate-500 shadow-sm border-slate-200 hover:border-brand-200 hover:bg-brand-50 hover:text-brand-600',
         ghost: 'border border-transparent bg-transparent text-slate-400 hover:bg-slate-100 hover:text-slate-600',
-        danger: 'border bg-white text-slate-500 shadow-sm border-slate-200 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600'
+        danger: 'border bg-(--card-bg) text-slate-500 shadow-sm border-slate-200 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600'
     }[variant];
     return `<button type="button" title="${escapeHtml(title)}" aria-label="${escapeHtml(title)}" class="inline-flex h-8 w-8 items-center justify-center rounded-lg transition-all ${cls}"><i class="fas ${icon} text-sm"></i></button>`;
 }

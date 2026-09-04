@@ -10,9 +10,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.css" />
     <link rel="stylesheet" href="./styles/admin.css" />
     <script>
-        // 读同源 localStorage 的前台主题色相，写回 --hue（无则保持 CSS 默认）
-        const hue = parseInt(localStorage.getItem('hue'), 10);
-        if (hue >= 0 && hue <= 360) document.documentElement.style.setProperty('--hue', String(hue));
+        // 同步前台主题：读同源 localStorage hue / theme（light|dark|system），写 --hue 与 dark class
+        (() => {
+            const hue = parseInt(localStorage.getItem('hue'), 10);
+            if (hue >= 0 && hue <= 360) document.documentElement.style.setProperty('--hue', String(hue));
+            const theme = localStorage.getItem('theme');
+            const dark = theme === 'dark' || (!theme && matchMedia('(prefers-color-scheme: dark)').matches);
+            document.documentElement.classList.toggle('dark', dark);
+        })();
     </script>
 </head>
 <body>
