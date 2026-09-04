@@ -10,7 +10,7 @@ export function renderLoginView() {
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,.18),transparent_45%)]"></div>
             <div class="relative max-w-md px-10 text-white">
                 <div class="mb-8 flex items-center gap-3">
-                    <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 text-lg font-bold backdrop-blur">F</span>
+                    <img src="/favicon/firefly-32.png" alt="Firefly" class="h-11 w-11 rounded-xl" />
                     <div>
                         <p class="text-lg font-semibold">Firefly 后台</p>
                         <p class="text-sm text-brand-100">Firefly Admin Console</p>

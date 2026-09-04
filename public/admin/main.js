@@ -1,6 +1,6 @@
 import { store, loadToken, setToken, clearToken, loadConfig } from './store.js';
 import { escapeHtml } from './utils.js';
-import { toast, openModal, closeModal, githubIcon } from './ui.js';
+import { toast, openModal, closeModal } from './ui.js';
 import { renderLoginView } from './views/login.js';
 import { renderDashboard } from './views/dashboard.js';
 import { renderPosts } from './views/posts.js';
@@ -117,7 +117,7 @@ function renderShell() {
     <div class="flex min-h-screen bg-slate-50">
         <aside class="fixed inset-y-0 left-0 z-30 hidden w-60 border-r border-slate-200 bg-(--card-bg) lg:block">
             <div class="flex h-16 items-center gap-2.5 px-5">
-                <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">F</span>
+                <img src="/favicon/firefly-32.png" alt="Firefly" class="h-8 w-8 shrink-0 rounded-lg" />
                 <div class="leading-tight">
                     <p class="text-sm font-semibold text-slate-900">Firefly 后台</p>
                     <p class="text-[11px] text-slate-400">管理控制台</p>
@@ -140,7 +140,7 @@ function renderShell() {
                 <button id="preview-btn" class="hidden h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-brand-600 sm:inline-flex" aria-label="预览前台" title="预览前台"><i class="fas fa-eye"></i></button>
                 <div class="relative">
                     <button id="user-menu-btn" class="flex items-center gap-2 rounded-lg py-1 pl-1 pr-2 transition-colors hover:bg-slate-100">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-white">${githubIcon('18')}</span>
+                        <img src="/favicon/firefly-32.png" alt="" class="h-8 w-8 rounded-full" />
                         <span class="hidden text-left leading-tight sm:block">
                             <span class="block text-sm font-medium text-slate-800">GitHub</span>
                             <span class="block text-[11px] text-slate-500">已授权</span>
