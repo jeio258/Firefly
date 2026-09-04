@@ -175,39 +175,67 @@ function parseRoute() {
     return { path, params };
 }
 
+function showError(err) {
+    const msg = (err && (err.stack || err.message)) || String(err);
+    const app = document.getElementById('app');
+    if (!app) return;
+    app.innerHTML = `
+    <div class="flex min-h-screen items-center justify-center bg-slate-50 p-6">
+        <div class="card max-w-2xl p-6">
+            <p class="mb-2 text-sm font-semibold text-rose-600"><i class="fas fa-triangle-exclamation"></i> 后台初始化失败</p>
+            <p class="mb-3 text-xs text-slate-500">请把下面信息反馈给维护者（或检查 /auth、/admin/config.yml 是否可访问）：</p>
+            <pre class="max-h-80 overflow-auto rounded-lg bg-slate-900 p-4 text-xs leading-relaxed text-slate-100"></pre>
+        </div>
+    </div>`;
+    app.querySelector('pre').textContent = msg;
+}
+
+window.addEventListener('error', (e) => showError(e.message || e.error));
+window.addEventListener('unhandledrejection', (e) => showError(e.reason));
+
 async function show() {
-    const { path, params } = parseRoute();
-    if (!store.token) {
-        renderLoginView();
-        return;
+    try {
+        const { path, params } = parseRoute();
+        if (!store.token) {
+            renderLoginView();
+            return;
+        }
+        if (!shell) renderShell();
+        if (!store.owner && !(await loadConfig())) {
+            toast('配置加载失败，请检查 /admin/config.yml', 'error');
+            clearToken();
+            shell = null;
+            renderLoginView();
+            return;
+        }
+        const view = shell.viewEl();
+        if (path === '/posts') renderPosts(view);
+        else if (path === '/new') renderEditor(view, null);
+        else if (path === '/edit') renderEditor(view, params.get('path'));
+        else if (path === '/friends') renderFriends(view);
+        else renderDashboard(view);
+        shell.setActive(path === '/new' || path === '/edit' ? '/posts' : path);
+    } catch (e) {
+        console.error(e);
+        showError(e);
     }
-    if (!shell) renderShell();
-    if (!store.owner && !(await loadConfig())) {
-        toast('配置加载失败，请检查 /admin/config.yml', 'error');
-        clearToken();
-        shell = null;
-        renderLoginView();
-        return;
-    }
-    const view = shell.viewEl();
-    if (path === '/posts') renderPosts(view);
-    else if (path === '/new') renderEditor(view, null);
-    else if (path === '/edit') renderEditor(view, params.get('path'));
-    else if (path === '/friends') renderFriends(view);
-    else renderDashboard(view);
-    shell.setActive(path === '/new' || path === '/edit' ? '/posts' : path);
 }
 
 window.addEventListener('hashchange', () => show());
 document.addEventListener('DOMContentLoaded', () => {
-    loadToken();
-    const params = new URLSearchParams(window.location.search);
-    const tokenFromUrl = params.get('token');
-    if (tokenFromUrl) {
-        setToken(tokenFromUrl);
-        history.replaceState({}, document.title, window.location.pathname);
+    try {
+        loadToken();
+        const params = new URLSearchParams(window.location.search);
+        const tokenFromUrl = params.get('token');
+        if (tokenFromUrl) {
+            setToken(tokenFromUrl);
+            history.replaceState({}, document.title, window.location.pathname);
+        }
+        show();
+    } catch (e) {
+        console.error(e);
+        showError(e);
     }
-    show();
 });
 
 export function handleLoginButton() {

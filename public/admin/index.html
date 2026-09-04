@@ -31,7 +31,7 @@
             }
         };
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com" defer></script>
     <style type="text/tailwindcss">
         @layer components {
             .btn {
@@ -63,11 +63,11 @@
     </style>
 </head>
 <body>
-    <div id="app"></div>
+    <div id="app"><div class="flex min-h-screen items-center justify-center text-sm text-slate-500"><i class="fas fa-circle-notch fa-spin mr-2"></i>正在加载后台…</div></div>
     <div id="modal-root"></div>
     <div id="toast-root" class="pointer-events-none fixed inset-x-0 top-4 z-[100] flex flex-col items-center gap-2 px-4 sm:left-auto sm:right-6 sm:items-end"></div>
-    <script src="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" defer></script>
     <script type="module" src="./main.js"></script>
 </body>
 </html>
