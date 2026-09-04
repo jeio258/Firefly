@@ -8,59 +8,7 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.css" />
-    <script>
-        // 主题调色板（对齐 cms-admin 的 brand indigo）
-        window.tailwind = window.tailwind || {};
-        window.tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc',
-                            400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca',
-                            800: '#3730a3', 900: '#312e81'
-                        }
-                    },
-                    boxShadow: {
-                        card: '0 1px 2px 0 rgb(16 24 40 / 0.04), 0 1px 3px 0 rgb(16 24 40 / 0.06)'
-                    },
-                    fontFamily: {
-                        sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', '"PingFang SC"', '"Hiragino Sans GB"', '"Microsoft YaHei"', 'sans-serif']
-                    }
-                }
-            }
-        };
-    </script>
-    <script src="https://cdn.tailwindcss.com" defer></script>
-    <style type="text/tailwindcss">
-        @layer components {
-            .btn {
-                @apply inline-flex items-center justify-center gap-1.5 rounded-lg text-sm font-medium transition-colors
-                       focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2
-                       disabled:cursor-not-allowed disabled:opacity-50;
-            }
-            .btn-primary { @apply btn bg-brand-600 px-4 py-2 text-white hover:bg-brand-700; }
-            .btn-secondary { @apply btn border border-slate-300 bg-white px-4 py-2 text-slate-700 hover:bg-slate-50; }
-            .btn-danger { @apply btn bg-rose-600 px-4 py-2 text-white hover:bg-rose-700; }
-            .btn-ghost { @apply btn px-2.5 py-1.5 text-slate-600 hover:bg-slate-100; }
-            .btn-sm { @apply px-3 py-1.5 text-[13px]; }
-            .field {
-                @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800
-                       placeholder:text-slate-400 focus:border-brand-500 focus:outline-none
-                       focus:ring-2 focus:ring-brand-100;
-            }
-            .label { @apply mb-1.5 block text-sm font-medium text-slate-700; }
-            .card { @apply rounded-xl border border-slate-200 bg-white shadow-card; }
-        }
-        /* SimpleMDE 浅色适配 */
-        .editor-toolbar { border-color: #e2e8f0 !important; border-radius: 0.5rem 0.5rem 0 0 !important; }
-        .CodeMirror {
-            border-color: #e2e8f0 !important;
-            border-radius: 0 0 0.5rem 0.5rem !important;
-            height: 420px !important;
-        }
-        body { background: #f8fafc; }
-    </style>
+    <link rel="stylesheet" href="./styles/admin.css" />
 </head>
 <body>
     <div id="app"><div class="flex min-h-screen items-center justify-center text-sm text-slate-500"><i class="fas fa-circle-notch fa-spin mr-2"></i>正在加载后台…</div></div>
