@@ -1,6 +1,6 @@
 import { store, loadToken, setToken, clearToken, loadConfig } from './store.js';
 import { escapeHtml } from './utils.js';
-import { toast, openModal, closeModal } from './ui.js';
+import { toast, openModal, closeModal, githubIcon } from './ui.js';
 import { renderLoginView } from './views/login.js';
 import { renderDashboard } from './views/dashboard.js';
 import { renderPosts } from './views/posts.js';
@@ -140,7 +140,7 @@ function renderShell() {
                 <button id="preview-btn" class="hidden h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-brand-600 sm:inline-flex" aria-label="预览前台" title="预览前台"><i class="fas fa-eye"></i></button>
                 <div class="relative">
                     <button id="user-menu-btn" class="flex items-center gap-2 rounded-lg py-1 pl-1 pr-2 transition-colors hover:bg-slate-100">
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-xs font-semibold text-brand-700">GH</span>
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-white">${githubIcon('18')}</span>
                         <span class="hidden text-left leading-tight sm:block">
                             <span class="block text-sm font-medium text-slate-800">GitHub</span>
                             <span class="block text-[11px] text-slate-500">已授权</span>

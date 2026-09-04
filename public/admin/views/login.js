@@ -1,5 +1,6 @@
 import { store } from '../store.js';
 import { escapeHtml } from '../utils.js';
+import { githubIcon } from '../ui.js';
 
 export function renderLoginView() {
     const app = document.getElementById('app');
@@ -27,7 +28,7 @@ export function renderLoginView() {
                 <h2 class="text-2xl font-bold text-slate-900">登录</h2>
                 <p class="mt-1.5 text-sm text-slate-500">使用 GitHub 账号进入管理后台</p>
                 <div class="mt-7">
-                    <button id="login-btn" class="btn-primary w-full justify-center py-2.5"><i class="fab fa-github"></i> 使用 GitHub 登录</button>
+                    <button id="login-btn" class="btn-primary w-full justify-center py-2.5">${githubIcon('1.05em')} 使用 GitHub 登录</button>
                 </div>
                 <p class="mt-6 text-center text-xs leading-relaxed text-slate-400">登录后改动将直接提交到 ${escapeHtml(store.owner ? `${store.owner}/${store.repo}@${store.branch}` : '配置中的仓库')}</p>
             </div>
