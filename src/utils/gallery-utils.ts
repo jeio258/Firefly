@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { GalleryAlbum } from "@/types/config";
-import { fetchImgBedImages } from "@/utils/imgbed-utils";
 import { url } from "@/utils/url-utils";
 
 function withBase(assetPath: string): string {
@@ -21,13 +20,8 @@ function withBase(assetPath: string): string {
 
 /**
  * 扫描相册目录中的所有图片文件
- * 特殊相册：id 为 "imgbed" 时从 CloudFlare-ImgBed API 获取远程图片列表
  */
-export async function scanAlbumPhotos(albumId: string): Promise<string[]> {
-	// ImgBed 远程相册
-	if (albumId === "imgbed") {
-		return await fetchImgBedImages();
-	}
+export function scanAlbumPhotos(albumId: string): string[] {
 	const dir = path.join(process.cwd(), "public", "gallery", albumId);
 	if (!fs.existsSync(dir)) return [];
 	const files = fs

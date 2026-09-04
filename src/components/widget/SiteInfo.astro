@@ -1,5 +1,6 @@
 ---
 import { readFileSync } from "node:fs";
+import { execSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { Icon } from "astro-icon/components";
 import ci from "ci-info";
@@ -43,12 +44,17 @@ try {
 // Node 版本
 const nodeVersion = process.version;
 
-// pnpm 版本（从 npm_config_user_agent 解析）
+// pnpm 版本（优先 user_agent，其次执行 pnpm --version 兜底）
 let pnpmVersion = "unknown";
 const userAgent = process.env.npm_config_user_agent || "";
-const pnpmMatch = userAgent.match(/pnpm\/([\d.]+)/);
+const pnpmMatch =
+	userAgent.match(/(?:pnpm|pnpm\.cjs)\/([\d.]+)/) || userAgent.match(/pnpm@([\d.]+)/);
 if (pnpmMatch) {
 	pnpmVersion = `v${pnpmMatch[1]}`;
+} else {
+	try {
+		pnpmVersion = `v${execSync("pnpm --version", { encoding: "utf8" }).trim()}`;
+	} catch {}
 }
 
 // 构建时间
@@ -172,7 +178,7 @@ const detailItems: {
     <div class="flex flex-col gap-2">
       {
         mainItems.map((item: { icon: string; label: string; value: string; href?: string }) => (
-          <div class="flex items-center justify-between px-3 py-2 rounded-lg bg-neutral-100/60 dark:bg-neutral-800/50">
+          <div class="flex items-center justify-between px-3 py-2 rounded-lg">
             <div class="flex items-center gap-2.5">
               <div class="text-(--primary) text-lg">
                 <Icon name={item.icon} />

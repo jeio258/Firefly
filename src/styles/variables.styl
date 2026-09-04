@@ -7,8 +7,8 @@
 :root
   --primary: oklch(0.70 0.14 var(--hue))
   --page-bg: oklch(0.95 0.01 var(--hue))
-  --card-bg: oklch(0.995 0.004 var(--hue))
-  --card-bg-transparent: unquote("oklch(0.995 0.004 var(--hue) / var(--card-transparent-opacity, 0.6))")
+  --card-bg: white
+  --card-bg-transparent: unquote("rgb(255 255 255 / var(--card-transparent-opacity, 0.6))")
   
   --btn-content: oklch(0.55 0.12 var(--hue))
   --btn-regular-bg: oklch(0.95 0.025 var(--hue))
@@ -46,7 +46,7 @@
   --link-hover: oklch(0.95 0.025 var(--hue))
   --link-active: oklch(0.90 0.05 var(--hue))
   
-  --float-panel-bg: oklch(0.995 0.004 var(--hue))
+  --float-panel-bg: white
   
   --scrollbar-bg-light: rgba(0, 0, 0, 0.4)
   --scrollbar-bg-hover-light: rgba(0, 0, 0, 0.5)
@@ -77,12 +77,15 @@
   --toc-width: calc((100vw - var(--page-width)) / 2 - 1rem)
   --toc-item-active: oklch(0.70 0.13 var(--hue))
 
+  /* Live2D 消息框变量 */
+  --l2d-msg-bg: oklch(0.7 0.14 var(--hue))
+
   /* 主题色选择条渐变 */
   --color-selection-bar: linear-gradient(to right, oklch(0.80 0.10 0), oklch(0.80 0.10 30), oklch(0.80 0.10 60), oklch(0.80 0.10 90), oklch(0.80 0.10 120), oklch(0.80 0.10 150), oklch(0.80 0.10 180), oklch(0.80 0.10 210), oklch(0.80 0.10 240), oklch(0.80 0.10 270), oklch(0.80 0.10 300), oklch(0.80 0.10 330), oklch(0.80 0.10 360))
 
 /* 卡片风格跟随主题色相 */
 :root:not(.dark) body.card-follow-theme-hue
-  --card-bg: oklch(0.995 0.008 var(--hue))
+  --card-bg: oklch(1 0.01 var(--hue))
 
 /* 暗色主题变量 */
 :root.dark
@@ -90,7 +93,11 @@
   --page-bg: oklch(0.16 0.014 var(--hue))
   --card-bg: oklch(0.23 0.015 var(--hue))
   --card-bg-transparent: unquote("rgb(23 23 23 / var(--card-transparent-opacity, 0.6))")
-  
+
+  /* 导航栏玻璃高光与发丝线（暗色） */
+  --navbar-glass-highlight: rgba(255, 255, 255, 0.06)
+  --navbar-glass-hairline: rgba(255, 255, 255, 0.10)
+
   --btn-content: oklch(0.75 0.1 var(--hue))
   --btn-regular-bg: oklch(0.33 0.035 var(--hue))
   --btn-regular-bg-hover: oklch(0.38 0.04 var(--hue))
@@ -139,6 +146,9 @@
   --toc-btn-active: oklch(0.32 0.05 var(--hue))
   --toc-indicator-bg: oklch(0.28 0.04 var(--hue))
   --toc-item-active: oklch(0.35 0.07 var(--hue))
+
+  /* Live2D 消息框变量 - 暗色主题 */
+  --l2d-msg-bg: oklch(0.35 0.08 var(--hue))
 
   /* 主题色选择条渐变 - 暗色主题 */
   --color-selection-bar: linear-gradient(to right, oklch(0.70 0.10 0), oklch(0.70 0.10 30), oklch(0.70 0.10 60), oklch(0.70 0.10 90), oklch(0.70 0.10 120), oklch(0.70 0.10 150), oklch(0.70 0.10 180), oklch(0.70 0.10 210), oklch(0.70 0.10 240), oklch(0.70 0.10 270), oklch(0.70 0.10 300), oklch(0.70 0.10 330), oklch(0.70 0.10 360))
@@ -221,6 +231,10 @@
   --shadow-button: 0 4px 12px rgba(0, 0, 0, 0.15)
   --shadow-button-dark: 0 4px 12px rgba(255, 255, 255, 0.1)
 
+  /* 导航栏玻璃高光与发丝线（明色） */
+  --navbar-glass-highlight: rgba(255, 255, 255, 0.18)
+  --navbar-glass-hairline: rgba(0, 0, 0, 0.06)
+
 /* ===== 边框半径变量 ===== */
 :root
   --radius-sm: 0.25rem     /* 4px */
@@ -240,6 +254,7 @@
   --opacity-25: 0.25
   --opacity-30: 0.3
   --opacity-40: 0.4
+  --opacity-45: 0.45
   --opacity-50: 0.5
   --opacity-55: 0.55
   --opacity-60: 0.6
