@@ -1,0 +1,85 @@
+---
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+
+const title = "申请友链";
+const description = "与临渊羡鱼博客交换友链，提交后等待管理员审核。";
+---
+
+<MainGridLayout title={title} description={description}>
+  <div class="flex w-full overflow-hidden rounded-(--radius-large)">
+    <div class="card-base relative z-10 w-full px-6 py-8 sm:px-9 sm:py-8">
+      <div class="mb-6 flex items-center gap-3">
+        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-(--primary) text-white dark:text-black/70">
+          <span class="text-xl">🔗</span>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-neutral-900 dark:text-neutral-100">{title}</h1>
+          <p class="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">{description}</p>
+        </div>
+      </div>
+
+      <form id="apply-form" class="grid gap-4 sm:grid-cols-2">
+        <div class="sm:col-span-1">
+          <label class="mb-1.5 block text-sm font-medium text-neutral-800 dark:text-neutral-200" for="apply-title">网站标题 <span class="text-red-600">*</span></label>
+          <input id="apply-title" required class="w-full rounded-lg border border-(--line-color) bg-(--btn-regular-bg) px-3.5 py-2.5 text-sm text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-(--primary) dark:text-neutral-100" placeholder="你的网站名称" />
+        </div>
+        <div class="sm:col-span-1">
+          <label class="mb-1.5 block text-sm font-medium text-neutral-800 dark:text-neutral-200" for="apply-url">网站地址 <span class="text-red-600">*</span></label>
+          <input id="apply-url" type="url" required class="w-full rounded-lg border border-(--line-color) bg-(--btn-regular-bg) px-3.5 py-2.5 text-sm text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-(--primary) dark:text-neutral-100" placeholder="https://example.com" />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="mb-1.5 block text-sm font-medium text-neutral-800 dark:text-neutral-200" for="apply-img">头像图片 URL <span class="font-normal text-neutral-500 dark:text-neutral-400">(留空则自动使用网站图标)</span></label>
+          <input id="apply-img" type="url" class="w-full rounded-lg border border-(--line-color) bg-(--btn-regular-bg) px-3.5 py-2.5 text-sm text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-(--primary) dark:text-neutral-100" placeholder="可选，手动输入图片链接" />
+        </div>
+        <div class="sm:col-span-2">
+          <label class="mb-1.5 block text-sm font-medium text-neutral-800 dark:text-neutral-200" for="apply-desc">描述 <span class="text-red-600">*</span></label>
+          <textarea id="apply-desc" required rows="3" class="w-full rounded-lg border border-(--line-color) bg-(--btn-regular-bg) px-3.5 py-2.5 text-sm text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-(--primary) dark:text-neutral-100" placeholder="写一句关于你网站的话..."></textarea>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="mb-1.5 block text-sm font-medium text-neutral-800 dark:text-neutral-200" for="apply-tags">标签 <span class="font-normal text-neutral-500 dark:text-neutral-400">(逗号分隔)</span></label>
+          <input id="apply-tags" class="w-full rounded-lg border border-(--line-color) bg-(--btn-regular-bg) px-3.5 py-2.5 text-sm text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-(--primary) dark:text-neutral-100" placeholder="技术, 博客, 前端" />
+        </div>
+        <div class="sm:col-span-2">
+          <button type="submit" class="btn-regular w-full justify-center rounded-lg px-6 py-2.5 text-sm text-(--btn-content) dark:text-white/75">提交申请</button>
+          <p id="apply-msg" class="mt-3 text-center text-sm text-neutral-500 dark:text-neutral-400" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</MainGridLayout>
+
+<script>
+  const form = document.getElementById("apply-form") as HTMLFormElement;
+  const msg = document.getElementById("apply-msg") as HTMLElement;
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const g = (id: string) => (document.getElementById(id) as HTMLInputElement).value.trim();
+    const title = g("apply-title");
+    const siteurl = g("apply-url");
+    const desc = g("apply-desc");
+    let imgurl = g("apply-img");
+    if (!title || !siteurl || !desc) {
+      msg!.textContent = "请填写所有必填项";
+      return;
+    }
+    if (!imgurl && siteurl) imgurl = `https://faviconsnap.com/api/favicon?url=${encodeURIComponent(siteurl)}`;
+    const tags = g("apply-tags") ? g("apply-tags").split(/[,，]/).map((t) => t.trim()).filter(Boolean) : [];
+    msg!.textContent = "提交中...";
+    try {
+      const res = await fetch("/submit-friend-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, siteurl, imgurl, desc, tags, weight: 0 })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        msg!.textContent = "✅ 申请已提交，请等待审核";
+        form!.reset();
+      } else {
+        throw new Error(data.error || "请求失败");
+      }
+    } catch (err) {
+      msg!.textContent = "❌ 提交失败，请稍后重试";
+    }
+  });
+</script>
