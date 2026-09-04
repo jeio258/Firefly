@@ -173,11 +173,27 @@ function renderShell() {
         }
     };
 
-    app.querySelector('#hamburger').onclick = () => {
-        const aside = app.querySelector('aside');
-        aside.classList.toggle('hidden');
-        aside.classList.toggle('lg:block');
+    const aside = app.querySelector('aside');
+    const closeSidebar = () => {
+        aside.classList.add('hidden');
+        document.getElementById('sidebar-overlay')?.remove();
     };
+    const openSidebar = () => {
+        aside.classList.remove('hidden');
+        document.getElementById('sidebar-overlay')?.remove();
+        const ov = document.createElement('div');
+        ov.id = 'sidebar-overlay';
+        ov.className = 'fixed inset-0 z-[25] bg-(--overlay) lg:hidden';
+        document.body.appendChild(ov);
+        ov.addEventListener('click', closeSidebar);
+    };
+    app.querySelector('#hamburger').onclick = () => {
+        aside.classList.contains('hidden') ? openSidebar() : closeSidebar();
+    };
+    app.querySelectorAll('aside a[data-nav]').forEach((a) => a.addEventListener('click', closeSidebar));
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeSidebar();
+    });
     const userBtn = app.querySelector('#user-menu-btn');
     const userMenu = app.querySelector('#user-menu');
     userBtn.onclick = () => userMenu.classList.toggle('hidden');
