@@ -44,9 +44,6 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		children: [
 			// 友链
 			LinkPresets.Friends,
-
-			// 留言
-			LinkPresets.Guestbook,
 		],
 	});
 
@@ -58,9 +55,6 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		children: [
 			// 相册
 			LinkPresets.Gallery,
-
-			// 书签导航
-			LinkPresets.Booknav,
 		],
 	});
 
