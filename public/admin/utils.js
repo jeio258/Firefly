@@ -36,85 +36,26 @@ export function parseFrontmatter(raw) {
     }
 }
 
-// 构建完整的 frontmatter + 正文 - 保留所有原有字段
-export function buildFrontmatter(content, title, isDraft, desc, tagsStr, category, image, existingFrontmatter = {}) {
-    // 从现有 frontmatter 中提取所有字段
-    const {
-        published,
-        pinned,
-        updated,
-        lang,
-        author,
-        slug,
-        comment,
-        password,
-        passwordHint,
-        licenseName,
-        licenseUrl,
-        sourceLink,
-        ...otherFields  // 捕获任何其他未列出的字段
-    } = existingFrontmatter;
-
-    // 使用现有的 published，如果没有则用今天
-    const pubDate = published || new Date().toISOString().slice(0, 10);
-    const draftStr = isDraft ? 'true' : 'false';
-    
-    let body = content;
-    const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
-    if (fmMatch) {
-        body = content.substring(fmMatch[0].length);
-    }
-    
-    let tagsYaml = '';
-    if (tagsStr) {
-        const tagsArray = tagsStr.split(/[,，]/).map(t => t.trim()).filter(Boolean);
-        if (tagsArray.length > 0) {
-            tagsYaml = `[${tagsArray.join(', ')}]`;
-        }
-    }
-    
-    let fm = `---\ntitle: ${title || '未命名文章'}\npublished: ${pubDate}\ndraft: ${draftStr}`;
-    
-    // 保留 pinned
-    if (pinned !== undefined) fm += `\npinned: ${pinned}`;
-    
-    // 保留 updated
-    if (updated) fm += `\nupdated: ${updated}`;
-    
-    if (desc) fm += `\ndescription: ${desc}`;
-    if (tagsYaml) fm += `\ntags: ${tagsYaml}`;
-    if (category) fm += `\ncategory: ${category}`;
-    if (image) fm += `\nimage: ${image}`;
-    
-    // 保留语言
-    if (lang) fm += `\nlang: ${lang}`;
-    // 保留作者
-    if (author) fm += `\nauthor: ${author}`;
-    // 保留 slug
-    if (slug) fm += `\nslug: ${slug}`;
-    // 保留评论开关
-    if (comment !== undefined) fm += `\ncomment: ${comment}`;
-    // 保留密码
-    if (password) fm += `\npassword: ${password}`;
-    if (passwordHint) fm += `\npasswordHint: ${passwordHint}`;
-    // 保留许可证
-    if (licenseName) fm += `\nlicenseName: ${licenseName}`;
-    if (licenseUrl) fm += `\nlicenseUrl: ${licenseUrl}`;
-    // 保留来源链接
-    if (sourceLink) fm += `\nsourceLink: ${sourceLink}`;
-    
-    // 保留任何其他未列出的字段
-    for (const [key, value] of Object.entries(otherFields)) {
-        // 跳过 undefined 和 null
-        if (value === undefined || value === null) continue;
-        // 如果是对象或数组，用 JSON 序列化
-        if (typeof value === 'object') {
-            fm += `\n${key}: ${JSON.stringify(value)}`;
-        } else {
-            fm += `\n${key}: ${value}`;
-        }
-    }
-    
-    fm += `\n---\n${body}`;
-    return fm;
+// 构建完整 frontmatter + 正文（生产版：字段顺序与日期去引号，逐字保留旧后台行为）
+export function buildFrontmatter(content, title, draft, description, tagsStr, category, image, published, updated, pinned, comment, author, sourceLink, password) {
+    const fm = {};
+    fm.title = title;
+    fm.draft = draft;
+    if (author) fm.author = author;
+    if (description) fm.description = description;
+    if (tagsStr) fm.tags = tagsStr.split(',').map(t => t.trim()).filter(Boolean);
+    if (category) fm.category = category;
+    if (image) fm.image = image;
+    if (sourceLink) fm.sourceLink = sourceLink;
+    if (password) fm.password = password;
+    if (published) fm.published = published;
+    if (updated) fm.updated = updated;
+    if (pinned) fm.pinned = true;
+    fm.comment = comment !== false;
+    var y = jsyaml.dump(fm, { lineWidth: -1, quotingType: "'", forceQuotes: false });
+    // 修复日期格式: 将 "2025-01-15" 去掉引号变成纯日期
+    y = y.replace(/'(\d{4}-\d{2}-\d{2})'/g, '$1');
+    y = y.replace(/(\d{4}-\d{2}-\d{2})T00:00:00\.000Z/g, '$1');
+    var body = content.replace(/^---\n[\s\S]*?\n---\n?/, '');
+    return '---\n' + y + '---\n' + body;
 }
