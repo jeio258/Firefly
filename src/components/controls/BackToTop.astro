@@ -53,12 +53,7 @@ import FloatingButton from "@/components/common/FloatingButton.astro";
   // （按钮不在 Swup 容器内、跨导航持久存在，单个管理器实例即可）
   if (!window.__backToTopInit) {
     window.__backToTopInit = true;
-    // 页面加载完成后初始化
-    document.addEventListener("DOMContentLoaded", () => {
-      new BackToTopManager();
-    });
-
-    // 如果页面已经加载完成，立即初始化
+    // 页面加载完成后初始化；已加载完成则立即初始化
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", () => {
         new BackToTopManager();
