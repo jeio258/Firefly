@@ -63,6 +63,9 @@ export const ko: Translation = {
 	[Key.announcementClose]: "닫기",
 
 	[Key.comments]: "댓글",
+	[Key.commentSection]: "댓글",
+	[Key.commentSubtitle]: "생각을 공유하고 모두와 이야기해 보세요",
+	[Key.commentNotConfigured]: "댓글 시스템이 설정되지 않았습니다",
 	[Key.friends]: "친구",
 	[Key.friendsDescription]:
 		"여기는 제 친구들입니다. 방문하여 서로 교류해 보세요",

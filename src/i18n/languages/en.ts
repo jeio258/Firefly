@@ -63,6 +63,9 @@ export const en: Translation = {
 	[Key.announcementClose]: "Close",
 
 	[Key.comments]: "Comments",
+	[Key.commentSection]: "Comments",
+	[Key.commentSubtitle]: "Share your thoughts and discuss with everyone",
+	[Key.commentNotConfigured]: "Comment system not configured",
 	[Key.friends]: "Friends",
 	[Key.friendsDescription]:
 		"Here are my friends, welcome to visit and communicate with each other",

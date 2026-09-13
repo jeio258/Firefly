@@ -44,6 +44,9 @@ enum I18nKey {
 	announcementClose = "announcementClose",
 
 	comments = "comments",
+	commentSection = "commentSection",
+	commentSubtitle = "commentSubtitle",
+	commentNotConfigured = "commentNotConfigured",
 
 	uncategorized = "uncategorized",
 	noTags = "noTags",

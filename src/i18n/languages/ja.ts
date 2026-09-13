@@ -63,6 +63,9 @@ export const ja: Translation = {
 	[Key.announcementClose]: "閉じる",
 
 	[Key.comments]: "コメント",
+	[Key.commentSection]: "コメント欄",
+	[Key.commentSubtitle]: "あなたの考えを共有し、みんなと議論しましょう",
+	[Key.commentNotConfigured]: "コメントシステムが設定されていません",
 	[Key.friends]: "友達",
 	[Key.friendsDescription]:
 		"ここは私の友達です、お互いに訪問して交流することを歓迎します",

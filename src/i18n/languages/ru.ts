@@ -63,6 +63,9 @@ export const ru: Translation = {
 	[Key.announcementClose]: "Закрыть",
 
 	[Key.comments]: "Комментарии",
+	[Key.commentSection]: "Комментарии",
+	[Key.commentSubtitle]: "Поделитесь своими мыслями и обсудите с остальными",
+	[Key.commentNotConfigured]: "Система комментариев не настроена",
 	[Key.friends]: "Ссылки",
 	[Key.friendsDescription]:
 		"Вот мои друзья, добро пожаловать посетить и общаться друг с другом",

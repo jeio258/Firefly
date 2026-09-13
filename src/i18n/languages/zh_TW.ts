@@ -63,6 +63,9 @@ export const zh_TW: Translation = {
 	[Key.announcementClose]: "關閉",
 
 	[Key.comments]: "評論",
+	[Key.commentSection]: "評論區",
+	[Key.commentSubtitle]: "分享你的想法，與大家交流討論",
+	[Key.commentNotConfigured]: "評論系統暫未配置",
 	[Key.friends]: "友鏈",
 	[Key.friendsDescription]: "這裡是我的朋友們，歡迎互相訪問交流",
 	[Key.searchFriends]: "搜尋友鏈...",
