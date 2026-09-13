@@ -39,7 +39,7 @@ All features are toggled/configured via TypeScript files in `src/config/`, expor
 - `sidebarConfig.ts` — sidebar layout (left/right/both, widget ordering)
 - `commentConfig.ts`, `analyticsConfig.ts`, `fontConfig.ts`, etc.
 
-**图床 (ImgBed) token:** `src/config/imgBedConfig.ts` reads the API token from the environment variable `IMG_BED_TOKEN` (or `SECRET_IMG_BED_TOKEN`) at build time — never commit a hardcoded token. Set it in the deployment platform's build environment (or a non-committed `.env`) and rotate it if ever leaked. When unset, the `imgbed` gallery album gracefully degrades to an empty list.
+**图床 (ImgBed):** 该功能已移除（`src/config/imgBedConfig.ts` 及相关构建脚本已删除），`imgbed` 相册配置亦已失效，相册列表不再包含该项。如需恢复，请勿再硬编码 token，始终从部署平台的环境变量读取。
 
 ### Layout System
 

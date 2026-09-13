@@ -28,15 +28,6 @@ import type { FontDefinition, FontSelectionConfig } from "@/types/fontConfig";
 // 本地开发调试的情况下，修改后需要每次重启开发服务器才能生效
 export const fontsList: FontDefinition[] = [
 	{
-		name: "Zen Maru Gothic",
-		cssVariable: "--font-zen-maru-gothic",
-		provider: "fontsource",
-		weights: ["400", "700"],
-		styles: ["normal"],
-		subsets: ["latin"],
-		fallbacks: ["sans-serif"],
-	},
-	{
 		name: "Inter",
 		cssVariable: "--font-inter",
 		provider: "fontsource",
@@ -88,12 +79,11 @@ export const fontConfig: FontSelectionConfig = {
 	// 是否启用自定义字体功能
 	enable: true,
 	// 当前选择的字体 CSS 变量名（对应上方 fonts 中的 cssVariable）
-	// Inter 作为正文字体，Zen Maru Gothic 作为 banner 标题字体
 	selected: ["--font-inter"],
 
 	// 各区域独立字体设置（填写上方 fonts 中的 cssVariable，留空则使用全局 selected 字体）
-	// 主页横幅主标题字体 — 圆体日文/中文 display face
-	bannerTitleFont: "--font-zen-maru-gothic",
+	// 主页横幅主标题字体 — 留空沿用全局字体（该位置此前配置的圆体日文/中文字体对中文标题不生效）
+	bannerTitleFont: "",
 	// 主页横幅副标题字体 — Inter 保持与正文一致
 	bannerSubtitleFont: "--font-inter",
 	// 导航栏标题字体

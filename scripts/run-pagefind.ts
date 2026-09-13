@@ -28,8 +28,10 @@ const result = spawnSync("pagefind", ["--site", siteRoot], {
 	shell: process.platform === "win32",
 });
 
+if (result.status !== 0) {
+	process.exit(result.status ?? 1);
+}
+
 for (const file of UNUSED_UI_FILES) {
 	await rm(path.join(siteRoot, "pagefind", file), { force: true });
 }
-
-process.exit(result.status ?? 1);
