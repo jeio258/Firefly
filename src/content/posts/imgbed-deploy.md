@@ -5,7 +5,7 @@ description: CloudFlare-ImgBed 图床 + Firefly 相册 部署教程
 tags:
   - 教程，部署指南
 category: 博客指南
-image: https://tc.alcy.cc/tc/20260121/cdf58dc918fb56bfd0dacf18ec944465.webp
+image: /assets/images/covers/imgbed-deploy.webp
 published: 2026-07-25
 comment: true
 ---

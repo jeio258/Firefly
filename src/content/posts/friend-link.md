@@ -5,7 +5,7 @@ description: 本次更新为博客引入了友链审核系统、全功能管理�
 tags:
   - 教程，部署指南
 category: 博客指南
-image: https://tc.alcy.cc/tc/20260429/4e3134262bd3725bb5f43e3424ca2384.webp
+image: /assets/images/covers/friend-link.webp
 published: 2026-07-15
 updated: 2026-07-25
 pinned: true
