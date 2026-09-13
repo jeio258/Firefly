@@ -1,9 +1,4 @@
-import {
-	type NavBarConfig,
-	type NavBarLink,
-	type NavBarSearchConfig,
-	NavBarSearchMethod,
-} from "../types/navBarConfig";
+import type { NavBarConfig, NavBarLink } from "../types/navBarConfig";
 
 // ============================================================================
 // 导航栏配置 - 根据顺序动态生成导航栏链接
@@ -115,11 +110,6 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 	// });
 
 	return { links } as NavBarConfig;
-};
-
-// 导航搜索配置
-export const navBarSearchConfig: NavBarSearchConfig = {
-	method: NavBarSearchMethod.PageFind,
 };
 
 // ============================================================================

@@ -3,8 +3,6 @@
 ## 动态组件
 
 - `widget/Dynamic.astro`：显示最新动态的侧边栏组件。
-- `pages/dynamic/DynamicGallery.astro`：动态图片网格、轮播和灯箱。
-- `pages/dynamic/DynamicInlineComments.astro`：单条动态的按需评论区。
 
 Firefly 项目中所有可复用组件的集中管理。组件按照功能和职责进行分类，提供清晰的架构和易于维护的代码组织。
 
@@ -68,11 +66,7 @@ Firefly 项目中所有可复用组件的集中管理。组件按照功能和职
 - `Steps.astro` / `StepItem.astro` / `Badge.astro`  - MDX 内容组件（编号步骤条、内联徽章）
 
 **分页组件**
-- `ClientPagination.svelte` - 客户端分页（JavaScript 控制）
 - `Pagination.astro` - 静态路由分页（Astro 原生）
-
-**列表与筛选组件**
-- `FilterControls.svelte` - 筛选控制组件（胶囊筛选按钮）
 
 ### 🧩 widget/ - 小部件
 

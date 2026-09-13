@@ -192,7 +192,7 @@
       },
     });
 
-    Fancybox.bind(`${LINK_SELECTOR}:not(dynamic-gallery [data-gallery-lightbox])`, {
+    Fancybox.bind(LINK_SELECTOR, {
       ...commonOptions,
       source: (el: any) => el.getAttribute("data-src") || el.getAttribute("href"),
     });
@@ -225,9 +225,6 @@
   // fetch(blob) 的同步长任务阻塞换入瞬间（尤其文章页图多时）。setup 内部有
   // data-svg-fixed / Fancybox.unbind 守卫，延一帧不会重绑或丢图。
   document.addEventListener("swup:content:replace", () => {
-    requestAnimationFrame(setup);
-  });
-  document.addEventListener("dynamic-gallery:ready", () => {
     requestAnimationFrame(setup);
   });
   document.addEventListener("swup:visit:start", cleanupFancybox);

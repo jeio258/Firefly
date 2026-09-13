@@ -261,12 +261,8 @@ export const siteConfig: SiteConfig = {
 		downloadCovers: false,
 		// VNDB API 地址
 		apiUrl: "https://api.vndb.org/kana",
-		// 条目详情页地址，末尾需要带 /
-		vnBaseUrl: "https://vndb.org/",
 		// 私密列表访问令牌，仅 static 模式下使用；不要把真实令牌提交到公开仓库！
 		apiToken: "",
-		// NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
-		nsfw: "hide",
 	},
 
 	// ── 图像优化配置 ──────────────────────────────────

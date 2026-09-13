@@ -8,7 +8,6 @@ import type {
 	WALLPAPER_OVERLAY,
 } from "../constants/constants";
 import type { ImmersiveReadingConfig } from "./immersiveReadingConfig";
-import type { NsfwMode } from "./nsfw";
 
 export type LIGHT_DARK_MODE =
 	| typeof LIGHT_MODE
@@ -175,9 +174,7 @@ export type SiteConfig = {
 		mode?: "static" | "dynamic"; // 数据模式：static=构建时获取，dynamic=客户端实时获取
 		downloadCovers?: boolean; // 构建时下载并压缩 VNDB 封面到本地
 		apiUrl?: string; // VNDB API 地址
-		vnBaseUrl?: string; // VNDB 条目详情页地址，末尾需要带 /
 		apiToken?: string; // 私密列表访问令牌，仅 static 模式下使用
-		nsfw?: NsfwMode; // NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
 	};
 
 	// 分页配置
