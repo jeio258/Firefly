@@ -33,7 +33,7 @@ export const fontsList: FontDefinition[] = [
 		provider: "fontsource",
 		weights: ["400", "700"],
 		styles: ["normal"],
-		subsets: ["latin", "cyrillic", "japanese"],
+		subsets: ["latin"],
 		fallbacks: ["sans-serif"],
 	},
 	{
