@@ -199,3 +199,62 @@ export function buildSiteGraph(opts: {
 		],
 	};
 }
+
+/**
+ * 文章页 @graph：BlogPosting + Person + Organization + BreadcrumbList。
+ * 封面、分类、字数、更新时间均按需输出，缺失字段不产生 null。
+ */
+export function buildPostJsonLd(opts: {
+	title: string;
+	description?: string;
+	tags: string[];
+	author: Record<string, unknown>;
+	publisher: Record<string, unknown>;
+	breadcrumbList: Record<string, unknown>;
+	coverImage?: { url: string; width?: number; height?: number } | null;
+	published: Date;
+	updated?: Date;
+	category?: string;
+	wordCount?: number;
+	url: string;
+	lang: string;
+}): Record<string, unknown> {
+	return {
+		"@context": "https://schema.org",
+		"@graph": [
+			{
+				"@type": "BlogPosting",
+				headline: opts.title,
+				description: opts.description || opts.title,
+				keywords: opts.tags.length ? opts.tags.join(", ") : undefined,
+				author: { "@id": opts.author["@id"] },
+				publisher: { "@id": opts.publisher["@id"] },
+				...(opts.coverImage
+					? {
+							image: {
+								"@type": "ImageObject",
+								url: opts.coverImage.url,
+								contentUrl: opts.coverImage.url,
+								...(opts.coverImage.width
+									? { width: opts.coverImage.width }
+									: {}),
+								...(opts.coverImage.height
+									? { height: opts.coverImage.height }
+									: {}),
+							},
+						}
+					: {}),
+				datePublished: opts.published.toISOString(),
+				...(opts.category ? { articleSection: opts.category } : {}),
+				...(opts.wordCount ? { wordCount: opts.wordCount } : {}),
+				...(opts.updated ? { dateModified: opts.updated.toISOString() } : {}),
+				mainEntityOfPage: { "@type": "WebPage", "@id": opts.url },
+				url: opts.url,
+				inLanguage: opts.lang.replace("_", "-"),
+			},
+			opts.author,
+			opts.publisher,
+			opts.breadcrumbList,
+		],
+	};
+}

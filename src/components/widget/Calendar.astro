@@ -6,6 +6,7 @@ import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import type { WidgetComponentConfig } from "@/types/config";
 import { url } from "@/utils/url-utils";
+import { resolveWidgetTitle } from "@/utils/widget-utils";
 
 interface Props {
 	class?: string;
@@ -16,34 +17,34 @@ interface Props {
 const { class: className, style, widgetConfig } = Astro.props;
 
 const showHeatmap = widgetConfig?.specificConfig?.calendar?.showHeatmap ?? true;
-const showTitle = widgetConfig?.showTitle !== false;
+const showTitle = resolveWidgetTitle(widgetConfig);
 
 // 月份名称（使用 i18n）
 const monthNames = [
-	i18n(I18nKey.calendarJanuary),
-	i18n(I18nKey.calendarFebruary),
-	i18n(I18nKey.calendarMarch),
-	i18n(I18nKey.calendarApril),
-	i18n(I18nKey.calendarMay),
-	i18n(I18nKey.calendarJune),
-	i18n(I18nKey.calendarJuly),
-	i18n(I18nKey.calendarAugust),
-	i18n(I18nKey.calendarSeptember),
-	i18n(I18nKey.calendarOctober),
-	i18n(I18nKey.calendarNovember),
-	i18n(I18nKey.calendarDecember),
-];
+	I18nKey.calendarJanuary,
+	I18nKey.calendarFebruary,
+	I18nKey.calendarMarch,
+	I18nKey.calendarApril,
+	I18nKey.calendarMay,
+	I18nKey.calendarJune,
+	I18nKey.calendarJuly,
+	I18nKey.calendarAugust,
+	I18nKey.calendarSeptember,
+	I18nKey.calendarOctober,
+	I18nKey.calendarNovember,
+	I18nKey.calendarDecember,
+].map((key) => i18n(key));
 
 // 星期名称（简写，使用 i18n）
 const weekDays = [
-	i18n(I18nKey.calendarSunday),
-	i18n(I18nKey.calendarMonday),
-	i18n(I18nKey.calendarTuesday),
-	i18n(I18nKey.calendarWednesday),
-	i18n(I18nKey.calendarThursday),
-	i18n(I18nKey.calendarFriday),
-	i18n(I18nKey.calendarSaturday),
-];
+	I18nKey.calendarSunday,
+	I18nKey.calendarMonday,
+	I18nKey.calendarTuesday,
+	I18nKey.calendarWednesday,
+	I18nKey.calendarThursday,
+	I18nKey.calendarFriday,
+	I18nKey.calendarSaturday,
+].map((key) => i18n(key));
 
 // 年份文本
 const yearText = i18n(I18nKey.year);

@@ -5,10 +5,13 @@ import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import type { WidgetComponentConfig } from "@/types/config";
 import { getCategoryList } from "@/utils/content-utils";
+import {
+	resolveWidgetCollapse,
+	resolveWidgetTitle,
+	WIDGET_COLLAPSED_HEIGHT,
+} from "@/utils/widget-utils";
 
 const categories = await getCategoryList();
-
-const COLLAPSED_HEIGHT = "7.5rem";
 
 interface Props {
 	class?: string;
@@ -17,14 +20,11 @@ interface Props {
 }
 const { class: className, style, widgetConfig } = Astro.props;
 
-const collapseThreshold = widgetConfig?.specificConfig?.collapseThreshold;
-const showTitle = widgetConfig?.showTitle !== false;
-const isCollapsed = collapseThreshold
-	? categories.length > collapseThreshold
-	: false;
+const showTitle = resolveWidgetTitle(widgetConfig);
+const isCollapsed = resolveWidgetCollapse(widgetConfig, categories.length);
 ---
 
-<WidgetLayout name={i18n(I18nKey.categories)} showTitle={showTitle} id="categories" isCollapsed={isCollapsed} collapsedHeight={COLLAPSED_HEIGHT}
+<WidgetLayout name={i18n(I18nKey.categories)} showTitle={showTitle} id="categories" isCollapsed={isCollapsed} collapsedHeight={WIDGET_COLLAPSED_HEIGHT}
                 class={className} style={style}
 >
     {categories.map((c) =>

@@ -5,6 +5,7 @@ import { announcementConfig } from "@/config/announcementConfig";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import type { WidgetComponentConfig } from "@/types/config";
+import { resolveWidgetTitle } from "@/utils/widget-utils";
 
 const config = announcementConfig;
 
@@ -15,7 +16,7 @@ interface Props {
 }
 const { class: className, style, widgetConfig } = Astro.props;
 
-const showTitle = widgetConfig?.showTitle !== false;
+const showTitle = resolveWidgetTitle(widgetConfig);
 ---
 
 <!-- 组件显示现在由sidebarLayoutConfig统一控制，无需检查config.enable -->

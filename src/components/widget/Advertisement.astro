@@ -5,6 +5,7 @@ import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import type { WidgetComponentConfig } from "@/types/config";
 import { url } from "@/utils/url-utils";
+import { resolveWidgetTitle } from "@/utils/widget-utils";
 
 export interface Props {
 	class?: string;
@@ -14,7 +15,7 @@ export interface Props {
 
 const { class: className = "", style, widgetConfig } = Astro.props as Props;
 
-const showTitle = widgetConfig?.showTitle !== false;
+const showTitle = resolveWidgetTitle(widgetConfig);
 const adConfig = widgetConfig?.specificConfig?.ad;
 
 // 无配置时不做渲染

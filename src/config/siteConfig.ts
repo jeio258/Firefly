@@ -12,8 +12,6 @@ const pages = resolvePageToggles({
 
 	// 友链页面开关
 	friends: true,
-	// 留言板页面开关，需要配置评论系统
-	guestbook: false,
 
 	// ── 我的 (My) ──────────────────────────────────
 
@@ -23,16 +21,8 @@ const pages = resolvePageToggles({
 	projects: true,
 	// 相册页面开关
 	gallery: true,
-	// 书签导航页面开关
-	booknav: false,
-	// 哔哩哔哩追番页面开关
-	bilibili: false,
-	// 番组计划页面开关
-	bangumi: false,
 	// VNDB页面开关
 	vndb: false,
-	// MyAnimeList页面开关
-	mal: false,
 
 	// ── 关于 (About) ──────────────────────────────────
 
@@ -259,36 +249,6 @@ export const siteConfig: SiteConfig = {
 		},
 	},
 
-	// ── Bilibili配置 ──────────────────────────────────
-	bilibili: {
-		// 你的 Bilibili 用户 UID
-		uid: "38932988",
-	},
-
-	// ── 番组计划bangumi配置 ──────────────────────────────────
-	bangumi: {
-		// Bangumi用户ID
-		userId: "1143164",
-		// 数据模式：static=构建时获取，dynamic=客户端实时获取
-		// static 模式在构建时获取数据并静态渲染，部署后数据不更新
-		// dynamic 模式在浏览器中实时请求 API，始终显示最新数据
-		mode: "dynamic",
-		// Bangumi API 地址
-		apiUrl: "https://api.bangumi.pro",
-		// 详情页地址
-		subjectBaseUrl: "https://api.bangumi.pro/subject/",
-		// 条目类型排序，数组中的类型将按顺序优先展示
-		// 可选值: "anime" | "book" | "music" | "game" | "real" (暂不支持"real"类型)
-		// 未列出的类型将按默认顺序排在后面
-		categoryOrder: ["anime", "book", "music", "game"],
-		// 控制各分类的启用状态（true/false），未指定的分类默认启用
-		// categories: {
-		// 	game: false, // 禁用游戏分类显示
-		// },
-		// NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
-		nsfw: "hide",
-	},
-
 	// ── VNDB配置 ──────────────────────────────────
 	vndb: {
 		// VNDB 用户 ID
@@ -305,22 +265,6 @@ export const siteConfig: SiteConfig = {
 		vnBaseUrl: "https://vndb.org/",
 		// 私密列表访问令牌，仅 static 模式下使用；不要把真实令牌提交到公开仓库！
 		apiToken: "",
-		// NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
-		nsfw: "hide",
-	},
-
-	// ── MyAnimeList配置 ──────────────────────────────────
-	mal: {
-		// MyAnimeList 用户名（列表需为公开状态，私密列表无法读取）
-		username: "cuteleaf",
-		// MyAnimeList Client ID，在 https://myanimelist.net/apiconfig 注册免费应用后获取
-		clientId: "	0ef34371450f9c6c809deaadec6aa8f3",
-		// MAL API 地址
-		apiUrl: "https://api.myanimelist.net/v2",
-		// 动画条目详情页地址，末尾需要带 /
-		animeBaseUrl: "https://myanimelist.net/anime/",
-		// 漫画条目详情页地址，末尾需要带 /
-		mangaBaseUrl: "https://myanimelist.net/manga/",
 		// NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
 		nsfw: "hide",
 	},

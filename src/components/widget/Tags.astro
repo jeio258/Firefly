@@ -7,10 +7,13 @@ import { i18n } from "@/i18n/translation";
 import type { WidgetComponentConfig } from "@/types/config";
 import { getTagList } from "@/utils/content-utils";
 import { getTagUrl, url } from "@/utils/url-utils";
+import {
+	resolveWidgetCollapse,
+	resolveWidgetTitle,
+	WIDGET_COLLAPSED_HEIGHT,
+} from "@/utils/widget-utils";
 
 const tags = await getTagList();
-
-const COLLAPSED_HEIGHT = "7.5rem";
 
 interface Props {
 	class?: string;
@@ -19,11 +22,10 @@ interface Props {
 }
 const { class: className, style, widgetConfig } = Astro.props;
 
-const collapseThreshold = widgetConfig?.specificConfig?.collapseThreshold;
-const showTitle = widgetConfig?.showTitle !== false;
-const isCollapsed = collapseThreshold ? tags.length > collapseThreshold : false;
+const showTitle = resolveWidgetTitle(widgetConfig);
+const isCollapsed = resolveWidgetCollapse(widgetConfig, tags.length);
 ---
-<WidgetLayout name={i18n(I18nKey.tags)} showTitle={showTitle} id="tags" isCollapsed={isCollapsed} collapsedHeight={COLLAPSED_HEIGHT} useExpandedButtonSpacing={true} moreUrl={url("/tags/")} class={className} style={style}>
+<WidgetLayout name={i18n(I18nKey.tags)} showTitle={showTitle} id="tags" isCollapsed={isCollapsed} collapsedHeight={WIDGET_COLLAPSED_HEIGHT} useExpandedButtonSpacing={true} moreUrl={url("/tags/")} class={className} style={style}>
     <div class="tags-container">
         {tags.map(t => (
             <ButtonTag href={getTagUrl(t.name)} label={`View all posts with the ${t.name.trim()} tag`}>

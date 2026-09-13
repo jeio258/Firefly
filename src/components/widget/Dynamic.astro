@@ -7,6 +7,7 @@ import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import type { WidgetComponentConfig } from "@/types/config";
 import { url } from "@/utils/url-utils";
+import { resolveWidgetTitle } from "@/utils/widget-utils";
 
 interface Props {
 	class?: string;
@@ -15,7 +16,7 @@ interface Props {
 }
 
 const { class: className, style, widgetConfig } = Astro.props;
-const showTitle = widgetConfig?.showTitle !== false;
+const showTitle = resolveWidgetTitle(widgetConfig);
 const configuredLimit = widgetConfig?.specificConfig?.dynamic?.limit ?? 3;
 const limit = Math.max(1, Math.floor(configuredLimit));
 

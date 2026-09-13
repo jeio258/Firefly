@@ -11,6 +11,7 @@ import { i18n } from "@/i18n/translation";
 import type { WidgetComponentConfig } from "@/types/config";
 import { detectBuildPlatform } from "@/utils/build-platform";
 import { formatDateI18nWithTime } from "@/utils/date-utils";
+import { resolveWidgetTitle } from "@/utils/widget-utils";
 
 interface Props {
 	class?: string;
@@ -20,7 +21,7 @@ interface Props {
 
 const { class: className, style, widgetConfig } = Astro.props;
 
-const showTitle = widgetConfig?.showTitle !== false;
+const showTitle = resolveWidgetTitle(widgetConfig);
 
 // ---- 构建时收集版本和环境信息 ----
 
