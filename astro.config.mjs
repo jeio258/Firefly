@@ -213,7 +213,6 @@ export default defineConfig({
 				codeFontFamily:
 					"var(--font-code, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace)",
 				codeLineHeight: "1.5rem",
-				frames: {},
 				textMarkers: {
 					delHue: 0,
 					insHue: 180,

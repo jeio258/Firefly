@@ -1,6 +1,7 @@
 ---
 import type { MarkdownHeading } from "astro";
 import FloatingButton from "@/components/common/FloatingButton.astro";
+import TocItem from "@/components/common/TocItem.astro";
 import { siteConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
@@ -58,30 +59,7 @@ const items = encrypted ? [] : computeTocItems(headings, { maxLevel: 3 });
             {!encrypted && items.length > 0 && (
               <>
                 {items.map((item) => (
-                  <a
-                    href={item.href}
-                    class={`toc-item toc-level-${item.depthLevel}`}
-                    data-heading-id={item.headingId}
-                    aria-label={item.text}
-                    title={item.text}
-                  >
-                    <div
-                      class={`toc-badge ${item.badgeKind === "index" ? "toc-badge-index" : ""}`}
-                    >
-                      {item.badgeKind === "index" ? (
-                        item.badgeIndex
-                      ) : item.badgeKind === "dot" ? (
-                        <span class="toc-badge-dot"></span>
-                      ) : (
-                        <span class="toc-badge-dot toc-badge-dot-sm"></span>
-                      )}
-                    </div>
-                    <div
-                      class={`toc-label ${item.labelPrimary ? "toc-label-primary" : "toc-label-secondary"}`}
-                    >
-                      {item.text}
-                    </div>
-                  </a>
+                  <TocItem item={item} />
                 ))}
                 <div
                   id="immersive-toc-indicator"

@@ -15,24 +15,6 @@ export function pathsEqual(path1: string, path2: string): boolean {
 	return normalizedPath1 === normalizedPath2;
 }
 
-/**
- * 智能拼接URL，正确处理网络URL和本地路径
- */
-function joinUrl(...parts: string[]): string {
-	// 如果第一个部分是网络URL，直接返回拼接后的结果（不处理协议头的//）
-	if (
-		parts[0]?.startsWith("http://") ||
-		parts[0]?.startsWith("https://") ||
-		parts[0]?.startsWith("//")
-	) {
-		return parts.join("").replace(/(?<!:)\/+/g, "/");
-	}
-
-	// 本地路径正常拼接
-	const joined = parts.join("/");
-	return joined.replace(/\/+/g, "/");
-}
-
 export function getPostUrlBySlug(slug: string): string {
 	// 移除文件扩展名（如 .md, .mdx 等）
 	const slugWithoutExt = removeFileExtension(slug);
@@ -84,7 +66,7 @@ export function url(path: string): string {
 	}
 
 	// 只有本地相对路径才添加BASE_URL
-	return joinUrl("", import.meta.env.BASE_URL, path);
+	return ["", import.meta.env.BASE_URL, path].join("/").replace(/\/+/g, "/");
 }
 
 // 内容详情页路径模式：文章(/posts/、/post/) 与 项目详情(/projects/<slug>/)

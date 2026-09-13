@@ -33,17 +33,7 @@ export function getTranslation(lang: string): Translation {
 }
 
 export function i18n(key: I18nKey): string {
-	const lang = siteConfig.lang || "en";
-	const currentLang = getTranslation(lang);
-	const value = currentLang[key];
-
-	// 如果当前语言没有翻译（或为空），则使用中文作为备选
-	if (!value && lang.toLowerCase() !== "zh_cn") {
-		const chineseValue = zh_CN[key];
-		if (chineseValue) {
-			return chineseValue;
-		}
-	}
-
-	return value || defaultTranslation[key];
+	const value = getTranslation(siteConfig.lang || "en")[key];
+	// 当前语言缺该条目时依次回退中文、英文
+	return value || zh_CN[key] || defaultTranslation[key];
 }

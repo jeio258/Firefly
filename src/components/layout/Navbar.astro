@@ -337,20 +337,15 @@ function loadButtonScript() {
     }
 
     document.addEventListener("click", function(event) {
-        // nav-menu-panel 不再走点击外部关闭：面板现在覆盖全屏（inset-0），任意点击都在面板内，
-        // 该监听永不触发；关闭由抽屉自己的遮罩点击/Document 委托负责。
-        const panels = ["display-setting", "music-nav-panel", "theme-mode-panel"];
-        const buttons = ["display-settings-switch", "music-player-switch", "scheme-switch"];
-
-        panels.forEach((id, index) => {
-            const panel = document.getElementById(id);
-            const button = document.getElementById(buttons[index]);
-            if (panel && button && !panel.classList.contains("float-panel-closed")) {
-                if (event.target instanceof Node && !panel.contains(event.target) && !button.contains(event.target)) {
-                    panel.classList.add("float-panel-closed");
-                }
+        // display-setting / theme-mode-panel 已由 layout-init 的 setClickOutsideToClose 注册，
+        // 此处只处理音乐面板，避免同一面板注册两份点击外部关闭监听。
+        const panel = document.getElementById("music-nav-panel");
+        const button = document.getElementById("music-player-switch");
+        if (panel && button && !panel.classList.contains("float-panel-closed")) {
+            if (event.target instanceof Node && !panel.contains(event.target) && !button.contains(event.target)) {
+                panel.classList.add("float-panel-closed");
             }
-        });
+        }
     });
 }
 

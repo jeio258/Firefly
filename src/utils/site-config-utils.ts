@@ -1,19 +1,14 @@
 import type { SiteConfig } from "@/types/siteConfig";
+import { readPublicEnv } from "@/utils/env-utils";
 
 // 站点语言的环境变量覆盖工具
 // 把「读取 PUBLIC_SITE_LANG 环境变量并规整为合法语言」的逻辑收敛在这里，
 // 让 siteConfig.ts 保持纯配置，不掺杂判断代码
 
-// 读取站点语言环境变量（Vite/Astro 走 import.meta.env，构建脚本回退 process.env）
+// 读取站点语言环境变量，未设置时返回 undefined
 function readSiteLangEnv(): string | undefined {
-	try {
-		const raw = (import.meta.env as Record<string, unknown>).PUBLIC_SITE_LANG;
-		return typeof raw === "string" && raw.trim() ? raw.trim() : undefined;
-	} catch {
-		return typeof process === "undefined"
-			? undefined
-			: process.env.PUBLIC_SITE_LANG;
-	}
+	const raw = readPublicEnv("PUBLIC_SITE_LANG");
+	return typeof raw === "string" && raw.trim() ? raw.trim() : undefined;
 }
 
 // 规整成 SiteConfig.lang 的合法取值，无法识别时返回 undefined（回退到默认值）
