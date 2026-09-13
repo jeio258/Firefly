@@ -23,15 +23,11 @@ export type WidgetComponentConfig = {
 	customProps?: Record<string, unknown>; // 自定义属性，用于扩展组件功能
 };
 
-export type MobileBottomComponentConfig = {
-	type: WidgetComponentType; // 组件类型
-	enable: boolean; // 是否启用该组件
-	showTitle?: boolean; // 是否显示该组件标题，默认true
-	showOnPostPage?: boolean; // 是否在文章详情页显示
-	hideOnNonPostPage?: boolean; // 是否在非文章详情页隐藏
-	specificConfig?: WidgetSpecificConfig;
-	customProps?: Record<string, unknown>; // 自定义属性，用于扩展组件功能
-};
+// 移动端底栏组件配置：与桌面侧边栏一致，但没有 position（底栏位置固定）
+export type MobileBottomComponentConfig = Omit<
+	WidgetComponentConfig,
+	"position"
+>;
 
 // 组件通用专属配置
 export type WidgetSpecificConfig = {

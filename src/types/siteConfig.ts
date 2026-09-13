@@ -59,11 +59,7 @@ export type SiteConfig = {
 	// 可选：站点时区，使用 IANA 时区标识，例如 "Asia/Shanghai"、"UTC"
 	timezone?: string;
 
-	favicon: Array<{
-		src: string;
-		theme?: "light" | "dark";
-		sizes?: string;
-	}>;
+	favicon: Favicon[];
 
 	navbar: {
 		/** 导航栏Logo图标，可选类型：icon库、本地图片、网络图片链接 */
