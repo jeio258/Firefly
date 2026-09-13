@@ -77,4 +77,3 @@ function fallbackNavigation(
 		window.location.href = url;
 	}
 }
-
