@@ -143,9 +143,6 @@ importers:
       pagefind:
         specifier: ^1.5.2
         version: 1.5.2
-      pako:
-        specifier: ^3.0.1
-        version: 3.0.1
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -4730,9 +4727,6 @@ packages:
 
   pako@1.0.11:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
-
-  pako@3.0.1:
-    resolution: {integrity: sha512-GupotUUI0mlhugKjUs4bjOwLt3nrehy9Ys2dxC0GtgVef5cnKggkDMmf2bq2poCCuVXopWPmqsc9VDT2iJUy+w==}
 
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
@@ -11415,8 +11409,6 @@ snapshots:
       '@pagefind/windows-x64': 1.5.2
 
   pako@1.0.11: {}
-
-  pako@3.0.1: {}
 
   parent-module@1.0.1:
     dependencies:

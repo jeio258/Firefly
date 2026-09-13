@@ -69,7 +69,6 @@
     "marked": "^18.0.12",
     "mdast-util-to-string": "^4.0.0",
     "pagefind": "^1.5.2",
-    "pako": "^3.0.1",
     "qrcode": "^1.5.4",
     "reading-time": "^1.5.0",
     "rehype-autolink-headings": "^7.1.0",

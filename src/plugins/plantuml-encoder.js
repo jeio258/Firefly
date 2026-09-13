@@ -1,4 +1,4 @@
-import * as pako from "pako";
+import { deflateRawSync } from "node:zlib";
 
 /**
  * PlantUML 编码字母表：`0-9A-Za-z-_`。
@@ -76,7 +76,7 @@ export function encodePlantUML(source) {
 		);
 	}
 	const utf8Bytes = new TextEncoder().encode(source);
-	const deflated = pako.deflateRaw(utf8Bytes, { level: 9 });
+	const deflated = deflateRawSync(utf8Bytes, { level: 9 });
 	return encode64(deflated);
 }
 
