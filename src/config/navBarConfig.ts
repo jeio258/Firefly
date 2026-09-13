@@ -44,6 +44,9 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		children: [
 			// 友链
 			LinkPresets.Friends,
+
+			// 留言
+			LinkPresets.Guestbook,
 		],
 	});
 
@@ -53,8 +56,29 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 		url: "#",
 		icon: "material-symbols:person",
 		children: [
+			// 动态
+			LinkPresets.Dynamic,
+
+			// 项目
+			LinkPresets.Projects,
+
 			// 相册
 			LinkPresets.Gallery,
+
+			// 书签导航
+			LinkPresets.Booknav,
+
+			// 哔哩哔哩追番
+			LinkPresets.Bilibili,
+
+			// 番组计划
+			LinkPresets.Bangumi,
+
+			// VNDB
+			LinkPresets.VNDB,
+
+			// MyAnimeList
+			LinkPresets.MAL,
 		],
 	});
 
@@ -90,12 +114,6 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				url: "https://gitee.com/CuteLeaf/Firefly",
 				external: true,
 				icon: "fa7-brands:gitee",
-			},
-			{
-				name: "QQ交流群",
-				url: "https://qm.qq.com/q/ZGsFa8qX2G",
-				external: true,
-				icon: "fa7-brands:qq",
 			},
 			{
 				name: "Firefly文档",
@@ -169,6 +187,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		url: "/dynamic/",
 		icon: "material-symbols:forum-rounded",
 		pageKey: "dynamic",
+	},
+	Projects: {
+		name: "项目",
+		url: "/projects/",
+		icon: "material-symbols:rocket-launch",
+		pageKey: "projects",
 	},
 	Gallery: {
 		name: "相册",

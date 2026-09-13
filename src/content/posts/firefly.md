@@ -14,6 +14,8 @@ published: 2026-07-16
 updated: 2026-07-16
 comment: true
 slug: firefly
+series: "Firefly 功能示例"
+seriesOrder: 4
 ---
 
 ## 🌟 项目概述

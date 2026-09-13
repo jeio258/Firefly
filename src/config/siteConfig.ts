@@ -19,6 +19,8 @@ const pages = resolvePageToggles({
 
 	// 动态页面开关
 	dynamic: false,
+	// 项目展示页开关
+	projects: true,
 	// 相册页面开关
 	gallery: true,
 	// 书签导航页面开关
@@ -243,7 +245,7 @@ export const siteConfig: SiteConfig = {
 		// 是否显示随机文章推荐
 		randomPosts: true,
 		// OpenGraph图片功能，注意开启后要渲染很长时间，不建议本地调试的时候开启
-		generateOgImages: false,
+		generateOgImages: true,
 		// 沉浸阅读配置：电脑端文章详情页右下角按钮，进入后只留文章卡片+左侧目录
 		immersiveReading: {
 			// 总开关：false 则不显示按钮
@@ -345,6 +347,14 @@ export const siteConfig: SiteConfig = {
 			"*.myanimelist.net",
 			"*.vndb.org",
 		],
+	},
+
+	// ── 订阅 (RSS / Atom) 配置 ──────────────────────────────────
+	feed: {
+		// 订阅条目内容模式：
+		// - "full": 包含文章正文全文（默认）
+		// - "summary": 仅包含文章摘要/描述，不含正文，体积更小
+		contentMode: "full",
 	},
 
 	// 站点语言，在本配置文件顶部SITE_LANG定义
