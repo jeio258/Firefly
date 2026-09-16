@@ -5,7 +5,6 @@
 @import './waves.css';
 @import './transition.css';
 @import './custom-scrollbar.css';
-@import './gallery.css';
 @import './tags.css';
 @import './display-settings.css';
 @import './categories.css';
@@ -681,25 +680,4 @@ html {
 /* 分页信息样式 */
 .pagination-info {
   @apply text-sm text-(--text-secondary) text-center mb-2;
-}
-
-/* 移动端：为图标类小控件扩展不可见点击热区至 32px（可见尺寸与布局不变） */
-@media (max-width: 768px) {
-  .immersive-toc-toggle,
-  .copy-btn,
-  .floating-btn > button {
-    position: relative;
-  }
-
-  .immersive-toc-toggle::after,
-  .copy-btn::after,
-  .floating-btn > button::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: max(100%, 32px);
-    height: max(100%, 32px);
-  }
 }
