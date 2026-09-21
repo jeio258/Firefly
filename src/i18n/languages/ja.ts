@@ -318,6 +318,7 @@ export const ja: Translation = {
 	[Key.galleryPhotos]: "枚の写真",
 	[Key.galleryNoAlbums]: "アルバムがありません",
 	[Key.galleryBackToAlbums]: "アルバム一覧に戻る",
+	[Key.galleryEnterAlbum]: "アルバムを見る",
 	[Key.searchAlbums]: "アルバムを検索...",
 
 	// パスワード保護

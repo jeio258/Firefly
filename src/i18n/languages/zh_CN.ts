@@ -313,6 +313,7 @@ export const zh_CN: Translation = {
 	[Key.galleryPhotos]: "张照片",
 	[Key.galleryNoAlbums]: "暂无相册",
 	[Key.galleryBackToAlbums]: "返回相册列表",
+	[Key.galleryEnterAlbum]: "进入相册",
 	[Key.searchAlbums]: "搜索相簿...",
 
 	// 密码保护

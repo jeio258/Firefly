@@ -318,6 +318,7 @@ export const ko: Translation = {
 	[Key.galleryPhotos]: "장",
 	[Key.galleryNoAlbums]: "아직 앨범이 없습니다",
 	[Key.galleryBackToAlbums]: "앨범으로 돌아가기",
+	[Key.galleryEnterAlbum]: "앨범 보기",
 	[Key.searchAlbums]: "앨범 검색...",
 
 	// Password Protection
