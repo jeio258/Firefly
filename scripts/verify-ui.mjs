@@ -148,7 +148,16 @@ async function connect() {
 		}
 		if (m.method === "Log.entryAdded" && m.params.entry.level === "error") {
 			const t = m.params.entry.text || "";
-			if (!/favicon/i.test(t)) consoleErrors.push(`[log] ${t.slice(0, 200)}`);
+			if (/favicon/i.test(t)) return;
+			// 外部资源（友链头像/分析 SDK/CDN）加载失败属环境抖动，非本站回归；同源资源失败仍计
+			const urlMatch = t.match(/(https?:\/\/[^\s)]+)/);
+			if (
+				urlMatch &&
+				new URL(urlMatch[1], BASE).origin !== new URL(BASE).origin
+			) {
+				return;
+			}
+			consoleErrors.push(`[log] ${t.slice(0, 200)}`);
 		}
 	};
 	await send("Page.enable");
@@ -159,7 +168,7 @@ async function connect() {
 const PROBE = `(async () => {
   const de = document.documentElement;
   // 等待图片加载收敛（最多 3s），避免慢加载被误判；对已失败图片重试一次再判定，
-  // 过滤外部图床（如友链头像 tc.alcy.cc）的瞬时网络抖动
+  // 过滤外部图床（如友链头像）的瞬时网络抖动
   const settle = (img) => new Promise((r) => {
     if (img.complete) return r();
     img.addEventListener('load', r, { once: true });
@@ -174,6 +183,11 @@ const PROBE = `(async () => {
     img.src = u.toString();
   }
   if (failed.length) await Promise.all(failed.map(settle));
+  const broken = [...document.images].filter((i) => i.complete && i.naturalWidth === 0);
+  // 破损判定只针对本站资源（部署门禁抓本站回归）；外部图失败为环境抖动，不计入失败
+  const localBroken = broken.filter(
+    (i) => new URL(i.src, location.href).origin === location.origin,
+  ).length;
   return {
     path: location.pathname,
     title: document.title,
@@ -181,7 +195,8 @@ const PROBE = `(async () => {
     overflowX: de.scrollWidth - de.clientWidth,
     hasNavbar: !!document.getElementById('navbar'),
     hasFooter: !!document.querySelector('footer'),
-    brokenImages: [...document.images].filter((i) => i.complete && i.naturalWidth === 0).length,
+    brokenImages: localBroken,
+    externalBroken: broken.length - localBroken,
   };
 })()`;
 
@@ -280,6 +295,11 @@ async function main() {
 				info.brokenImages === 0,
 				`破损 ${info.brokenImages}`,
 			);
+			if (info.externalBroken > 0) {
+				console.log(
+					`  ⚠  ${p} 外部图片 ${info.externalBroken} 张加载失败（环境抖动，不阻塞）`,
+				);
+			}
 		}
 
 		console.log(
@@ -374,6 +394,11 @@ async function main() {
 			mobile.brokenImages === 0,
 			`破损 ${mobile.brokenImages}`,
 		);
+		if (mobile.externalBroken > 0) {
+			console.log(
+				`  ⚠  移动端外部图片 ${mobile.externalBroken} 张加载失败（环境抖动，不阻塞）`,
+			);
+		}
 		const menu = await evaluate(`(() => {
       const b = document.getElementById('nav-menu-switch');
       if (!b) return { ok: false };
