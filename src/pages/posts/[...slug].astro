@@ -165,7 +165,7 @@ const jsonLd = buildPostJsonLd({
 	coverImage: coverImage,
 	published: entry.data.published,
 	updated: entry.data.updated,
-	category: entry.data.category,
+	category: entry.data.category ?? undefined,
 	wordCount: remarkPluginFrontmatter.words,
 	url: Astro.url.toString(),
 	lang: entry.data.lang || siteConfig.lang,
