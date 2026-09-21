@@ -175,15 +175,25 @@ const PROBE = `(async () => {
     img.addEventListener('error', r, { once: true });
     setTimeout(r, 3000);
   });
-  await Promise.all([...document.images].map(settle));
-  const failed = [...document.images].filter((i) => i.complete && i.naturalWidth === 0);
+  // 仅统计有真实 src 的图片：空 src 占位图（如无封面时的播放器封面）渲染为空、
+  // 会被浏览器解析为页面 URL 而报失败，属既有视觉占位而非资源回归
+  const isRealSrc = (i) => {
+    const s = i.getAttribute('src');
+    return !!s && s.trim() !== '';
+  };
+  await Promise.all([...document.images].filter(isRealSrc).map(settle));
+  const failed = [...document.images].filter(
+    (i) => isRealSrc(i) && i.complete && i.naturalWidth === 0,
+  );
   for (const img of failed) {
     const u = new URL(img.src, location.href);
     u.searchParams.set('v', Date.now());
     img.src = u.toString();
   }
   if (failed.length) await Promise.all(failed.map(settle));
-  const broken = [...document.images].filter((i) => i.complete && i.naturalWidth === 0);
+  const broken = [...document.images].filter(
+    (i) => isRealSrc(i) && i.complete && i.naturalWidth === 0,
+  );
   // 破损判定只针对本站资源（部署门禁抓本站回归）；外部图失败为环境抖动，不计入失败
   const localBroken = broken.filter(
     (i) => new URL(i.src, location.href).origin === location.origin,
@@ -277,16 +287,21 @@ async function main() {
 		console.log(`\n[1/5] 页面渲染（${PAGES.length} 个路由，桌面 1440px）`);
 		for (const p of PAGES) {
 			await goto(`${BASE}${p}`);
-			const info = await evaluate(PROBE);
-			const notFound =
-				/404|not found/i.test(info.title) || info.bodyLen < 50000;
-			if (notFound) {
+			let info = await evaluate(PROBE);
+			const renderOK = () =>
+				info.bodyLen > 100000 && info.hasNavbar && info.hasFooter;
+			if (!renderOK()) {
+				// 渲染不通过可能是慢加载/边缘抖动：重试一次再判定，避免静默漏检或误报
+				await goto(`${BASE}${p}`, 3500);
+				info = await evaluate(PROBE);
+			}
+			if (/404|not found/i.test(info.title) || info.bodyLen < 50000) {
 				console.log(`  ⏭  ${p} 跳过（未启用或 404）`);
 				continue;
 			}
 			check(
 				`${p} 渲染`,
-				info.bodyLen > 100000 && info.hasNavbar && info.hasFooter,
+				renderOK(),
 				`bodyLen=${info.bodyLen}`,
 			);
 			check(`${p} 无横向溢出`, info.overflowX <= 2, `溢出 ${info.overflowX}px`);
