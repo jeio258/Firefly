@@ -156,8 +156,24 @@ async function connect() {
 	await send("Log.enable");
 }
 
-const PROBE = `(() => {
+const PROBE = `(async () => {
   const de = document.documentElement;
+  // 等待图片加载收敛（最多 3s），避免慢加载被误判；对已失败图片重试一次再判定，
+  // 过滤外部图床（如友链头像 tc.alcy.cc）的瞬时网络抖动
+  const settle = (img) => new Promise((r) => {
+    if (img.complete) return r();
+    img.addEventListener('load', r, { once: true });
+    img.addEventListener('error', r, { once: true });
+    setTimeout(r, 3000);
+  });
+  await Promise.all([...document.images].map(settle));
+  const failed = [...document.images].filter((i) => i.complete && i.naturalWidth === 0);
+  for (const img of failed) {
+    const u = new URL(img.src, location.href);
+    u.searchParams.set('v', Date.now());
+    img.src = u.toString();
+  }
+  if (failed.length) await Promise.all(failed.map(settle));
   return {
     path: location.pathname,
     title: document.title,
@@ -165,7 +181,7 @@ const PROBE = `(() => {
     overflowX: de.scrollWidth - de.clientWidth,
     hasNavbar: !!document.getElementById('navbar'),
     hasFooter: !!document.querySelector('footer'),
-    brokenImages: [...document.images].filter(i => i.complete && i.naturalWidth === 0).length,
+    brokenImages: [...document.images].filter((i) => i.complete && i.naturalWidth === 0).length,
   };
 })()`;
 
