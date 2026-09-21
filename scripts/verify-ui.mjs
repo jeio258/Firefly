@@ -193,6 +193,7 @@ const PAGES = [
 	"/gallery/",
 	"/about/",
 	"/friends/",
+	"/apply/",
 	"/sponsor/",
 	"/rss/",
 	"/atom/",
@@ -242,7 +243,7 @@ async function main() {
 			mobile: false,
 		});
 
-		console.log(`\n[1/4] 页面渲染（${PAGES.length} 个路由，桌面 1440px）`);
+		console.log(`\n[1/5] 页面渲染（${PAGES.length} 个路由，桌面 1440px）`);
 		for (const p of PAGES) {
 			await goto(`${BASE}${p}`);
 			const info = await evaluate(PROBE);
@@ -266,7 +267,7 @@ async function main() {
 		}
 
 		console.log(
-			"\n[2/4] Swup 单程软导航（每程只点一次，避免整数往返掩盖监听器问题）",
+			"\n[2/5] Swup 单程软导航（每程只点一次，避免整数往返掩盖监听器问题）",
 		);
 		await goto(`${BASE}/`);
 		for (const target of ["归档", "标签", "分类", "关于"]) {
@@ -298,7 +299,7 @@ async function main() {
 			`${backBefore.path} → ${backAfter.path}`,
 		);
 
-		console.log("\n[3/4] 文章页 TOC");
+		console.log("\n[3/5] 文章页 TOC");
 		const postPath = process.env.POST_PATH || "/posts/friend-link/";
 		await goto(`${BASE}${postPath}`, 3500);
 		const toc = await evaluate(`(() => {
@@ -338,7 +339,7 @@ async function main() {
 			);
 		}
 
-		console.log("\n[4/4] 移动端 375x812");
+		console.log("\n[4/5] 移动端 375x812");
 		await send("Emulation.setDeviceMetricsOverride", {
 			width: 375,
 			height: 812,
@@ -373,6 +374,140 @@ async function main() {
 				"移动端导航抽屉可开",
 				drawer.exists && !drawer.closed,
 				JSON.stringify(drawer),
+			);
+		}
+
+		console.log("\n[5/5] 定制功能契约（后台 API / 友链申请 / admin 入口）");
+
+		// ── 静态 JSON API（构建产物，本地 preview 与生产一致）──
+		const jsonGet = async (path) => {
+			const res = await fetch(`${BASE}${path}`, {
+				signal: AbortSignal.timeout(8000),
+			});
+			return res.ok
+				? { ok: true, status: res.status, data: await res.json() }
+				: { ok: false, status: res.status };
+		};
+
+		const adminPosts = await jsonGet("/api/admin-posts.json");
+		check("admin-posts.json 200", adminPosts.ok, `HTTP ${adminPosts.status}`);
+		check(
+			"admin-posts 结构安全（无正文/明文密码）",
+			adminPosts.ok &&
+				Array.isArray(adminPosts.data) &&
+				adminPosts.data.every(
+					(p) =>
+						typeof p.passwordProtected === "boolean" &&
+						!("body" in p) &&
+						!("password" in p),
+				),
+			adminPosts.ok ? `${adminPosts.data.length} 条` : "不可用",
+		);
+
+		const allMeta = await jsonGet("/api/allPostMeta.json");
+		check("allPostMeta.json 200", allMeta.ok, `HTTP ${allMeta.status}`);
+		check(
+			"allPostMeta 结构",
+			allMeta.ok &&
+				Array.isArray(allMeta.data) &&
+				allMeta.data.every(
+					(p) =>
+						typeof p.id === "string" &&
+						typeof p.published === "number" &&
+						typeof p.password === "boolean",
+				),
+			allMeta.ok ? `${allMeta.data.length} 条` : "不可用",
+		);
+
+		const dyn = await jsonGet("/api/dynamic.json");
+		check("dynamic.json 200", dyn.ok, `HTTP ${dyn.status}`);
+		check(
+			"dynamic.json 结构",
+			dyn.ok &&
+				Array.isArray(dyn.data) &&
+				dyn.data.every(
+					(d) =>
+						typeof d.id === "string" &&
+						typeof d.published === "number" &&
+						typeof d.html === "string",
+				),
+			dyn.ok ? `${dyn.data.length} 条` : "不可用",
+		);
+
+		// ── 页面（CDP 探测）──
+		await goto(`${BASE}/apply/`);
+		const apply = await evaluate(PROBE);
+		check(
+			"友链申请页渲染",
+			apply.bodyLen > 50000 &&
+				(await evaluate("!!document.getElementById('apply-form')")),
+			`bodyLen=${apply.bodyLen}`,
+		);
+
+		await goto(`${BASE}/admin/`);
+		const adminShell = await evaluate(`(() => {
+      return {
+        path: location.pathname,
+        title: document.title,
+        hasApp: !!document.getElementById('app'),
+      };
+    })()`);
+		check(
+			"admin 后台壳加载",
+			adminShell.hasApp && /后台管理/.test(adminShell.title),
+			JSON.stringify(adminShell),
+		);
+
+		// ── Cloudflare Functions（仅生产可用；本地 preview 无 Functions 则跳过）──
+		const cfgRes = await fetch(`${BASE}/admin/config.yml`, {
+			signal: AbortSignal.timeout(8000),
+		});
+		if (cfgRes.status === 404 || cfgRes.status === 405) {
+			console.log("  ⏭  /admin/config.yml 无 Functions（本地 preview），跳过");
+		} else {
+			check("admin config.yml 200", cfgRes.ok, `HTTP ${cfgRes.status}`);
+		}
+
+		// 友链申请负向用例：只测被拦（不写仓库）；429=命中限流亦属被拦
+		const submitUrl = `${BASE}/submit-friend-request`;
+		const rejectOK = (status) => status === 400 || status === 429;
+		const probe = await fetch(submitUrl, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: "not-json",
+			signal: AbortSignal.timeout(8000),
+		});
+		if (probe.status === 404 || probe.status === 405) {
+			console.log(
+				"  ⏭  /submit-friend-request 无 Functions（本地 preview），跳过",
+			);
+		} else {
+			check(
+				"友链申请 非法 JSON 被拒",
+				rejectOK(probe.status),
+				`HTTP ${probe.status}`,
+			);
+			const missing = await fetch(submitUrl, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ title: "测试" }),
+				signal: AbortSignal.timeout(8000),
+			});
+			check(
+				"友链申请 缺 siteurl 被拒",
+				rejectOK(missing.status),
+				`HTTP ${missing.status}`,
+			);
+			const huge = await fetch(submitUrl, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ title: "x".repeat(20 * 1024) }),
+				signal: AbortSignal.timeout(8000),
+			});
+			check(
+				"友链申请 超大 body 被拒(413)",
+				huge.status === 413,
+				`HTTP ${huge.status}`,
 			);
 		}
 
