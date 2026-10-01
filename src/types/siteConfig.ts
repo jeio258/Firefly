@@ -8,6 +8,7 @@ import type {
 	WALLPAPER_OVERLAY,
 } from "../constants/constants";
 import type { ImmersiveReadingConfig } from "./immersiveReadingConfig";
+import type { NsfwMode } from "./nsfw";
 
 export type LIGHT_DARK_MODE =
 	| typeof LIGHT_MODE
@@ -59,7 +60,11 @@ export type SiteConfig = {
 	// 可选：站点时区，使用 IANA 时区标识，例如 "Asia/Shanghai"、"UTC"
 	timezone?: string;
 
-	favicon: Favicon[];
+	favicon: Array<{
+		src: string;
+		theme?: "light" | "dark";
+		sizes?: string;
+	}>;
 
 	navbar: {
 		/** 导航栏Logo图标，可选类型：icon库、本地图片、网络图片链接 */
@@ -81,10 +86,15 @@ export type SiteConfig = {
 
 	// 页面开关配置
 	pages: {
+		booknav: boolean; // 书签导航页面开关
 		friends: boolean; // 友链页面开关
 		sponsor: boolean; // 打赏页面开关
+		guestbook: boolean; // 留言板页面开关
+		bangumi: boolean;
 		vndb: boolean;
+		mal: boolean; // MyAnimeList 页面开关
 		gallery: boolean; // 相册页面开关
+		bilibili: boolean; // 哔哩哔哩追番页面开关
 		dynamic: boolean; // 动态页面开关
 		projects: boolean; // 项目展示页开关
 	};
@@ -164,13 +174,48 @@ export type SiteConfig = {
 		immersiveReading?: ImmersiveReadingConfig;
 	};
 
+	// bangumi配置
+	bangumi?: {
+		userId?: string; // Bangumi用户ID
+		mode?: "static" | "dynamic"; // 数据模式：static=构建时获取，dynamic=客户端实时获取
+		apiUrl?: string; // Bangumi API 地址
+		subjectBaseUrl?: string; // 条目详情页地址
+		categoryOrder?: ("anime" | "game" | "book" | "music" | "real")[]; // 条目类型排序顺序
+		// 各分类的显示启用状态，未设置时默认启用
+		categories?: {
+			book?: boolean;
+			anime?: boolean;
+			music?: boolean;
+			game?: boolean;
+			real?: boolean;
+		};
+		nsfw?: NsfwMode; // NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
+	};
+
 	// VNDB 配置
 	vndb?: {
 		userId?: string; // VNDB 用户 ID，例如 "u2"
 		mode?: "static" | "dynamic"; // 数据模式：static=构建时获取，dynamic=客户端实时获取
 		downloadCovers?: boolean; // 构建时下载并压缩 VNDB 封面到本地
 		apiUrl?: string; // VNDB API 地址
+		vnBaseUrl?: string; // VNDB 条目详情页地址，末尾需要带 /
 		apiToken?: string; // 私密列表访问令牌，仅 static 模式下使用
+		nsfw?: NsfwMode; // NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
+	};
+
+	// MyAnimeList 配置
+	mal?: {
+		username?: string; // MyAnimeList 用户名，列表需为公开状态
+		clientId?: string; // MyAnimeList Client ID，从 https://myanimelist.net/apiconfig 注册免费应用后获取
+		apiUrl?: string; // MAL API 地址
+		animeBaseUrl?: string; // 动画条目详情页地址，末尾需要带 /
+		mangaBaseUrl?: string; // 漫画条目详情页地址，末尾需要带 /
+		nsfw?: NsfwMode; // NSFW 处理："off" 不过滤 | "blur" 仅模糊封面 | "hide" 隐藏条目
+	};
+
+	// Bilibili 配置
+	bilibili?: {
+		uid?: string; // Bilibili 用户 UID
 	};
 
 	// 分页配置

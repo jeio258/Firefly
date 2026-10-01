@@ -17,6 +17,16 @@ const pages = resolvePageToggles({
 
 	// 动态页面开关
 	dynamic: false,
+	// 留言板页面开关（上游功能，本地未启用）
+	guestbook: false,
+	// 书签导航页面开关（上游功能，本地未启用）
+	booknav: false,
+	// 番组计划页面开关（上游功能，本地未启用）
+	bangumi: false,
+	// MAL 页面开关（上游功能，本地未启用）
+	mal: false,
+	// Bilibili 页面开关（上游功能，本地未启用）
+	bilibili: false,
 	// 项目展示页开关
 	projects: true,
 	// 相册页面开关

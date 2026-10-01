@@ -7,6 +7,14 @@ export type NavBarLink = {
 	pageKey?: string;
 };
 
+export enum NavBarSearchMethod {
+	PageFind = 0,
+}
+
+export type NavBarSearchConfig = {
+	method: NavBarSearchMethod;
+};
+
 export type NavBarConfig = {
 	links: NavBarLink[];
 };

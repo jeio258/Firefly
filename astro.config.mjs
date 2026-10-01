@@ -213,6 +213,7 @@ export default defineConfig({
 				codeFontFamily:
 					"var(--font-code, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace)",
 				codeLineHeight: "1.5rem",
+				frames: {},
 				textMarkers: {
 					delHue: 0,
 					insHue: 180,
@@ -257,6 +258,24 @@ export default defineConfig({
 					return false;
 				}
 				if (pathname === "/sponsor/" && !siteConfig.pages.sponsor) {
+					return false;
+				}
+				if (pathname === "/guestbook/" && !siteConfig.pages.guestbook) {
+					return false;
+				}
+				if (pathname === "/booknav/" && !siteConfig.pages.booknav) {
+					return false;
+				}
+				if (pathname === "/bilibili/" && !siteConfig.pages.bilibili) {
+					return false;
+				}
+				if (pathname === "/bangumi/" && !siteConfig.pages.bangumi) {
+					return false;
+				}
+				if (pathname === "/vndb/" && !siteConfig.pages.vndb) {
+					return false;
+				}
+				if (pathname === "/myanimelist/" && !siteConfig.pages.mal) {
 					return false;
 				}
 				return true;
