@@ -258,6 +258,11 @@ async function main() {
 			"--no-sandbox",
 			"--disable-gpu",
 			`--remote-debugging-port=${CDP_PORT}`,
+			// 独立 profile：Windows 侧 Chrome 若已有运行实例，新进程会让位于它导致 CDP 端口不开
+			`--user-data-dir=${
+				process.env.CHROME_USER_DATA_DIR || "C:\\Temp\\firefly-verify"
+			}`,
+			"--no-first-run",
 			"--window-size=1440,900",
 			"about:blank",
 		],
@@ -585,6 +590,8 @@ async function main() {
 		});
 		process.exit(1);
 	}
+	// Windows 侧 Chrome 不响应 WSL 的 SIGKILL，子进程句柄会挂住 node；结果已输出，显式退出
+	process.exit(0);
 }
 
 main().catch((e) => {
