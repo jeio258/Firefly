@@ -1,4 +1,4 @@
-import { base64ToString } from './utils.js';
+import { base64ToString, stringToBase64 } from './utils.js';
 
 const API_BASE = 'https://api.github.com';
 
@@ -105,5 +105,21 @@ export async function deletePost(owner, repo, branch, filePath, sha, token) {
     return await gitRequest(owner, repo, branch, 'DELETE', filePath, {
         message: `Delete: ${filePath}`,
         sha
+    }, token);
+}
+
+export async function getRawFile(owner, repo, branch, filePath, token) {
+    const res = await gitRequest(owner, repo, branch, 'GET', filePath, null, token);
+    if (res.status === 404) return { sha: null, text: null };
+    if (!res.ok) throw new Error(`读取 ${filePath} 失败（${res.status}）`);
+    const data = await res.json();
+    return { sha: data.sha, text: base64ToString(data.content) };
+}
+
+export async function saveRawFile(owner, repo, branch, filePath, text, sha, token, message) {
+    return await gitRequest(owner, repo, branch, 'PUT', filePath, {
+        message: message || `Update: ${filePath}`,
+        content: stringToBase64(text),
+        sha: sha || undefined
     }, token);
 }

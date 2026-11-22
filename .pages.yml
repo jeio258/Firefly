@@ -1,0 +1,281 @@
+# 后台配置结构（对齐 Pages CMS v2 schema）
+# 后台「配置」页按此渲染：分组 → 条目 → 文件。
+# format: code 直接编辑文本；format: yaml-frontmatter 拆出 frontmatter 字段与正文。
+# 保存即提交到 GitHub，Cloudflare Pages 重新构建后生效。
+
+media:
+  - name: post-images
+    label: 文章配图
+    input: src/content/posts/images
+    output: /images
+    categories: [image]
+
+  - name: assets
+    label: 站点资源
+    input: public/assets
+    output: /assets
+    categories: [image]
+
+  - name: banner
+    label: 站点头图
+    input: public/assets/images
+    output: /assets/images
+    categories: [image]
+
+content:
+  # ============================================================
+  # 📝 内容页面
+  # ============================================================
+  - name: content-pages
+    label: 📝 内容页面
+    type: group
+    items:
+      - name: posts
+        label: 📝 博客文章
+        type: collection
+        path: src/content/posts
+        format: yaml-frontmatter
+        view:
+          primary: title
+          fields: [title, published, tags, category, draft, pinned]
+          sort: ["published desc", "title asc"]
+          search: [title, description, tags, category]
+        fields:
+          - { name: title, label: 标题, type: string, required: true }
+          - { name: published, label: 发布时间, type: date, required: true }
+          - { name: updated, label: 更新时间, type: date }
+          - { name: draft, label: 草稿, type: boolean, default: false }
+          - { name: description, label: 文章摘要, type: text }
+          - { name: image, label: 封面图, type: image }
+          - { name: tags, label: 标签, type: select, multiple: true, creatable: true }
+          - { name: category, label: 分类, type: string }
+          - { name: lang, label: 语言, type: select }
+          - { name: pinned, label: 置顶, type: boolean, default: false }
+          - { name: author, label: 作者, type: string }
+          - { name: sourceLink, label: 原文链接, type: string }
+          - { name: licenseName, label: 许可协议名称, type: string }
+          - { name: licenseUrl, label: 许可协议链接, type: string }
+          - { name: comment, label: 启用评论, type: boolean, default: true }
+          - { name: password, label: 文章密码, type: string }
+          - { name: passwordHint, label: 密码提示, type: string }
+          - { name: body, label: 正文, type: rich-text, required: true }
+
+      - name: about
+        label: 📄 关于页面
+        type: file
+        path: src/content/spec/about.md
+        format: yaml-frontmatter
+        description: 关于页标题与正文
+        fields:
+          - { name: title, label: 页面标题, type: string }
+          - { name: body, label: 正文, type: rich-text }
+
+      - name: friends
+        label: 🔗 友情链接
+        type: file
+        path: src/content/spec/friends.mdx
+        format: yaml-frontmatter
+        description: 友链页标题、描述与 MDX 正文
+        fields:
+          - { name: title, label: 页面标题, type: string }
+          - { name: description, label: 页面描述, type: string }
+          - { name: body, label: 正文, type: code }
+
+      - name: guestbook
+        label: 📬 留言板
+        type: file
+        path: src/content/spec/guestbook.md
+        format: yaml-frontmatter
+        description: 留言板标题与正文
+        fields:
+          - { name: title, label: 页面标题, type: string }
+          - { name: body, label: 正文, type: rich-text }
+
+  # ============================================================
+  # ⚙️ 站点设置
+  # ============================================================
+  - name: site-settings
+    label: ⚙️ 站点设置
+    type: group
+    description: 核心站点配置，包括标题、域名、SEO、个人信息等
+    items:
+      - name: site-config
+        label: 🌐 站点主配置
+        type: file
+        path: src/config/siteConfig.ts
+        format: code
+        description: 站点标题、URL、主题色、分页、页面开关等核心设置
+
+      - name: profile-config
+        label: 👤 个人信息
+        type: file
+        path: src/config/profileConfig.ts
+        format: code
+        description: 头像、昵称、签名、社交链接等个人资料配置
+
+      - name: announcement-config
+        label: 📢 公告栏
+        type: file
+        path: src/config/announcementConfig.ts
+        format: code
+        description: 博客顶部公告栏的标题、内容和链接配置
+
+      - name: license-config
+        label: 📜 许可协议
+        type: file
+        path: src/config/licenseConfig.ts
+        format: code
+        description: 文章底部版权声明（如 CC BY-NC-SA 4.0）
+
+  # ============================================================
+  # 🎨 布局与外观
+  # ============================================================
+  - name: layout-appearance
+    label: 🎨 布局与外观
+    type: group
+    description: 导航栏、侧边栏、壁纸、字体等视觉相关配置
+    items:
+      - name: nav-bar-config
+        label: 🧭 导航栏
+        type: file
+        path: src/config/navBarConfig.ts
+        format: code
+        description: 导航栏菜单项、链接预设和搜索配置
+
+      - name: sidebar-config
+        label: 📐 侧边栏布局
+        type: file
+        path: src/config/sidebarConfig.ts
+        format: code
+        description: 侧边栏位置、组件显示与排序
+
+      - name: footer-html
+        label: 📏 页脚 HTML
+        type: file
+        path: src/config/FooterConfig.html
+        format: code
+        description: 页脚自定义 HTML（备案号、版权信息等）
+
+      - name: font-config
+        label: 🔤 字体设置
+        type: file
+        path: src/config/fontConfig.ts
+        format: code
+        description: 全局字体、横幅字体、子集化等配置
+
+      - name: cover-image-config
+        label: 🖼️ 文章封面图
+        type: file
+        path: src/config/coverImageConfig.ts
+        format: code
+        description: 文章详情页封面图显示与随机图 API 配置
+
+      - name: background-wallpaper
+        label: 🏞️ 背景壁纸
+        type: file
+        path: src/config/backgroundWallpaper.ts
+        format: code
+        description: 壁纸模式、壁纸列表、背景特效
+
+      - name: expressive-code-config
+        label: 💻 代码块样式
+        type: file
+        path: src/config/expressiveCodeConfig.ts
+        format: code
+        description: 代码高亮主题、折叠插件、语言徽章
+
+      - name: display-settings-config
+        label: 🎛️ 显示设置面板
+        type: file
+        path: src/config/displaySettingsConfig.ts
+        format: code
+        description: 前台显示设置面板的可切换项开关
+
+  # ============================================================
+  # 🔧 功能配置
+  # ============================================================
+  - name: feature-settings
+    label: 🔧 功能配置
+    type: group
+    description: 评论、统计、音乐、打赏、友链、特效等功能模块配置
+    items:
+      - name: comment-config
+        label: 💬 评论系统
+        type: file
+        path: src/config/commentConfig.ts
+        format: code
+        description: Twikoo / Waline / Giscus / Artalk / Disqus 配置
+
+      - name: analytics-config
+        label: 📊 数据统计
+        type: file
+        path: src/config/analyticsConfig.ts
+        format: code
+        description: Google Analytics、Clarity、Umami、51la 配置
+
+      - name: music-config
+        label: 🎵 音乐播放器
+        type: file
+        path: src/config/musicConfig.ts
+        format: code
+        description: 播放模式、播放列表、歌词设置
+
+      - name: sponsor-config
+        label: 💰 打赏页面
+        type: file
+        path: src/config/sponsorConfig.ts
+        format: code
+        description: 打赏用途、支付方式、赞助者列表
+
+      - name: friends-data
+        label: 🔗 友链数据
+        type: file
+        path: src/config/friendsConfig.ts
+        format: code
+        description: 友链列表（站点名、头像、描述、链接、标签、权重）
+
+      - name: effects-config
+        label: 🌸 樱花特效
+        type: file
+        path: src/config/effectsConfig.ts
+        format: code
+        description: 樱花数量、速度、尺寸、透明度
+
+      - name: gallery-config
+        label: 🖼️ 相册配置
+        type: file
+        path: src/config/galleryConfig.ts
+        format: code
+        description: 相册列表与布局设置
+
+      - name: pio-config
+        label: 🎭 看板娘
+        type: file
+        path: src/config/pioConfig.ts
+        format: code
+        description: Spine / Live2D 模型、位置、交互、气泡提示
+
+      - name: plantuml-config
+        label: 📐 PlantUML 图表
+        type: file
+        path: src/config/plantumlConfig.ts
+        format: code
+        description: PlantUML 服务器地址与明暗主题
+
+      - name: mermaid-config
+        label: 🧜 Mermaid 图表
+        type: file
+        path: src/config/mermaidConfig.ts
+        format: code
+        description: Mermaid 渲染主题与参数
+
+      - name: dynamic-config
+        label: 🕒 动态页
+        type: file
+        path: src/config/dynamicConfig.ts
+        format: code
+        description: 动态页数据源（本地 / Memos）与评论设置
+
+settings:
+  content:
+    merge: false

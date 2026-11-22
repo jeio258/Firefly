@@ -2,6 +2,7 @@ import { store, loadToken, setToken, clearToken, loadConfig } from './store.js';
 import { escapeHtml } from './utils.js';
 import { toast, openModal, closeModal } from './ui.js';
 import { renderLoginView } from './views/login.js';
+import { renderConfig } from './views/config.js';
 import { renderDashboard } from './views/dashboard.js';
 import { renderPosts } from './views/posts.js';
 import { renderEditor } from './views/editor.js';
@@ -96,11 +97,12 @@ const NAV = [
         { path: '/posts', label: '文章管理', icon: 'fa-file-lines' }
     ]},
     { group: '站点模块', items: [
-        { path: '/friends', label: '友链管理', icon: 'fa-link' }
+        { path: '/friends', label: '友链管理', icon: 'fa-link' },
+        { path: '/config', label: '配置', icon: 'fa-sliders' }
     ]}
 ];
 
-const TITLES = { '/dashboard': '仪表盘', '/posts': '文章管理', '/new': '新建文章', '/edit': '编辑文章', '/friends': '友链管理' };
+const TITLES = { '/dashboard': '仪表盘', '/posts': '文章管理', '/new': '新建文章', '/edit': '编辑文章', '/friends': '友链管理', '/config': '配置' };
 
 function renderShell() {
     const app = document.getElementById('app');
@@ -319,6 +321,7 @@ async function show() {
         else if (path === '/new') renderEditor(view, null);
         else if (path === '/edit') renderEditor(view, params.get('path'));
         else if (path === '/friends') renderFriends(view);
+        else if (path === '/config') renderConfig(view, params);
         else renderDashboard(view);
         shell.setActive(path === '/new' || path === '/edit' ? '/posts' : path);
     } catch (e) {
