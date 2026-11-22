@@ -105,54 +105,66 @@ const TITLES = { '/dashboard': '仪表盘', '/posts': '文章管理', '/new': '�
 function renderShell() {
     const app = document.getElementById('app');
     const groupsHtml = NAV.map((g) => `
-        <div>
-            <p class="px-3 pb-1 pt-1 text-[11px] font-semibold uppercase tracking-wider text-slate-400">${g.group}</p>
+        <div class="nav-group">
+            <p class="nav-title">${g.group}</p>
             <div class="space-y-1">
-                ${g.items.map((it) => `<a href="#${it.path}" data-nav="${it.path}" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
-                    <i class="fas ${it.icon} h-[18px] w-[18px] text-center text-slate-400"></i><span>${it.label}</span>
+                ${g.items.map((it) => `<a href="#${it.path}" data-nav="${it.path}" class="nav-item" title="${it.label}" aria-label="${it.label}">
+                    <i class="fas ${it.icon}"></i><span class="nav-label">${it.label}</span>
                 </a>`).join('')}
             </div>
         </div>`).join('');
     app.innerHTML = `
-    <div class="flex min-h-screen bg-slate-50">
-        <aside class="fixed inset-y-0 left-0 z-30 hidden w-60 border-r border-slate-200 bg-(--card-bg) lg:block">
-            <div class="flex h-16 items-center gap-2.5 px-5">
-                <img src="/favicon/firefly-32.png" alt="Firefly" class="h-8 w-8 shrink-0 rounded-lg" />
-                <div class="leading-tight">
-                    <p class="text-sm font-semibold text-slate-900">Firefly 后台</p>
-                    <p class="text-[11px] text-slate-400">管理控制台</p>
+    <div class="flex h-dvh overflow-hidden bg-(--page-bg)">
+        <aside id="admin-sidebar" class="admin-sidebar sticky top-0 flex h-dvh w-(--admin-sidebar-w) shrink-0 flex-col border-r border-(--line-divider) bg-(--card-bg) shadow-(--admin-shadow-side) max-[900px]:fixed max-[900px]:inset-y-0 max-[900px]:left-0 max-[900px]:z-50 max-[900px]:w-[min(17rem,84vw)] max-[900px]:-translate-x-full max-[900px]:shadow-xl">
+            <div class="admin-brand flex h-(--admin-topbar-h) shrink-0 items-center gap-2.5 border-b border-(--line-divider) px-4">
+                <img src="/favicon/firefly-32.png" alt="Firefly" class="sidebar-brand-logo h-8 w-8 shrink-0 rounded-lg" />
+                <div class="sidebar-brand-text min-w-0 leading-tight">
+                    <p class="truncate text-sm font-semibold text-slate-900">Firefly 后台</p>
+                    <p class="truncate text-[11px] text-slate-400">管理控制台</p>
                 </div>
+                <button id="sidebar-collapse-btn" class="sidebar-collapse-btn ml-auto inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-(--admin-radius) text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 max-[900px]:hidden" aria-label="折叠侧栏" title="折叠侧栏"><i class="fas fa-angles-left"></i></button>
             </div>
-            <nav class="space-y-5 overflow-y-auto px-3 py-2">${groupsHtml}</nav>
-            <div class="border-t border-slate-200 p-3">
-                <div class="rounded-lg bg-slate-50 p-3">
-                    <p class="text-xs font-medium text-slate-700">写回仓库</p>
-                    <p class="mt-1 text-[11px] leading-relaxed text-slate-500">${escapeHtml(store.owner ? `${store.owner}/${store.repo} · ${store.branch}` : '登录后自动读取')}</p>
+            <nav class="flex-1 overflow-y-auto px-3 py-2">${groupsHtml}</nav>
+            <div class="sidebar-footer border-t border-(--line-divider) p-3">
+                <div class="sidebar-repo rounded-(--admin-radius) bg-slate-50 p-3">
+                    <p class="flex items-center gap-2 text-xs font-medium text-slate-700"><i class="fas fa-code-branch text-slate-400"></i><span class="sidebar-footer-detail">写回仓库</span></p>
+                    <p class="sidebar-footer-detail mt-1 break-all text-[11px] leading-relaxed text-slate-500">${escapeHtml(store.owner ? `${store.owner}/${store.repo} · ${store.branch}` : '登录后自动读取')}</p>
+                </div>
+                <div class="sidebar-user mt-2 flex items-center gap-2.5 rounded-(--admin-radius) px-1 py-1.5">
+                    <img src="/favicon/firefly-32.png" alt="" class="h-8 w-8 shrink-0 rounded-full" />
+                    <div class="sidebar-footer-detail min-w-0 leading-tight">
+                        <p class="truncate text-sm font-medium text-slate-800">GitHub</p>
+                        <p class="truncate text-[11px] text-slate-500">已授权 · 可写回</p>
+                    </div>
                 </div>
             </div>
         </aside>
 
-        <div class="flex min-w-0 flex-1 flex-col lg:pl-60">
-            <header class="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-slate-200 bg-(--card-bg) px-4 backdrop-blur sm:px-6">
-                <button id="hamburger" class="inline-flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 lg:hidden" aria-label="打开菜单"><i class="fas fa-bars"></i></button>
-                <h1 id="page-title" class="min-w-0 flex-1 truncate text-base font-semibold text-slate-900 sm:text-lg"></h1>
-                <button id="theme-toggle" class="hidden h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-brand-600 sm:inline-flex" aria-label="切换深浅模式"></button>
-                <button id="preview-btn" class="hidden h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-brand-600 sm:inline-flex" aria-label="预览前台" title="预览前台"><i class="fas fa-eye"></i></button>
+        <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
+            <header class="admin-topbar h-(--admin-topbar-h) sticky top-0 z-40 flex items-center gap-3.5 border-b border-(--line-divider) bg-(--card-bg)/85 px-5 backdrop-blur-[10px]">
+                <button id="hamburger" class="hidden h-9 w-9 shrink-0 items-center justify-center rounded-(--admin-radius) text-slate-500 transition-colors hover:bg-slate-100 hover:text-brand-600 max-[900px]:inline-flex" aria-label="打开菜单" aria-controls="admin-sidebar" aria-expanded="false"><i class="fas fa-bars"></i></button>
+                <div class="flex min-w-0 flex-1 items-center gap-2 text-sm">
+                    <span id="page-group" class="max-[900px]:hidden truncate font-medium text-slate-500"></span>
+                    <span class="max-[900px]:hidden text-slate-300">/</span>
+                    <h1 id="page-title" class="min-w-0 truncate text-base font-semibold text-slate-900"></h1>
+                </div>
+                <button id="theme-toggle" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-(--admin-radius) text-slate-500 transition-colors hover:bg-slate-100 hover:text-brand-600" aria-label="切换深浅模式"></button>
+                <button id="preview-btn" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-(--admin-radius) text-slate-500 transition-colors hover:bg-slate-100 hover:text-brand-600" aria-label="预览前台" title="预览前台"><i class="fas fa-eye"></i></button>
                 <div class="relative">
-                    <button id="user-menu-btn" class="flex items-center gap-2 rounded-lg py-1 pl-1 pr-2 transition-colors hover:bg-slate-100">
+                    <button id="user-menu-btn" class="flex items-center gap-2 rounded-(--admin-radius) py-1 pl-1 pr-2 transition-colors hover:bg-slate-100">
                         <img src="/favicon/firefly-32.png" alt="" class="h-8 w-8 rounded-full" />
-                        <span class="hidden text-left leading-tight sm:block">
+                        <span class="max-[900px]:hidden text-left leading-tight">
                             <span class="block text-sm font-medium text-slate-800">GitHub</span>
                             <span class="block text-[11px] text-slate-500">已授权</span>
                         </span>
-                        <i class="fas fa-chevron-down text-slate-400"></i>
+                        <i class="fas fa-chevron-down max-[900px]:hidden text-slate-400"></i>
                     </button>
-                    <div id="user-menu" class="absolute right-0 top-full z-40 mt-2 hidden w-44 overflow-hidden rounded-xl border border-slate-200 bg-(--card-bg) py-1 shadow-lg">
+                    <div id="user-menu" class="absolute right-0 top-full z-50 mt-2 hidden w-44 overflow-hidden rounded-(--admin-radius) border border-(--line-divider) bg-(--card-bg) py-1 shadow-(--admin-shadow-card)">
                         <button id="logout-btn" class="flex w-full items-center gap-2 px-3 py-2 text-sm text-rose-600 transition-colors hover:bg-rose-50"><i class="fas fa-right-from-bracket"></i>退出登录</button>
                     </div>
                 </div>
             </header>
-            <main id="view" class="min-w-0 flex-1 px-4 py-5 sm:px-6 sm:py-6"></main>
+            <main id="view" class="min-h-0 min-w-0 flex-1 overflow-y-auto px-5 py-6"></main>
         </div>
     </div>`;
 
@@ -161,39 +173,61 @@ function renderShell() {
         setActive(path) {
             app.querySelectorAll('[data-nav]').forEach((a) => {
                 const act = a.dataset.nav === path;
-                a.className = `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${act ? 'bg-brand-50 text-brand-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`;
-                const ic = a.querySelector('i');
-                ic.className = `fas ${NAV.flatMap((g) => g.items).find((n) => n.path === a.dataset.nav).icon} text-center ${act ? 'text-brand-600' : 'text-slate-400'}`;
+                a.classList.toggle('active', act);
+                if (act) a.setAttribute('aria-current', 'page');
+                else a.removeAttribute('aria-current');
             });
             const title = TITLES[path] || 'Firefly 后台';
             app.querySelector('#page-title').textContent = title;
+            const group = NAV.find((g) => g.items.some((it) => it.path === path));
+            const groupEl = app.querySelector('#page-group');
+            if (groupEl) groupEl.textContent = group ? group.group : 'Firefly';
         },
         viewEl() {
             return app.querySelector('#view');
         }
     };
 
-    const aside = app.querySelector('aside');
-    const closeSidebar = () => {
-        aside.classList.add('hidden');
-        document.getElementById('sidebar-overlay')?.remove();
+    const aside = app.querySelector('#admin-sidebar');
+    const hamburger = app.querySelector('#hamburger');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    const isMobile = () => window.matchMedia('(width < 900px)').matches;
+
+    const setDrawer = (open) => {
+        aside.classList.toggle('open', open);
+        backdrop?.classList.toggle('open', open);
+        hamburger.setAttribute('aria-expanded', String(open));
     };
-    const openSidebar = () => {
-        aside.classList.remove('hidden');
-        document.getElementById('sidebar-overlay')?.remove();
-        const ov = document.createElement('div');
-        ov.id = 'sidebar-overlay';
-        ov.className = 'fixed inset-0 z-[25] bg-(--overlay) lg:hidden';
-        document.body.appendChild(ov);
-        ov.addEventListener('click', closeSidebar);
-    };
-    app.querySelector('#hamburger').onclick = () => {
-        aside.classList.contains('hidden') ? openSidebar() : closeSidebar();
-    };
-    app.querySelectorAll('aside a[data-nav]').forEach((a) => a.addEventListener('click', closeSidebar));
+    const closeDrawer = () => setDrawer(false);
+
+    hamburger.onclick = () => setDrawer(!aside.classList.contains('open'));
+    app.querySelectorAll('aside a[data-nav]').forEach((a) => a.addEventListener('click', () => {
+        if (isMobile()) closeDrawer();
+    }));
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeSidebar();
+        if (e.key === 'Escape') closeDrawer();
     });
+    backdrop?.addEventListener('click', closeDrawer);
+
+    // 桌面侧栏折叠：宽度切换到 collapsed 令牌，状态持久化
+    const COLLAPSE_KEY = 'firefly-admin-sidebar-collapsed';
+    const collapseBtn = app.querySelector('#sidebar-collapse-btn');
+    const mobileMq = window.matchMedia('(width < 900px)');
+    const applyCollapse = (collapsed, persist = true) => {
+        aside.classList.toggle('is-collapsed', collapsed);
+        collapseBtn.innerHTML = collapsed ? '<i class="fas fa-angles-right"></i>' : '<i class="fas fa-angles-left"></i>';
+        const label = collapsed ? '展开侧栏' : '折叠侧栏';
+        collapseBtn.setAttribute('aria-label', label);
+        collapseBtn.setAttribute('title', label);
+        if (persist) localStorage.setItem(COLLAPSE_KEY, collapsed ? '1' : '0');
+    };
+    applyCollapse(!mobileMq.matches && localStorage.getItem(COLLAPSE_KEY) === '1', false);
+    collapseBtn.onclick = () => applyCollapse(!aside.classList.contains('is-collapsed'));
+    mobileMq.addEventListener('change', (e) => {
+        if (e.matches) closeDrawer();
+        applyCollapse(!e.matches && localStorage.getItem(COLLAPSE_KEY) === '1', false);
+    });
+
     const userBtn = app.querySelector('#user-menu-btn');
     const userMenu = app.querySelector('#user-menu');
     userBtn.onclick = () => userMenu.classList.toggle('hidden');

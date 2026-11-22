@@ -23,6 +23,15 @@
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --danger: oklch(0.6 0.2 25);
   --danger-hover: oklch(0.55 0.2 25);
+
+  /* 后台布局令牌：侧栏 / 顶栏 / 圆角 / 抽屉断点 / 阴影 */
+  --admin-sidebar-w: 15rem;
+  --admin-sidebar-collapsed: 4.25rem;
+  --admin-topbar-h: 3.6rem;
+  --admin-radius: 0.55rem;
+  --admin-drawer-bp: 900px;
+  --admin-shadow-side: 6px 0 26px rgba(0, 0, 0, 0.05);
+  --admin-shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 14px rgba(16, 24, 40, 0.03);
 }
 
 @theme {
@@ -90,7 +99,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.375rem;
-    border-radius: 0.5rem;
+    border-radius: var(--admin-radius);
     font-size: 0.875rem;
     line-height: 1.25rem;
     font-weight: 500;
@@ -156,7 +165,7 @@
 
   .field {
     width: 100%;
-    border-radius: 0.5rem;
+    border-radius: var(--admin-radius);
     border: 1px solid var(--line-color);
     background-color: var(--card-bg);
     padding-left: 0.75rem;
@@ -185,10 +194,152 @@
   }
 
   .card {
-    border-radius: var(--radius-large);
+    border-radius: var(--admin-radius);
     border: 1px solid var(--line-divider);
     background-color: var(--card-bg);
-    box-shadow: var(--shadow-sm);
+    box-shadow: var(--admin-shadow-card);
+  }
+
+  /* ===== 后台布局语义类（main.js / index.html 共用） ===== */
+  .admin-sidebar {
+    display: flex;
+    flex-direction: column;
+    width: var(--admin-sidebar-w);
+    height: 100dvh;
+    flex-shrink: 0;
+    background-color: var(--card-bg);
+    border-right: 1px solid var(--line-divider);
+    box-shadow: var(--admin-shadow-side);
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    transition: width 0.2s ease, transform 0.2s ease, translate 0.2s ease;
+  }
+
+  .admin-topbar {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    height: var(--admin-topbar-h);
+    padding-inline: 1.25rem;
+    background-color: color-mix(in oklab, var(--card-bg) 85%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line-divider);
+  }
+
+  .admin-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background-color: var(--overlay);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+  .admin-backdrop.open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .nav-title {
+    padding: 0.375rem 0.75rem;
+    font-size: 11px;
+    line-height: 1.25;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-slate-400);
+  }
+
+  .nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--admin-radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-slate-600);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .nav-item > i {
+    width: 1.125rem;
+    flex-shrink: 0;
+    text-align: center;
+    color: var(--color-slate-400);
+    transition: color 0.15s ease;
+  }
+  .nav-item:hover {
+    background-color: var(--color-slate-100);
+    color: var(--color-slate-900);
+  }
+  .nav-item:hover > i { color: var(--color-slate-600); }
+  .nav-item.active {
+    background-color: var(--color-brand-50);
+    color: var(--color-brand-700);
+  }
+  .nav-item.active > i { color: var(--color-brand-600); }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 3px;
+    height: 1.15rem;
+    transform: translateY(-50%);
+    border-radius: 9999px;
+    background-color: var(--primary);
+  }
+  .nav-group + .nav-group { margin-top: 1rem; }
+
+  /* 桌面折叠态：仅保留图标，移动端不进入该分支 */
+  @media (min-width: 900px) {
+    .admin-sidebar.is-collapsed .admin-brand {
+      justify-content: center;
+      padding-inline: 0;
+    }
+    .admin-sidebar.is-collapsed .sidebar-brand-logo,
+    .admin-sidebar.is-collapsed .sidebar-brand-text,
+    .admin-sidebar.is-collapsed .nav-title,
+    .admin-sidebar.is-collapsed .nav-label,
+    .admin-sidebar.is-collapsed .sidebar-footer-detail { display: none; }
+    .admin-sidebar.is-collapsed .sidebar-collapse-btn { margin-inline: 0; }
+    .admin-sidebar.is-collapsed .nav-item {
+      justify-content: center;
+      padding-inline: 0;
+    }
+    .admin-sidebar.is-collapsed .nav-item.active::before {
+      left: 0.125rem;
+      height: 1.35rem;
+    }
+    .admin-sidebar.is-collapsed .nav-group + .nav-group { margin-top: 0.5rem; }
+    .admin-sidebar.is-collapsed .sidebar-footer { padding-inline: 0.5rem; }
+    .admin-sidebar.is-collapsed .sidebar-repo {
+      display: flex;
+      justify-content: center;
+      padding: 0.5rem;
+    }
+    .admin-sidebar.is-collapsed .sidebar-user {
+      justify-content: center;
+      padding-inline: 0;
+    }
+    .admin-backdrop { display: none; }
+  }
+}
+
+/* 抽屉/折叠状态放在 layer 外：覆盖 Tailwind utilities 层的 translate / width 工具类 */
+@media (width < 900px) {
+  .admin-sidebar.open {
+    transform: translateX(0);
+    translate: 0 0;
+  }
+}
+@media (width >= 900px) {
+  .admin-sidebar.is-collapsed {
+    width: var(--admin-sidebar-collapsed);
   }
 }
 
@@ -224,6 +375,8 @@ body { background: var(--page-bg); }
   --danger: oklch(0.65 0.20 25);
   --danger-hover: oklch(0.72 0.19 25);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --admin-shadow-side: 6px 0 26px rgba(0, 0, 0, 0.35);
+  --admin-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.30), 0 4px 14px rgba(0, 0, 0, 0.22);
 }
 
 /* 暗色下色族反转：中性灰与状态色变深底亮字 */
