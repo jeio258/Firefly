@@ -1,6 +1,5 @@
 ---
 import { readFileSync } from "node:fs";
-import { execSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { Icon } from "astro-icon/components";
 import ci from "ci-info";
@@ -11,7 +10,6 @@ import { i18n } from "@/i18n/translation";
 import type { WidgetComponentConfig } from "@/types/config";
 import { detectBuildPlatform } from "@/utils/build-platform";
 import { formatDateI18nWithTime } from "@/utils/date-utils";
-import { resolveWidgetTitle } from "@/utils/widget-utils";
 
 interface Props {
 	class?: string;
@@ -21,7 +19,7 @@ interface Props {
 
 const { class: className, style, widgetConfig } = Astro.props;
 
-const showTitle = resolveWidgetTitle(widgetConfig);
+const showTitle = widgetConfig?.showTitle !== false;
 
 // ---- 构建时收集版本和环境信息 ----
 
@@ -45,17 +43,12 @@ try {
 // Node 版本
 const nodeVersion = process.version;
 
-// pnpm 版本（优先 user_agent，其次执行 pnpm --version 兜底）
+// pnpm 版本（从 npm_config_user_agent 解析）
 let pnpmVersion = "unknown";
 const userAgent = process.env.npm_config_user_agent || "";
-const pnpmMatch =
-	userAgent.match(/(?:pnpm|pnpm\.cjs)\/([\d.]+)/) || userAgent.match(/pnpm@([\d.]+)/);
+const pnpmMatch = userAgent.match(/pnpm\/([\d.]+)/);
 if (pnpmMatch) {
 	pnpmVersion = `v${pnpmMatch[1]}`;
-} else {
-	try {
-		pnpmVersion = `v${execSync("pnpm --version", { encoding: "utf8" }).trim()}`;
-	} catch {}
 }
 
 // 构建时间

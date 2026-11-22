@@ -10,7 +10,6 @@ import {
 	getSortedPosts,
 	getTagList,
 } from "@/utils/content-utils";
-import { resolveWidgetTitle } from "@/utils/widget-utils";
 
 interface Props {
 	class?: string;
@@ -20,7 +19,7 @@ interface Props {
 
 const { class: className, style, widgetConfig } = Astro.props;
 
-const showTitle = resolveWidgetTitle(widgetConfig);
+const showTitle = widgetConfig?.showTitle !== false;
 
 // 从配置中获取站点开始日期
 const siteStartDate = siteConfig.siteStartDate || "2025-01-01";

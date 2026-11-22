@@ -14,7 +14,6 @@ import icon from "astro-icon";
 import { pluginLanguageLogo } from "ec-lang-logo"; /* Language Logo */
 import { pluginCollapsible } from "expressive-code-collapsible"; /* Collapsible */
 import { pluginLanguageBadge } from "expressive-code-language-badge"; /* Language Badge */
-import katex from "katex";
 import "katex/dist/contrib/mhchem.mjs"; // 加载 mhchem 扩展
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeCallouts from "rehype-callouts";
@@ -248,18 +247,6 @@ export default defineConfig({
 				if (pathname === "/friends/" && !siteConfig.pages.friends) {
 					return false;
 				}
-				// 动态页评论嵌入页：评论关闭时重定向到 /404/，不应进 sitemap
-				if (
-					pathname === "/dynamic/comments/" &&
-					(dynamicConfig.showComment === false ||
-						!commentConfig.type ||
-						commentConfig.type === "none")
-				) {
-					return false;
-				}
-				if (pathname === "/sponsor/" && !siteConfig.pages.sponsor) {
-					return false;
-				}
 				if (pathname === "/guestbook/" && !siteConfig.pages.guestbook) {
 					return false;
 				}
@@ -276,6 +263,18 @@ export default defineConfig({
 					return false;
 				}
 				if (pathname === "/myanimelist/" && !siteConfig.pages.mal) {
+					return false;
+				}
+				// 动态页评论嵌入页：评论关闭时重定向到 /404/，不应进 sitemap
+				if (
+					pathname === "/dynamic/comments/" &&
+					(dynamicConfig.showComment === false ||
+						!commentConfig.type ||
+						commentConfig.type === "none")
+				) {
+					return false;
+				}
+				if (pathname === "/sponsor/" && !siteConfig.pages.sponsor) {
 					return false;
 				}
 				return true;
@@ -302,7 +301,7 @@ export default defineConfig({
 				[remarkPlantuml, plantumlConfig],
 			],
 			rehypePlugins: [
-				[rehypeKatex, { katex }],
+				rehypeKatex,
 				[rehypeCallouts, { theme: siteConfig.post.rehypeCallouts.theme }],
 				rehypeSlug,
 				rehypeCodeGroup,
