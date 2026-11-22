@@ -511,14 +511,20 @@ async function main() {
 			`bodyLen=${apply.bodyLen}`,
 		);
 
-		await goto(`${BASE}/admin/`);
-		const adminShell = await evaluate(`(() => {
-      return {
-        path: location.pathname,
-        title: document.title,
-        hasApp: !!document.getElementById('app'),
-      };
-    })()`);
+		await goto(`${BASE}/admin/`, 1500);
+		// admin 页需等 main.js 执行后挂载；慢加载时轮询，避免把时序抖动误判为失败
+		let adminShell = { path: "", title: "", hasApp: false };
+		for (let i = 0; i < 12; i++) {
+			adminShell = await evaluate(`(() => {
+        return {
+          path: location.pathname,
+          title: document.title,
+          hasApp: !!document.getElementById('app'),
+        };
+      })()`);
+			if (adminShell.hasApp && /后台管理/.test(adminShell.title)) break;
+			await sleep(700);
+		}
 		check(
 			"admin 后台壳加载",
 			adminShell.hasApp && /后台管理/.test(adminShell.title),
