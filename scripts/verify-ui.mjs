@@ -68,6 +68,7 @@ let ws;
 let msgId = 0;
 const pending = new Map();
 const consoleErrors = [];
+const externalErrors = [];
 const failures = [];
 let checks = 0;
 
@@ -147,15 +148,24 @@ async function connect() {
 			);
 		}
 		if (m.method === "Log.entryAdded" && m.params.entry.level === "error") {
-			const t = m.params.entry.text || "";
+			const entry = m.params.entry || {};
+			const t = entry.text || "";
 			if (/favicon/i.test(t)) return;
-			// 外部资源（友链头像/分析 SDK/CDN）加载失败属环境抖动，非本站回归；同源资源失败仍计
-			const urlMatch = t.match(/(https?:\/\/[^\s)]+)/);
-			if (
-				urlMatch &&
-				new URL(urlMatch[1], BASE).origin !== new URL(BASE).origin
-			) {
-				return;
+			// 外部资源（友链头像/分析 SDK/CDN）加载失败属环境抖动，非本站回归；同源资源失败仍计。
+			// 优先用 entry.url：部分网络错误（如 521）的文本里不含 URL。
+			const source =
+				entry.url || (t.match(/(https?:\/\/[^\s)]+)/) || [])[1] || "";
+			if (source) {
+				try {
+					if (new URL(source, BASE).origin !== new URL(BASE).origin) {
+						externalErrors.push(
+							`${source.slice(0, 120)} (status ${entry.statusCode ?? "?"})`,
+						);
+						return;
+					}
+				} catch {
+					// 非 URL 来源按同源处理
+				}
 			}
 			consoleErrors.push(`[log] ${t.slice(0, 200)}`);
 		}
@@ -304,11 +314,7 @@ async function main() {
 				console.log(`  ⏭  ${p} 跳过（未启用或 404）`);
 				continue;
 			}
-			check(
-				`${p} 渲染`,
-				renderOK(),
-				`bodyLen=${info.bodyLen}`,
-			);
+			check(`${p} 渲染`, renderOK(), `bodyLen=${info.bodyLen}`);
 			check(`${p} 无横向溢出`, info.overflowX <= 2, `溢出 ${info.overflowX}px`);
 			check(
 				`${p} 无破损图`,
@@ -573,6 +579,11 @@ async function main() {
 		}
 
 		console.log("\n控制台错误");
+		if (externalErrors.length) {
+			console.log(
+				`  ⚠  外部资源错误 ${externalErrors.length} 条（环境抖动，不阻塞）：${externalErrors.join("; ")}`,
+			);
+		}
 		check(
 			"无控制台错误",
 			consoleErrors.length === 0,
