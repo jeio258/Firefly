@@ -113,6 +113,10 @@ export async function getRawFile(owner, repo, branch, filePath, token) {
     if (res.status === 404) return { sha: null, text: null };
     if (!res.ok) throw new Error(`读取 ${filePath} 失败（${res.status}）`);
     const data = await res.json();
+    // 目录返回数组，没有 content；按「不是文件」处理，避免 base64ToString(undefined) 崩溃
+    if (Array.isArray(data) || typeof data.content !== 'string') {
+        return { sha: null, text: null, isDirectory: Array.isArray(data) };
+    }
     return { sha: data.sha, text: base64ToString(data.content) };
 }
 

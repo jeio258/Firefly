@@ -5,6 +5,12 @@ import { escapeAttr, escapeHtml } from '../utils.js';
 
 const CONFIG_PATH = '.pages.yml';
 
+function ensureYaml() {
+	if (typeof jsyaml === 'undefined') {
+		throw new Error('js-yaml 未加载（CDN 不可达），请刷新或检查网络');
+	}
+}
+
 function splitFrontmatter(text) {
 	const match = (text || '').match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?/);
 	if (!match) return { data: {}, body: text || '', hasFrontmatter: false };
@@ -43,7 +49,12 @@ function listItem(item) {
 		: '';
 	const badgeText =
 		item.type === 'collection' ? '集合' : item.format === 'code' ? '代码' : '文档';
-	return `<a href="#/config?file=${encodeURIComponent(item.path || '')}&name=${encodeURIComponent(item.name || '')}"
+	// 集合是目录，不能按文件编辑，直接跳到已有的文章管理
+	const href =
+		item.type === 'collection'
+			? '#/posts'
+			: `#/config?file=${encodeURIComponent(item.path || '')}&name=${encodeURIComponent(item.name || '')}`;
+	return `<a href="${href}"
 		class="flex items-start gap-3 rounded-(--admin-radius) border border-(--line-divider) bg-(--card-bg) p-3 transition-colors hover:bg-slate-50">
 		<span class="mt-0.5 text-slate-400"><i class="fas ${item.type === 'collection' ? 'fa-layer-group' : 'fa-file-code'}"></i></span>
 		<span class="min-w-0 flex-1">
@@ -66,6 +77,7 @@ export async function renderConfig(container, params) {
 
 	let cfg;
 	try {
+		ensureYaml();
 		const raw = await getRawFile(store.owner, store.repo, store.branch, CONFIG_PATH, store.token);
 		if (!raw.text) throw new Error(`仓库根目录缺少 ${CONFIG_PATH}`);
 		cfg = jsyaml.load(raw.text) || {};
@@ -132,7 +144,10 @@ async function renderConfigFile(container, filePath, name) {
 		return;
 	}
 	if (raw.text === null) {
-		container.innerHTML = emptyState('文件不存在', `${filePath} 未找到（可能是新文件，请先在仓库创建）`, 'fa-file-circle-question');
+		const why = /\.[a-z0-9]+$/i.test(filePath)
+			? '未找到（新文件请先在仓库创建）'
+			: '目录请到「文章管理」操作；文件不存在则需先在仓库创建';
+		container.innerHTML = emptyState('无法编辑该路径', `${filePath}：${why}`, 'fa-file-circle-question');
 		return;
 	}
 
